@@ -1,0 +1,34 @@
+module Necro
+  module Master
+    class Client
+      attr_accessor :client_socket
+      def initialize(client_socket)
+        @client_socket = client_socket
+      end
+
+      def read_and_execute
+        command_info = client_socket.read()
+        if command_info && !command_info.empty?
+          worker_command, command_label = command_info.strip.split(" ")
+          if worker_command && command_label
+            run_command(worker_command, command_label)
+          end
+        end
+        client_socket.close()
+      end
+
+      def run_command(worker_command, command_label)
+        case worker_command
+        when 'add'
+          Necro::COMMANDER.add_command_by_label(command_label)
+        when 'remove'
+          Necro::COMMANDER.remove_command(command_label)
+        when 'reload'
+          Necro::COMMANDER.reload_command(command_label)
+        else
+          $stdout.puts("\n Invalid command".red)
+        end
+      end
+    end
+  end
+end

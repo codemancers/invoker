@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+begin
+  require "necro"
+rescue LoadError
+  necro_lib_path = File.expand_path('../../lib', __FILE__)
+  $:.unshift(necro_lib_path)
+  require "necro"
+end
+
+Necro::Runner.run(ARGV)
+
+
