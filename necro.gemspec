@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.summary = %q{Something small for Process management}
   s.add_dependency("slop")
+  s.add_dependency("iniparse")
   s.add_dependency("colored")
 end
 
