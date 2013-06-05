@@ -58,11 +58,17 @@ module Necro
       add_command_by_label(command_label)
     end
 
-    def remove_command(command_label)
+    def remove_command(command_label, rest_args)
       worker = @workers[command_label]
+      signal_to_use = rest_args ? Array(rest_args).first : 'INT'
+
       if worker
-        $stdout.puts("Removing #{command_label}".red)
-        Process.kill("INT",worker.pid)
+        $stdout.puts("Removing #{command_label} with signal #{signal_to_use}".red)
+        if signal_to_use.to_i == 0
+          Process.kill(signal_to_use, worker.pid)
+        else
+          Process.kill(signal_to_use.to_i, worker.pid)
+        end
       end
     end
 

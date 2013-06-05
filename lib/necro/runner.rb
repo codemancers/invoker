@@ -28,8 +28,14 @@ module Necro
         end
 
         command 'remove' do
+          on :s, :signal=, "Signal to send while killing the process", as: String
           run do |cmd_opts, cmd_args|
-            selected_command = OpenStruct.new(:command => 'remove', :command_key => cmd_args.first)
+            signal_to_use = cmd_opts.to_hash[:signal] || 'INT'
+            selected_command = OpenStruct.new(
+              :command => 'remove', 
+              :command_key => cmd_args.first,
+              :signal => signal_to_use
+            )
           end
         end
 
@@ -77,18 +83,21 @@ module Necro
       socket = UNIXSocket.open(Necro::Master::Server::SOCKET_PATH)
       socket.puts("add #{selected_command.command_key}")
       socket.flush()
+      socket.close()
     end
 
     def self.remove_command(selected_command)
       socket = UNIXSocket.open(Necro::Master::Server::SOCKET_PATH)
-      socket.puts("remove #{selected_command.command_key}")
+      socket.puts("remove #{selected_command.command_key} #{selected_command.signal}")
       socket.flush()
+      socket.close()
     end
 
     def self.refresh_command(selected_command)
       socket = UNIXSocket.open(Necro::Master::Server::SOCKET_PATH)
       socket.puts("reload #{selected_command.command_key}")
       socket.flush()
+      socket.close()
     end
   end
 end

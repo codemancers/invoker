@@ -1,3 +1,5 @@
 process.yml
 necro.ini
+config/
+*.gem
 

@@ -9,20 +9,20 @@ module Necro
       def read_and_execute
         command_info = client_socket.read()
         if command_info && !command_info.empty?
-          worker_command, command_label = command_info.strip.split(" ")
+          worker_command, command_label, rest_args = command_info.strip.split(" ")
           if worker_command && command_label
-            run_command(worker_command, command_label)
+            run_command(worker_command, command_label, rest_args)
           end
         end
         client_socket.close()
       end
 
-      def run_command(worker_command, command_label)
+      def run_command(worker_command, command_label, rest_args = nil)
         case worker_command
         when 'add'
           Necro::COMMANDER.add_command_by_label(command_label)
         when 'remove'
-          Necro::COMMANDER.remove_command(command_label)
+          Necro::COMMANDER.remove_command(command_label, rest_args)
         when 'reload'
           Necro::COMMANDER.reload_command(command_label)
         else
