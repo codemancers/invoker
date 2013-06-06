@@ -35,6 +35,8 @@ Now additionally you can control individual process by,
     # add and start running
     ~> necro add dj
     
+You can also enable OSX notifications for crashed processes by installing `terminal-notification` gem. It is not a dependency, but can be useful if something crashed and you weren't paying attention.    
+    
 That is about it.     
     
 
