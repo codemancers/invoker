@@ -22,5 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency("slop")
   s.add_dependency("iniparse")
   s.add_dependency("colored")
+  s.add_development_dependency("minitest")
+  s.add_development_dependency("mocha")
 end
 
