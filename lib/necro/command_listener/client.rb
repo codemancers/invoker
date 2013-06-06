@@ -1,5 +1,5 @@
 module Necro
-  module Master
+  module CommandListener
     class Client
       attr_accessor :client_socket
       def initialize(client_socket)

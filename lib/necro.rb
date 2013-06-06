@@ -7,7 +7,7 @@ end
 require "pry"
 require "colored"
 require_relative "necro/runner"
-require_relative "necro/master"
+require_relative "necro/command_listener"
 require_relative "necro/errors"
 require_relative "necro/config"
 require_relative "necro/commander"

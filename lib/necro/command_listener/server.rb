@@ -1,7 +1,7 @@
 require "fileutils"
 
 module Necro
-  module Master
+  module CommandListener
     class Server
       SOCKET_PATH = "/tmp/necro"
       def initialize
@@ -22,7 +22,7 @@ module Necro
       end
 
       def process_client(client_socket)
-        client = Necro::Master::Client.new(client_socket)
+        client = Necro::CommandListener::Client.new(client_socket)
         client.read_and_execute
       end
     end

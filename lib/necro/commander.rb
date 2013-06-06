@@ -4,6 +4,7 @@ require 'pty'
 module Necro
   class Commander
     MAX_PROCESS_COUNT = 10
+    LABEL_COLORS = ['green', 'yellow', 'blue', 'magenta', 'cyan']
 
     def initialize
       # mapping between open pipes and worker classes
@@ -24,7 +25,7 @@ module Necro
 
     def start_reactor
       unix_server_thread = Thread.new do
-        Necro::Master::Server.new()
+        Necro::CommandListener::Server.new()
       end
       @thread_group.add(unix_server_thread)
       @reactor.start
@@ -38,7 +39,7 @@ module Necro
 
       s.close()
 
-      worker = Necro::CommandWorker.new(process_info.label, m,  pid)
+      worker = Necro::CommandWorker.new(process_info.label, m, pid, LABEL_COLORS.sample())
 
       add_worker(worker)
       wait_on_pid(process_info.label,pid)

@@ -1,11 +1,12 @@
 module Necro
   class CommandWorker
-    attr_accessor :command_label, :pipe_end, :pid
+    attr_accessor :command_label, :pipe_end, :pid, :color
     
-    def initialize(command_label, pipe_end, pid)
+    def initialize(command_label, pipe_end, pid, color)
       @command_label = command_label
       @pipe_end = pipe_end
       @pid = pid
+      @color = color
     end
 
     # Copied verbatim from Eventmachine code
@@ -18,12 +19,12 @@ module Necro
     end
 
     def unbind
-      # $stdout.print(".")
+      $stdout.print(".")
     end
 
     # Print the lines received over the network
     def receive_line(line)
-      puts "#{@command_label.blue} : #{line}"
+      $stdout.puts "#{@command_label.send(color)} : #{line}"
     end
   end
 end

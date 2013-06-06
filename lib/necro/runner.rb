@@ -30,6 +30,7 @@ module Necro
         command 'remove' do
           banner "Usage : necro remove process_label \n Stop the process with given label"
           on :s, :signal=, "Signal to send for killing the process, default is SIGINT", as: String
+
           run do |cmd_opts, cmd_args|
             signal_to_use = cmd_opts.to_hash[:signal] || 'INT'
             selected_command = OpenStruct.new(
@@ -66,21 +67,21 @@ module Necro
     end
 
     def self.add_command(selected_command)
-      socket = UNIXSocket.open(Necro::Master::Server::SOCKET_PATH)
+      socket = UNIXSocket.open(Necro::CommandListener::Server::SOCKET_PATH)
       socket.puts("add #{selected_command.command_key}")
       socket.flush()
       socket.close()
     end
 
     def self.remove_command(selected_command)
-      socket = UNIXSocket.open(Necro::Master::Server::SOCKET_PATH)
+      socket = UNIXSocket.open(Necro::CommandListener::Server::SOCKET_PATH)
       socket.puts("remove #{selected_command.command_key} #{selected_command.signal}")
       socket.flush()
       socket.close()
     end
 
     def self.refresh_command(selected_command)
-      socket = UNIXSocket.open(Necro::Master::Server::SOCKET_PATH)
+      socket = UNIXSocket.open(Necro::CommandListener::Server::SOCKET_PATH)
       socket.puts("reload #{selected_command.command_key}")
       socket.flush()
       socket.close()
