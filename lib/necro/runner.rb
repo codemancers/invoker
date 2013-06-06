@@ -14,21 +14,22 @@ module Necro
         end
 
         command 'start' do
-          on :h, :help, "config_file : Start the Necro Server"
-          
+          banner "Usage : necro start config.ini \n Start Necro Process Manager"
           run do |cmd_opts, cmd_args|
             selected_command = OpenStruct.new(:command => 'start', :file => cmd_args.first)
           end
         end
 
         command 'add' do
+          banner "Usage : necro add process_label \n Start the process with given process_label"
           run do |cmd_opts, cmd_args|
             selected_command = OpenStruct.new(:command => 'add', :command_key => cmd_args.first)
           end
         end
 
         command 'remove' do
-          on :s, :signal=, "Signal to send while killing the process", as: String
+          banner "Usage : necro remove process_label \n Stop the process with given label"
+          on :s, :signal=, "Signal to send for killing the process, default is SIGINT", as: String
           run do |cmd_opts, cmd_args|
             signal_to_use = cmd_opts.to_hash[:signal] || 'INT'
             selected_command = OpenStruct.new(
@@ -38,34 +39,19 @@ module Necro
             )
           end
         end
-
-        command 'refresh' do
-          run do |cmd_opts, cmd_args|
-            selected_command = OpenStruct.new(:command => 'refresh', :command_key => cmd_args.first)
-          end
-        end
-
-        command 'stop' do
-          run do |cmd_opts, cmd_args|
-            selected_command = OpenStruct.new(:command => 'stop', :command_key => cmd_args[1])
-          end
-        end
       end
       run_command(selected_command)
     end
 
     def self.run_command(selected_command)
+      return unless selected_command
       case selected_command.command
       when 'start'
         start_server(selected_command)
-      when 'stop'
-        stop_server()
       when 'add'
         add_command(selected_command)
       when 'remove'
         remove_command(selected_command)
-      when 'refresh'
-        refresh_command(selected_command)
       else
         puts "Invalid command"
       end

@@ -26,9 +26,12 @@ Above command will start all your processes in one terminal with their stdout/st
 
 Now additionally you can control individual process by,
 
-    # stop running dj
+    # Will try to stop running delayed job by sending SIGINT to the process
     ~> necro remove dj
-    
+
+    # If Process can't be killed by SIGINT send a custom signal
+    ~> necro remove dj -s 9
+
     # add and start running
     ~> necro add dj
     
