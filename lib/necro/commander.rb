@@ -17,17 +17,12 @@ module Necro
       @worker_mutex = Mutex.new()
       @reactor = Necro::Reactor.new
       Thread.abort_on_exception = true
-
-      Necro::CONFIG.processes.each do |process_info|
-        add_command(process_info)
-      end
     end
 
-    def start_reactor
-      unix_server_thread = Thread.new do
-        Necro::CommandListener::Server.new()
-      end
+    def start_manager
+      unix_server_thread = Thread.new { Necro::CommandListener::Server.new() }
       @thread_group.add(unix_server_thread)
+      Necro::CONFIG.processes.each { |process_info| add_command(process_info) }
       @reactor.start
     end
 

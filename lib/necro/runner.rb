@@ -64,7 +64,7 @@ module Necro
       warn_about_terminal_notifier()
       commander = Necro::Commander.new()
       Necro.const_set(:COMMANDER, commander)
-      commander.start_reactor()
+      commander.start_manager()
     end
 
     def self.add_command(selected_command)
