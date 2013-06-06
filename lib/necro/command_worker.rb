@@ -19,7 +19,7 @@ module Necro
     end
 
     def unbind
-      $stdout.print(".")
+      # $stdout.print(".")
     end
 
     # Print the lines received over the network

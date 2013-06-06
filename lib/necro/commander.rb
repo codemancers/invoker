@@ -121,10 +121,31 @@ module Necro
       raise Necro::Errors::ToomanyOpenConnections if @thread_group.enclosed?
       thread = Thread.new do
         Process.wait(pid)
-        $stdout.puts("\nProcess with command #{command_label} exited with status #{$?.exitstatus}".red)
+        message = "Process with command #{command_label} exited with status #{$?.exitstatus}"
+        $stdout.puts("\n#{message}".red)
+        notify_user(message)
         remove_worker(command_label)
       end
       @thread_group.add(thread)
+    end
+
+    def notify_user(message)
+      if defined?(Bundler)
+        Bundler.with_clean_env do
+          check_and_notify_with_terminal_notifier(message)
+        end
+      else
+        check_and_notify_with_terminal_notifier(message)
+      end
+    end
+
+    def check_and_notify_with_terminal_notifier(message)
+      return unless RUBY_PLATFORM.downcase.include?("darwin")
+
+      command_path = `which terminal-notifier`
+      if command_path && !command_path.empty?
+        system("terminal-notifier -message '#{message}' -title Necro")
+      end
     end
 
   end
