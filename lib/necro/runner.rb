@@ -61,6 +61,7 @@ module Necro
     def self.start_server(selected_command)
       config = Necro::Config.new(selected_command.file)
       Necro.const_set(:CONFIG, config)
+      warn_about_terminal_notifier()
       commander = Necro::Commander.new()
       Necro.const_set(:COMMANDER, commander)
       commander.start_reactor()
@@ -86,5 +87,15 @@ module Necro
       socket.flush()
       socket.close()
     end
+
+    def self.warn_about_terminal_notifier
+      if RUBY_PLATFORM.downcase.include?("darwin")
+        command_path = `which terminal-notifier`
+        if !command_path || command_path.empty?
+          $stdout.puts("You can enable OSX notification for processes by installing terminal-notification gem".red)
+        end
+      end
+    end
+
   end
 end
