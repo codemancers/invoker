@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.email = %q{hemant@codemancers.com}
 
   s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.test_files    = `git ls-files -- {spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
@@ -22,7 +22,8 @@ Gem::Specification.new do |s|
   s.add_dependency("slop")
   s.add_dependency("iniparse")
   s.add_dependency("colored")
-  s.add_development_dependency("minitest")
+  s.add_development_dependency("bacon")
   s.add_development_dependency("mocha")
+  s.add_development_dependency("mocha-on-bacon")
 end
 
