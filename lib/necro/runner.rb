@@ -10,7 +10,7 @@ module Necro
       
       Slop.parse(args, help: true) do
         on :v, "Print the version" do
-          puts Necro::VERSION
+          $stdout.puts Necro::VERSION
         end
 
         command 'start' do
@@ -54,7 +54,7 @@ module Necro
       when 'remove'
         remove_command(selected_command)
       else
-        puts "Invalid command"
+        $stdout.puts "Invalid command"
       end
     end
 

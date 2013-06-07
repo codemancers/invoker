@@ -4,7 +4,6 @@ module Necro
   VERSION = "0.0.1"
 end
 
-require "pry"
 require "colored"
 require_relative "necro/runner"
 require_relative "necro/command_listener"

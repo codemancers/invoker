@@ -8,5 +8,7 @@ module Necro
         @message = message
       end
     end
+
+    class InvalidConfig < StandardError; end
   end
 end

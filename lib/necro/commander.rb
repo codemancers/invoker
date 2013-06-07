@@ -5,7 +5,8 @@ module Necro
   class Commander
     MAX_PROCESS_COUNT = 10
     LABEL_COLORS = ['green', 'yellow', 'blue', 'magenta', 'cyan']
-
+    attr_accessor :reactor, :workers, :thread_group, :open_pipes
+    
     def initialize
       # mapping between open pipes and worker classes
       @open_pipes = {}
@@ -20,10 +21,13 @@ module Necro
     end
 
     def start_manager
+      if !Necro::CONFIG.processes || Necro::CONFIG.processes.empty?
+        raise Necro::Errors::InvalidConfig.new("No processes configured in config file")
+      end
       unix_server_thread = Thread.new { Necro::CommandListener::Server.new() }
-      @thread_group.add(unix_server_thread)
+      thread_group.add(unix_server_thread)
       Necro::CONFIG.processes.each { |process_info| add_command(process_info) }
-      @reactor.start
+      reactor.start
     end
 
     def add_command(process_info)
@@ -55,7 +59,7 @@ module Necro
     end
 
     def remove_command(command_label, rest_args)
-      worker = @workers[command_label]
+      worker = workers[command_label]
       signal_to_use = rest_args ? Array(rest_args).first : 'INT'
 
       if worker
@@ -69,11 +73,11 @@ module Necro
     end
 
     def get_worker_from_fd(fd)
-      @open_pipes[fd.fileno]
+      open_pipes[fd.fileno]
     end
 
     def get_worker_from_label(label)
-      @workers[label]
+      workers[label]
     end
     
     private
