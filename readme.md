@@ -1,5 +1,8 @@
 Necro is a gem for managing processes in development environment.
 
+[![Build Status](https://travis-ci.org/code-mancers/necro.png)](https://travis-ci.org/code-mancers/necro)
+
+
 ## Usage ##
 
 You need to start by creating a `ini` file which will define processes you want to manage using necro. An example
