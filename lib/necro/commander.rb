@@ -38,7 +38,9 @@ module Necro
 
       s.close()
 
-      worker = Necro::CommandWorker.new(process_info.label, m, pid, LABEL_COLORS.sample())
+      selected_color = LABEL_COLORS.shift()
+      LABEL_COLORS.push(selected_color)
+      worker = Necro::CommandWorker.new(process_info.label, m, pid, selected_color)
 
       add_worker(worker)
       wait_on_pid(process_info.label,pid)
