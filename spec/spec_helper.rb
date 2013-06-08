@@ -17,6 +17,13 @@ def necro_config
   end
 end
 
-
+def necro_commander
+  if Necro.const_defined?(:COMMANDER)
+    Necro::COMMANDER
+  else
+    Necro.const_set(:COMMANDER, mock())
+    Necro::COMMANDER
+  end
+end
 
 

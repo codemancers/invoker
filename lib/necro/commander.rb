@@ -66,11 +66,7 @@ module Necro
 
       if worker
         $stdout.puts("Removing #{command_label} with signal #{signal_to_use}".red)
-        if signal_to_use.to_i == 0
-          Process.kill(signal_to_use, worker.pid)
-        else
-          Process.kill(signal_to_use.to_i, worker.pid)
-        end
+        process_kill(worker.pid, signal_to_use)
       end
     end
 
@@ -83,6 +79,14 @@ module Necro
     end
     
     private
+    def process_kill(pid, signal_to_use)
+      if signal_to_use.to_i == 0
+        Process.kill(signal_to_use, pid)
+      else
+        Process.kill(signal_to_use.to_i, pid)
+      end
+    end
+    
     # Remove worker from all collections
     def remove_worker(command_label)
       @worker_mutex.synchronize do
