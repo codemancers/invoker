@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.homepage = %q{http://github.com/codemancers/necro}
+  s.homepage = %q{http://github.com/code-mancers/necro}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.summary = %q{Something small for Process management}
