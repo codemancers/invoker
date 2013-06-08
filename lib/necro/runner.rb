@@ -8,7 +8,7 @@ module Necro
 
       selected_command = nil
       
-      Slop.parse(args, help: true) do
+      opts = Slop.parse(args, help: true) do
         on :v, "Print the version" do
           $stdout.puts Necro::VERSION
         end
@@ -41,7 +41,11 @@ module Necro
           end
         end
       end
-      run_command(selected_command)
+      unless selected_command
+        $stdout.puts opts.inspect
+      else
+        run_command(selected_command)
+      end
     end
 
     def self.run_command(selected_command)

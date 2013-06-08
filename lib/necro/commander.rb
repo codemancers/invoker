@@ -24,6 +24,7 @@ module Necro
       if !Necro::CONFIG.processes || Necro::CONFIG.processes.empty?
         raise Necro::Errors::InvalidConfig.new("No processes configured in config file")
       end
+      install_interrupt_handler()
       unix_server_thread = Thread.new { Necro::CommandListener::Server.new() }
       thread_group.add(unix_server_thread)
       Necro::CONFIG.processes.each { |process_info| add_command(process_info) }
@@ -150,6 +151,13 @@ module Necro
       command_path = `which terminal-notifier`
       if command_path && !command_path.empty?
         system("terminal-notifier -message '#{message}' -title Necro")
+      end
+    end
+
+    def install_interrupt_handler
+      Signal.trap("INT") do
+        @workers.each {|key,worker| Process.kill("INT", worker.pid) }
+        exit(0)
       end
     end
 
