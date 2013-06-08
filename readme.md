@@ -5,6 +5,12 @@ Necro is a gem for managing processes in development environment.
 
 ## Usage ##
 
+First we need to install `necro` gem to get command line utility called `necro`, we can do that via:
+
+    gem install necro
+    
+Currently it only works with Ruby 1.9.3 and 2.0. We are working on fixing it for other versions of Ruby.    
+
 You need to start by creating a `ini` file which will define processes you want to manage using necro. An example
 `ini` file is included in the repo.
 
