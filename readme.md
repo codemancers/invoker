@@ -41,7 +41,11 @@ Now additionally you can control individual process by,
 You can also enable OSX notifications for crashed processes by installing `terminal-notification` gem. It is not a dependency, but can be useful if something crashed and you weren't paying attention.    
     
 
-    
+## Bug reports, Feature requests ## 
+
+Please use [Github Issue Tracker](https://github.com/code-mancers/necro/issues) for feature requests or bug reports.
+
+
 
 
 
