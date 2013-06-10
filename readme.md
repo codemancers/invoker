@@ -49,23 +49,19 @@ You can also enable OSX notifications for crashed processes by installing `termi
 ## Using with rbenv or rvm ##
 
 The way `rbenv` and `rvm` work sometimes creates problems when you are trying to use a process supervisor like `invoker`. There are couple of things to keep in mind,
-If you are running `invoker` with Ruby version x, but your application requires Ruby version Y - then
+If you are running `invoker` with Ruby version x, but your application requires Ruby version Y:
 
 * When using `rbenv`, you can define the command with environment variable `RBENV_VERSION=Y` and then start your application. In other words:
-
-    command = RBENV_VERSION=2.0.0-p0 zsh -c "bundle exec rails s"
+ 
+        command = RBENV_VERSION=2.0.0-p0 zsh -c "bundle exec rails s"
 
 * Unless version of Ruby using which you are running `invoker` command and version of Ruby you are using in the application is same, you almost always will want to use 
 `zsh -c` or `bash -c`. `RVM` in particular requires a login shell and hence sometimes you may have to use `bash -lc`. For example:
 
-    command = bash -lc "rvm use 2.0.0-p0 && bundle exec rails s"
+        command = bash -lc "rvm use 2.0.0-p0 && bundle exec rails s"
     
 
-## Bug reports and Feature requests ## 
+## Bug reports and Feature requests
 
 Please use [Github Issue Tracker](https://github.com/code-mancers/invoker/issues) for feature requests or bug reports.
-
-
-
-
 
