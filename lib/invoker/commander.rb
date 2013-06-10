@@ -156,7 +156,12 @@ module Invoker
 
     def install_interrupt_handler
       Signal.trap("INT") do
-        @workers.each {|key,worker| Process.kill("INT", worker.pid) }
+        @workers.each {|key,worker|
+          begin
+            Process.kill("INT", worker.pid) 
+          rescue Errno::ESRCH
+          end
+        }
         exit(0)
       end
     end
