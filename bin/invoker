@@ -1,13 +1,14 @@
 #!/usr/bin/env ruby
 
 begin
-  require "necro"
+  require "invoker"
 rescue LoadError
-  necro_lib_path = File.expand_path('../../lib', __FILE__)
-  $:.unshift(necro_lib_path)
-  require "necro"
+  invoker_lib_path = File.expand_path('../../lib', __FILE__)
+  $:.unshift(invoker_lib_path)
+  require "invoker"
 end
 
-Necro::Runner.run(ARGV)
+Invoker::Runner.run(ARGV)
+
 
 
