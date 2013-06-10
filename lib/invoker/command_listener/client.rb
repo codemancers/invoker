@@ -1,4 +1,4 @@
-module Necro
+module Invoker
   module CommandListener
     class Client
       attr_accessor :client_socket
@@ -20,11 +20,11 @@ module Necro
       def run_command(worker_command, command_label, rest_args = nil)
         case worker_command
         when 'add'
-          Necro::COMMANDER.add_command_by_label(command_label)
+          Invoker::COMMANDER.add_command_by_label(command_label)
         when 'remove'
-          Necro::COMMANDER.remove_command(command_label, rest_args)
+          Invoker::COMMANDER.remove_command(command_label, rest_args)
         when 'reload'
-          Necro::COMMANDER.reload_command(command_label)
+          Invoker::COMMANDER.reload_command(command_label)
         else
           $stdout.puts("\n Invalid command".red)
         end

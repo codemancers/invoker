@@ -5,24 +5,24 @@ __LIB_PATH__ = File.join(File.dirname(__FILE__), "..")
 $: << __LIB_PATH__
 
 require "pry"
-require "necro"
+require "invoker"
 
 
-def necro_config
-  if Necro.const_defined?(:CONFIG)
-    Necro::CONFIG
+def invoker_config
+  if Invoker.const_defined?(:CONFIG)
+    Invoker::CONFIG
   else
-    Necro.const_set(:CONFIG, mock())
-    Necro::CONFIG
+    Invoker.const_set(:CONFIG, mock())
+    Invoker::CONFIG
   end
 end
 
-def necro_commander
-  if Necro.const_defined?(:COMMANDER)
-    Necro::COMMANDER
+def invoker_commander
+  if Invoker.const_defined?(:COMMANDER)
+    Invoker::COMMANDER
   else
-    Necro.const_set(:COMMANDER, mock())
-    Necro::COMMANDER
+    Invoker.const_set(:COMMANDER, mock())
+    Invoker::COMMANDER
   end
 end
 

@@ -1,9 +1,9 @@
 require "fileutils"
 
-module Necro
+module Invoker
   module CommandListener
     class Server
-      SOCKET_PATH = "/tmp/necro"
+      SOCKET_PATH = "/tmp/invoker"
       def initialize
         @open_clients = []
         clean_old_socket()
@@ -22,7 +22,7 @@ module Necro
       end
 
       def process_client(client_socket)
-        client = Necro::CommandListener::Client.new(client_socket)
+        client = Invoker::CommandListener::Client.new(client_socket)
         client.read_and_execute
       end
     end

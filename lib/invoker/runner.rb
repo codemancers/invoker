@@ -2,7 +2,7 @@ require "slop"
 require "ostruct"
 require "socket"
 
-module Necro
+module Invoker
   class Runner
     def self.run(args)
 
@@ -10,25 +10,25 @@ module Necro
       
       opts = Slop.parse(args, help: true) do
         on :v, "Print the version" do
-          $stdout.puts Necro::VERSION
+          $stdout.puts Invoker::VERSION
         end
 
         command 'start' do
-          banner "Usage : necro start config.ini \n Start Necro Process Manager"
+          banner "Usage : invoker start config.ini \n Start Invoker Process Manager"
           run do |cmd_opts, cmd_args|
             selected_command = OpenStruct.new(:command => 'start', :file => cmd_args.first)
           end
         end
 
         command 'add' do
-          banner "Usage : necro add process_label \n Start the process with given process_label"
+          banner "Usage : invoker add process_label \n Start the process with given process_label"
           run do |cmd_opts, cmd_args|
             selected_command = OpenStruct.new(:command => 'add', :command_key => cmd_args.first)
           end
         end
 
         command 'remove' do
-          banner "Usage : necro remove process_label \n Stop the process with given label"
+          banner "Usage : invoker remove process_label \n Stop the process with given label"
           on :s, :signal=, "Signal to send for killing the process, default is SIGINT", as: String
 
           run do |cmd_opts, cmd_args|
@@ -63,30 +63,30 @@ module Necro
     end
 
     def self.start_server(selected_command)
-      config = Necro::Config.new(selected_command.file)
-      Necro.const_set(:CONFIG, config)
+      config = Invoker::Config.new(selected_command.file)
+      Invoker.const_set(:CONFIG, config)
       warn_about_terminal_notifier()
-      commander = Necro::Commander.new()
-      Necro.const_set(:COMMANDER, commander)
+      commander = Invoker::Commander.new()
+      Invoker.const_set(:COMMANDER, commander)
       commander.start_manager()
     end
 
     def self.add_command(selected_command)
-      socket = UNIXSocket.open(Necro::CommandListener::Server::SOCKET_PATH)
+      socket = UNIXSocket.open(Invoker::CommandListener::Server::SOCKET_PATH)
       socket.puts("add #{selected_command.command_key}")
       socket.flush()
       socket.close()
     end
 
     def self.remove_command(selected_command)
-      socket = UNIXSocket.open(Necro::CommandListener::Server::SOCKET_PATH)
+      socket = UNIXSocket.open(Invoker::CommandListener::Server::SOCKET_PATH)
       socket.puts("remove #{selected_command.command_key} #{selected_command.signal}")
       socket.flush()
       socket.close()
     end
 
     def self.refresh_command(selected_command)
-      socket = UNIXSocket.open(Necro::CommandListener::Server::SOCKET_PATH)
+      socket = UNIXSocket.open(Invoker::CommandListener::Server::SOCKET_PATH)
       socket.puts("reload #{selected_command.command_key}")
       socket.flush()
       socket.close()

@@ -1,4 +1,4 @@
-module Necro
+module Invoker
   class Reactor
     attr_accessor :monitored_fds
     def initialize
@@ -33,11 +33,11 @@ module Necro
     end
 
     def process_read(ready_fd)
-      command_worker = Necro::COMMANDER.get_worker_from_fd(ready_fd)
+      command_worker = Invoker::COMMANDER.get_worker_from_fd(ready_fd)
       begin
         data = read_data(ready_fd)
         command_worker.receive_data(data)
-      rescue Necro::Errors::ProcessTerminated
+      rescue Invoker::Errors::ProcessTerminated
         command_worker.unbind()
       end
     end
@@ -53,7 +53,7 @@ module Necro
       rescue Errno::EWOULDBLOCK
         return sock_data.join
       rescue
-        raise Necro::Errors::ProcessTerminated.new(ready_fd,sock_data.join)
+        raise Invoker::Errors::ProcessTerminated.new(ready_fd,sock_data.join)
       end
     end
 

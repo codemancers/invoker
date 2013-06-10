@@ -1,4 +1,4 @@
-module Necro
+module Invoker
   module Errors
     class ToomanyOpenConnections < StandardError; end
     class ProcessTerminated < StandardError

@@ -1,7 +1,7 @@
 require "yaml"
 require 'iniparse'
 
-module Necro
+module Invoker
   class Config
     attr_accessor :processes
     def initialize(filename)

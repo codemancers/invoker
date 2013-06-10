@@ -1,14 +1,14 @@
 require "spec_helper"
 
-describe Necro::CommandListener::Client do
+describe Invoker::CommandListener::Client do
   describe "add command" do
     before do
       @client_socket = mock()
-      @client = Necro::CommandListener::Client.new(@client_socket)
+      @client = Invoker::CommandListener::Client.new(@client_socket)
     end
     
     it "should run if read from socket" do
-      necro_commander.expects(:add_command_by_label).with("foo")
+      invoker_commander.expects(:add_command_by_label).with("foo")
       @client_socket.expects(:read).returns("add foo\n")
       @client_socket.expects(:close)
 
@@ -19,11 +19,11 @@ describe Necro::CommandListener::Client do
   describe "remove command" do
     before do
       @client_socket = mock()
-      @client = Necro::CommandListener::Client.new(@client_socket)
+      @client = Invoker::CommandListener::Client.new(@client_socket)
     end
 
     it "with specific signal" do
-      necro_commander.expects(:remove_command).with("foo", "9")
+      invoker_commander.expects(:remove_command).with("foo", "9")
       @client_socket.expects(:read).returns("remove foo 9\n")
       @client_socket.expects(:close)
 
@@ -31,7 +31,7 @@ describe Necro::CommandListener::Client do
     end
 
     it "with default signal" do
-      necro_commander.expects(:remove_command).with("foo",nil)
+      invoker_commander.expects(:remove_command).with("foo",nil)
       @client_socket.expects(:read).returns("remove foo\n")
       @client_socket.expects(:close)
 
@@ -42,12 +42,12 @@ describe Necro::CommandListener::Client do
   describe "invalid command" do
     before do
       @client_socket = mock()
-      @client = Necro::CommandListener::Client.new(@client_socket)
+      @client = Invoker::CommandListener::Client.new(@client_socket)
     end
 
     it "should print error if read from socket" do
-      necro_commander.expects(:remove_command).never()
-      necro_commander.expects(:add_command_by_label).never()
+      invoker_commander.expects(:remove_command).never()
+      invoker_commander.expects(:add_command_by_label).never()
       @client_socket.expects(:read).returns("eugh foo\n")
       @client_socket.expects(:close)
 

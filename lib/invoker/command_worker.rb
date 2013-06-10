@@ -1,4 +1,4 @@
-module Necro
+module Invoker
   class CommandWorker
     attr_accessor :command_label, :pipe_end, :pid, :color
     

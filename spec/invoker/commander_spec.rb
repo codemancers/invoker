@@ -1,28 +1,28 @@
 require "spec_helper"
 
-describe "Necro::Commander" do
+describe "Invoker::Commander" do
   
   describe "With no processes configured" do
     before do
-      @commander = Necro::Commander.new()
+      @commander = Invoker::Commander.new()
     end
     
     it "should throw error" do
-      necro_config.stubs(:processes).returns([])
+      invoker_config.stubs(:processes).returns([])
 
       lambda {
         @commander.start_manager()
-      }.should.raise(Necro::Errors::InvalidConfig)
+      }.should.raise(Invoker::Errors::InvalidConfig)
     end
   end
 
   describe "#add_command_by_label" do
     before do
-      @commander = Necro::Commander.new()
+      @commander = Invoker::Commander.new()
     end
 
     it "should find command by label and start it, if found" do
-      necro_config.stubs(:processes).returns([OpenStruct.new(:label => "resque", :cmd => "foo", :dir => "bar")])
+      invoker_config.stubs(:processes).returns([OpenStruct.new(:label => "resque", :cmd => "foo", :dir => "bar")])
       @commander.expects(:add_command).returns(true)
       
       @commander.add_command_by_label("resque")
@@ -32,7 +32,7 @@ describe "Necro::Commander" do
   describe "#remove_command" do
     describe "when a worker is found" do
       before do
-        @commander = Necro::Commander.new()
+        @commander = Invoker::Commander.new()
         @commander.workers.expects(:[]).returns(OpenStruct.new(:pid => "bogus"))
       end
 
@@ -53,7 +53,7 @@ describe "Necro::Commander" do
 
     describe "when no worker is found" do
       before do
-        @commander = Necro::Commander.new()
+        @commander = Invoker::Commander.new()
         @commander.workers.expects(:[]).returns(nil)
       end
 
@@ -67,8 +67,8 @@ describe "Necro::Commander" do
 
   describe "#add_command" do
     before do
-      necro_config.stubs(:processes).returns([OpenStruct.new(:label => "sleep", :cmd => "sleep 4", :dir => ENV['HOME'])])
-      @commander = Necro::Commander.new()
+      invoker_config.stubs(:processes).returns([OpenStruct.new(:label => "sleep", :cmd => "sleep 4", :dir => ENV['HOME'])])
+      @commander = Invoker::Commander.new()
     end
 
     it "should populate workers and open_pipes" do

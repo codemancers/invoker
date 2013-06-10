@@ -1,7 +1,7 @@
 require "io/console"
 require 'pty'
 
-module Necro
+module Invoker
   class Commander
     MAX_PROCESS_COUNT = 10
     LABEL_COLORS = ['green', 'yellow', 'blue', 'magenta', 'cyan']
@@ -16,18 +16,18 @@ module Necro
       
       @thread_group = ThreadGroup.new()
       @worker_mutex = Mutex.new()
-      @reactor = Necro::Reactor.new
+      @reactor = Invoker::Reactor.new
       Thread.abort_on_exception = true
     end
 
     def start_manager
-      if !Necro::CONFIG.processes || Necro::CONFIG.processes.empty?
-        raise Necro::Errors::InvalidConfig.new("No processes configured in config file")
+      if !Invoker::CONFIG.processes || Invoker::CONFIG.processes.empty?
+        raise Invoker::Errors::InvalidConfig.new("No processes configured in config file")
       end
       install_interrupt_handler()
-      unix_server_thread = Thread.new { Necro::CommandListener::Server.new() }
+      unix_server_thread = Thread.new { Invoker::CommandListener::Server.new() }
       thread_group.add(unix_server_thread)
-      Necro::CONFIG.processes.each { |process_info| add_command(process_info) }
+      Invoker::CONFIG.processes.each { |process_info| add_command(process_info) }
       reactor.start
     end
 
@@ -41,14 +41,14 @@ module Necro
 
       selected_color = LABEL_COLORS.shift()
       LABEL_COLORS.push(selected_color)
-      worker = Necro::CommandWorker.new(process_info.label, m, pid, selected_color)
+      worker = Invoker::CommandWorker.new(process_info.label, m, pid, selected_color)
 
       add_worker(worker)
       wait_on_pid(process_info.label,pid)
     end
 
     def add_command_by_label(command_label)
-      process_info = Necro::CONFIG.processes.detect {|pconfig|
+      process_info = Invoker::CONFIG.processes.detect {|pconfig|
         pconfig.label == command_label
       }
       if process_info
@@ -124,7 +124,7 @@ module Necro
     end
 
     def wait_on_pid(command_label,pid)
-      raise Necro::Errors::ToomanyOpenConnections if @thread_group.enclosed?
+      raise Invoker::Errors::ToomanyOpenConnections if @thread_group.enclosed?
       thread = Thread.new do
         Process.wait(pid)
         message = "Process with command #{command_label} exited with status #{$?.exitstatus}"
@@ -150,7 +150,7 @@ module Necro
 
       command_path = `which terminal-notifier`
       if command_path && !command_path.empty?
-        system("terminal-notifier -message '#{message}' -title Necro")
+        system("terminal-notifier -message '#{message}' -title Invoker")
       end
     end
 
