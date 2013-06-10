@@ -1,17 +1,17 @@
-Necro is a gem for managing processes in development environment.
+Invoker is a gem for managing processes in development environment.
 
-[![Build Status](https://travis-ci.org/code-mancers/necro.png)](https://travis-ci.org/code-mancers/necro)
+[![Build Status](https://travis-ci.org/code-mancers/invoker.png)](https://travis-ci.org/code-mancers/invoker)
 
 
 ## Usage ##
 
-First we need to install `necro` gem to get command line utility called `necro`, we can do that via:
+First we need to install `invoker` gem to get command line utility called `invoker`, we can do that via:
 
-    gem install necro
+    gem install invoker
     
-Currently it only works with Ruby 1.9.3 and 2.0. We are working on fixing it for other versions of Ruby.    
+Currently it only works with Ruby 1.9.3 and 2.0.
 
-You need to start by creating a `ini` file which will define processes you want to manage using necro. An example
+You need to start by creating a `ini` file which will define processes you want to manage using invoker. An example
 `ini` file is included in the repo.
 
     [rails]
@@ -29,27 +29,27 @@ You need to start by creating a `ini` file which will define processes you want 
     
 After that you can start process manager via:
 
-    ~> necro start necro.ini
+    ~> invoker start invoker.ini
     
 Above command will start all your processes in one terminal with their stdout/stderr merged and labelled.
 
 Now additionally you can control individual process by,
 
     # Will try to stop running delayed job by sending SIGINT to the process
-    ~> necro remove dj
+    ~> invoker remove dj
 
     # If Process can't be killed by SIGINT send a custom signal
-    ~> necro remove dj -s 9
+    ~> invoker remove dj -s 9
 
     # add and start running
-    ~> necro add dj
+    ~> invoker add dj
     
 You can also enable OSX notifications for crashed processes by installing `terminal-notification` gem. It is not a dependency, but can be useful if something crashed and you weren't paying attention.    
     
 
 ## Bug reports, Feature requests ## 
 
-Please use [Github Issue Tracker](https://github.com/code-mancers/necro/issues) for feature requests or bug reports.
+Please use [Github Issue Tracker](https://github.com/code-mancers/invoker/issues) for feature requests or bug reports.
 
 
 

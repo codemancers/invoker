@@ -1,5 +1,4 @@
-process.yml
-necro.ini
+invoker.ini
 config/
 *.gem
 
