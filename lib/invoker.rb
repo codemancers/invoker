@@ -1,10 +1,7 @@
 $: << File.dirname(__FILE__) unless $:.include?(File.expand_path(File.dirname(__FILE__)))
 
-module Invoker
-  VERSION = "0.0.3"
-end
-
 require "colored"
+require_relative "invoker/version"
 require_relative "invoker/runner"
 require_relative "invoker/command_listener"
 require_relative "invoker/errors"

@@ -5,7 +5,7 @@ GEM_NAME = "invoker"
 lib = File.expand_path("../lib", __FILE__)
 $: << lib unless $:.include?(lib)
 
-require "invoker"
+require "invoker/version"
 
 Gem::Specification.new do |s|
   s.name = GEM_NAME
