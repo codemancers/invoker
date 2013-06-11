@@ -1,8 +1,15 @@
 # -*- encoding: utf-8 -*-
 
+GEM_NAME = "invoker"
+
+lib = File.expand_path("../lib", __FILE__)
+$: << lib unless $:.include?(lib)
+
+require "invoker"
+
 Gem::Specification.new do |s|
-  s.name = %q{invoker}
-  s.version = "0.0.2"
+  s.name = GEM_NAME
+  s.version = Invoker::VERSION
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Hemant Kumar"]
