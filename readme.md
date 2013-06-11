@@ -22,7 +22,6 @@ You need to start by creating a `ini` file which will define processes you want 
     directory = /home/gnufied/god_particle
     command = zsh -c 'bundle exec ruby script/delayed_job'
     
-    
     [events]
     directory = /home/gnufied/god_particle
     command = zsh -c 'bundle exec ruby script/event_server'
