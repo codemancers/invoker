@@ -57,7 +57,7 @@ If you are running `invoker` with Ruby version x, but your application requires 
 * Unless version of Ruby using which you are running `invoker` command and version of Ruby you are using in the application is same, you almost always will want to use 
 `zsh -c` or `bash -c`. `RVM` in particular requires a login shell and hence sometimes you may have to use `bash -lc`. For example:
 
-        command = bash -lc "rvm use 2.0.0-p0 && bundle exec rails s"
+        command = bash -lc "rvm 2.0.0-p0 do bundle exec rails s"
     
 
 ## Bug reports and Feature requests
