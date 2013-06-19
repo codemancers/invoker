@@ -4,6 +4,8 @@ require "socket"
 
 module Invoker
   class Runner
+    INI_FILE_REGEXP = Regexp.new(/\.ini$/)
+
     def self.run(args)
 
       selected_command = nil
@@ -40,7 +42,13 @@ module Invoker
             )
           end
         end
+
+        # if first argument is .ini file, default command to start
+        if args.first.match(INI_FILE_REGEXP)
+          selected_command = OpenStruct.new(:command => 'start', :file => args.first)
+        end
       end
+
       unless selected_command
         $stdout.puts opts.inspect
       else
