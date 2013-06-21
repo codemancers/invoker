@@ -5,6 +5,10 @@ require "socket"
 module Invoker
   class Runner
     def self.run(args)
+      selected_command = Invoker::Parsers::OptionParser.parse(args)
+      if selected_command
+        run_command(selected_command)
+      end
     end
 
     def self.run_command(selected_command)

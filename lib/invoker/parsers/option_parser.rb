@@ -41,13 +41,18 @@ module Invoker
           end
         end
 
-        unless selected_command
-          $stdout.puts opts.inspect
-        else
-          selected_command
-        end
-
+        selected_command || create_default_command(args, opts)
       end
+
+      def self.create_default_command(args,opts)
+        if File.exists?(args.first) && File.file?(args.first)
+          OpenStruct.new(:command => "start", :file => args.first)
+        else
+          $stdout.puts opts.inspect
+          false
+        end
+      end
+
     end
   end
 end
