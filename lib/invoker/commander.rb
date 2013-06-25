@@ -44,9 +44,7 @@ module Invoker
 
       s.close()
 
-      selected_color = LABEL_COLORS.shift()
-      LABEL_COLORS.push(selected_color)
-      worker = Invoker::CommandWorker.new(process_info.label, m, pid, selected_color)
+      worker = Invoker::CommandWorker.new(process_info.label, m, pid, select_color())
 
       add_worker(worker)
       wait_on_pid(process_info.label,pid)
@@ -110,6 +108,12 @@ module Invoker
       else
         Process.kill(signal_to_use.to_i, pid)
       end
+    end
+
+    def select_color
+      selected_color = LABEL_COLORS.shift()
+      LABEL_COLORS.push(selected_color)
+      selected_color
     end
     
     # Remove worker from all collections
