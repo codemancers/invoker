@@ -20,6 +20,8 @@ module Invoker
       Thread.abort_on_exception = true
     end
 
+    # Start the invoker process supervisor. This method starts a unix server
+    # in separate thread that listens for incoming commands.
     def start_manager
       if !Invoker::CONFIG.processes || Invoker::CONFIG.processes.empty?
         raise Invoker::Errors::InvalidConfig.new("No processes configured in config file")
@@ -31,6 +33,9 @@ module Invoker
       reactor.start
     end
 
+    # Start given command and start a background thread to wait on the process
+    #
+    # @param process_info [OpenStruct(command, directory)]
     def add_command(process_info)
       m, s = PTY.open
       s.raw! # disable newline conversion.
@@ -47,6 +52,9 @@ module Invoker
       wait_on_pid(process_info.label,pid)
     end
 
+    # Start executing given command by their label name.
+    #
+    # @param command_label [String] Command label of process specified in config file.
     def add_command_by_label(command_label)
       process_info = Invoker::CONFIG.processes.detect {|pconfig|
         pconfig.label == command_label
@@ -56,11 +64,19 @@ module Invoker
       end
     end
 
+    # Reload a process given by command label
+    #
+    # @params command_label [String] Command label of process specified in config file.
     def reload_command(command_label)
       remove_command(command_label)
       add_command_by_label(command_label)
     end
 
+    # Remove a process from list of processes managed by invoker supervisor.It also
+    # kills the process before removing it from the list.
+    #
+    # @param command_label [String] Command label of process specified in config file
+    # @param rest_args [Array] Additional option arguments, such as signal that can be used.
     def remove_command(command_label, rest_args)
       worker = workers[command_label]
       signal_to_use = rest_args ? Array(rest_args).first : 'INT'
@@ -71,10 +87,18 @@ module Invoker
       end
     end
 
+    # Given a file descriptor returns the worker object
+    #
+    # @param fd [IO] an IO object with valid file descriptor
+    # @return [Invoker::CommandWorker] The worker object which is associated with this fd
     def get_worker_from_fd(fd)
       open_pipes[fd.fileno]
     end
 
+    # Given a command label returns the associated worker object
+    #
+    # @param label [String] Command label of the command
+    # @return [Invoker::CommandWorker] The worker object which is associated with this command
     def get_worker_from_label(label)
       workers[label]
     end

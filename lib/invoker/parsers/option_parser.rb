@@ -44,8 +44,15 @@ module Invoker
         selected_command || create_default_command(args, opts)
       end
 
-      def self.create_default_command(args,opts)
-        if File.exists?(args.first) && File.file?(args.first)
+      
+      # If user specifies no command either show help message or start the invoker
+      # process supervisor.
+      #
+      # @param args [Array] command line arguments
+      # @param opts [Slop::Options] Processed slop options
+      # @return [OpenStruct, false] returns default command or nil
+      def self.create_default_command(args, opts)
+        if args.first && File.exists?(args.first) && File.file?(args.first)
           OpenStruct.new(:command => "start", :file => args.first)
         else
           $stdout.puts opts.inspect
