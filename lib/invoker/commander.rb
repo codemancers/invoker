@@ -18,9 +18,7 @@ module Invoker
       @thread_group = ThreadGroup.new()
       @worker_mutex = Mutex.new()
 
-
-      @scheduled_events = {}
-      @triggered_events = []
+      @event_manager = Invoker::Event::Manager.new()
 
       @reactor = Invoker::Reactor.new
       Thread.abort_on_exception = true
@@ -73,7 +71,7 @@ module Invoker
     # @params command_label [String] Command label of process specified in config file.
     def reload_command(command_label)
       remove_command(command_label)
-      on_next_tick(command_label, :exit) { add_command_by_label(command_label) }
+      event_manager.schedule_event(command_label, :exit) { add_command_by_label(command_label) }
     end
 
     # Remove a process from list of processes managed by invoker supervisor.It also
@@ -106,14 +104,6 @@ module Invoker
     def get_worker_from_label(label)
       workers[label]
     end
-
-    def on_next_tick(command_label, event_name = nil, &block)
-      scheduled_events[command_label] = OpenStruct.new(:event_name => nil, :block => block)
-    end
-
-    def add_event(command_label, event_name = nil)
-      triggered_events << OpenStruct.new(:command_label => command_label, :event_name => event_name)
-    end
     
     private
     def start_event_loop
@@ -122,11 +112,10 @@ module Invoker
         run_scheduled_events()
       end
     end
-
     
     def run_scheduled_events
-      triggered_events.each do |triggered_event|
-        scheduled_event = scheduled_events[triggered_events.command_label]
+      event_manager.run_scheduled_events do |event|
+        event.block.call()
       end
     end
     
