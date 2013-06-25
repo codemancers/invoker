@@ -6,6 +6,7 @@ module Invoker
     MAX_PROCESS_COUNT = 10
     LABEL_COLORS = ['green', 'yellow', 'blue', 'magenta', 'cyan']
     attr_accessor :reactor, :workers, :thread_group, :open_pipes
+    attr_accessor :scheduled_events, :triggered_events
     
     def initialize
       # mapping between open pipes and worker classes
@@ -16,6 +17,11 @@ module Invoker
       
       @thread_group = ThreadGroup.new()
       @worker_mutex = Mutex.new()
+
+
+      @scheduled_events = {}
+      @triggered_events = []
+
       @reactor = Invoker::Reactor.new
       Thread.abort_on_exception = true
     end
@@ -30,7 +36,7 @@ module Invoker
       unix_server_thread = Thread.new { Invoker::CommandListener::Server.new() }
       thread_group.add(unix_server_thread)
       Invoker::CONFIG.processes.each { |process_info| add_command(process_info) }
-      reactor.start
+      start_event_loop()
     end
 
     # Start given command and start a background thread to wait on the process
@@ -67,7 +73,7 @@ module Invoker
     # @params command_label [String] Command label of process specified in config file.
     def reload_command(command_label)
       remove_command(command_label)
-      add_command_by_label(command_label)
+      on_next_tick(command_label, :exit) { add_command_by_label(command_label) }
     end
 
     # Remove a process from list of processes managed by invoker supervisor.It also
@@ -100,8 +106,30 @@ module Invoker
     def get_worker_from_label(label)
       workers[label]
     end
+
+    def on_next_tick(command_label, event_name = nil, &block)
+      scheduled_events[command_label] = OpenStruct.new(:event_name => nil, :block => block)
+    end
+
+    def add_event(command_label, event_name = nil)
+      triggered_events << OpenStruct.new(:command_label => command_label, :event_name => event_name)
+    end
     
     private
+    def start_event_loop
+      loop do
+        reactor.watch_on_pipe()
+        run_scheduled_events()
+      end
+    end
+
+    
+    def run_scheduled_events
+      triggered_events.each do |triggered_event|
+        scheduled_event = scheduled_events[triggered_events.command_label]
+      end
+    end
+    
     def process_kill(pid, signal_to_use)
       if signal_to_use.to_i == 0
         Process.kill(signal_to_use, pid)
