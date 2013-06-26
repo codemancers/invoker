@@ -4,7 +4,7 @@ module Invoker
       attr_accessor :scheduled_events, :triggered_events
 
       def initialize
-        @scheduled_events = Hash.new([])
+        @scheduled_events = Hash.new {|h,k| h[k] = [] }
         @triggered_events = []
       end
 

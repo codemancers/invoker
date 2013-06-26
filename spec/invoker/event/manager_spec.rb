@@ -47,9 +47,11 @@ describe Invoker::Event::Manager do
       @event_manager.schedule_event("bar", :entry) { "entry bar"}
       @event_manager.trigger("foo", :exit)
 
+      events_ran = false
       @event_manager.run_scheduled_events do |event|
-        event.block.call.should.equal("exit foo")
+        events_ran = true
       end
+      events_ran.should.be.false
     end
   end
 end
