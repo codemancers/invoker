@@ -69,10 +69,15 @@ describe "Invoker::Commander" do
     before do
       invoker_config.stubs(:processes).returns([OpenStruct.new(:label => "sleep", :cmd => "sleep 4", :dir => ENV['HOME'])])
       @commander = Invoker::Commander.new()
+      Invoker.const_set(:COMMANDER, @commander)
+    end
+
+    after do
+      Invoker.send(:remove_const,:COMMANDER)
     end
 
     it "should populate workers and open_pipes" do
-      @commander.reactor.expects(:start).returns(true)
+      @commander.expects(:start_event_loop)
       @commander.start_manager()
       @commander.open_pipes.should.not.be.empty
       @commander.workers.should.not.be.empty
