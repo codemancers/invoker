@@ -69,8 +69,8 @@ module Invoker
     # Reload a process given by command label
     #
     # @params command_label [String] Command label of process specified in config file.
-    def reload_command(command_label)
-      remove_command(command_label)
+    def reload_command(command_label, rest_args)
+      remove_command(command_label, rest_args)
       event_manager.schedule_event(command_label, :exit) { add_command_by_label(command_label) }
     end
 

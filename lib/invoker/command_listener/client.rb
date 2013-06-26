@@ -24,7 +24,7 @@ module Invoker
         when 'remove'
           Invoker::COMMANDER.remove_command(command_label, rest_args)
         when 'reload'
-          Invoker::COMMANDER.reload_command(command_label)
+          Invoker::COMMANDER.reload_command(command_label, rest_args)
         else
           $stdout.puts("\n Invalid command".red)
         end
