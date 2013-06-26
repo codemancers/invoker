@@ -21,6 +21,8 @@ module Invoker
         case worker_command
         when 'add'
           Invoker::COMMANDER.add_command_by_label(command_label)
+        when 'list'
+          Invoker::COMMANDER.list_commands()
         when 'remove'
           Invoker::COMMANDER.remove_command(command_label, rest_args)
         when 'reload'

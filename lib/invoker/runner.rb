@@ -20,6 +20,8 @@ module Invoker
         add_command(selected_command)
       when 'reload'
         refresh_command(selected_command)
+      when 'list'
+        list_commands(selected_command)
       when 'remove'
         remove_command(selected_command)
       else
@@ -53,6 +55,13 @@ module Invoker
     def self.refresh_command(selected_command)
       socket = UNIXSocket.open(Invoker::CommandListener::Server::SOCKET_PATH)
       socket.puts("reload #{selected_command.command_key} #{selected_command.signal}")
+      socket.flush()
+      socket.close()
+    end
+
+    def self.list_commands(selected_command)
+      socket = UNIXSocket.open(Invoker::CommandListener::Server::SOCKET_PATH)
+      socket.puts("list")
       socket.flush()
       socket.close()
     end

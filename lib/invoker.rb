@@ -1,6 +1,7 @@
 $: << File.dirname(__FILE__) unless $:.include?(File.expand_path(File.dirname(__FILE__)))
 
 require "colored"
+require "hirb"
 require "invoker/version"
 require "invoker/logger"
 require "invoker/runner"

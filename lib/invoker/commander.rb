@@ -54,6 +54,11 @@ module Invoker
       wait_on_pid(process_info.label,pid)
     end
 
+    # List currently running commands
+    def list_commands
+      tp workers
+    end
+
     # Start executing given command by their label name.
     #
     # @param command_label [String] Command label of process specified in config file.

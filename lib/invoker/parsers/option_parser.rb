@@ -19,6 +19,13 @@ module Invoker
             end
           end
 
+          command 'list' do
+            banner "Usage : invoker list\n List processes managed by invoker"
+            run do |cmd_opts, cmd_args|
+              selected_command = OpenStruct.new(:command => 'list')
+            end
+          end
+
           command 'add' do
             banner "Usage : invoker add process_label \n Start the process with given process_label"
             run do |cmd_opts, cmd_args|
