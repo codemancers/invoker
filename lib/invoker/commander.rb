@@ -6,7 +6,7 @@ module Invoker
     MAX_PROCESS_COUNT = 10
     LABEL_COLORS = ['green', 'yellow', 'blue', 'magenta', 'cyan']
     attr_accessor :reactor, :workers, :thread_group, :open_pipes
-    attr_accessor :scheduled_events, :triggered_events
+    attr_accessor :event_manager
     
     def initialize
       # mapping between open pipes and worker classes
