@@ -1,5 +1,6 @@
 require "io/console"
 require 'pty'
+require "json"
 
 module Invoker
   class Commander
@@ -56,7 +57,7 @@ module Invoker
 
     # List currently running commands
     def list_commands
-      tp workers
+      workers.map {|worker| worker.to_json }.to_json
     end
 
     # Start executing given command by their label name.

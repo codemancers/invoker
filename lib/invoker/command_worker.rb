@@ -26,5 +26,9 @@ module Invoker
     def receive_line(line)
       Invoker::Logger.puts "#{@command_label.send(color)} : #{line}"
     end
+
+    def to_json(options = {})
+      {:command_label => command_label, :pid => pid}
+    end
   end
 end

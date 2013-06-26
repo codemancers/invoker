@@ -10,7 +10,9 @@ module Invoker
         command_info = client_socket.read()
         if command_info && !command_info.empty?
           worker_command, command_label, rest_args = command_info.strip.split(" ")
-          if worker_command && command_label
+          puts "got #{worker_command}"
+          worker_command.strip!
+          if worker_command
             run_command(worker_command, command_label, rest_args)
           end
         end
@@ -22,7 +24,9 @@ module Invoker
         when 'add'
           Invoker::COMMANDER.add_command_by_label(command_label)
         when 'list'
-          Invoker::COMMANDER.list_commands()
+          json = Invoker::COMMANDER.list_commands()
+          puts "Writing #{json.inspect}"
+          client_socket.puts(json)
         when 'remove'
           Invoker::COMMANDER.remove_command(command_label, rest_args)
         when 'reload'

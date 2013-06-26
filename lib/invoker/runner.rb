@@ -61,6 +61,7 @@ module Invoker
 
     def self.list_commands(selected_command)
       socket = UNIXSocket.open(Invoker::CommandListener::Server::SOCKET_PATH)
+      puts "writing a command here"
       socket.puts("list")
       socket.flush()
       socket.close()
