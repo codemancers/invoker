@@ -84,7 +84,7 @@ module Invoker
       signal_to_use = rest_args ? Array(rest_args).first : 'INT'
 
       if worker
-        $stdout.puts("Removing #{command_label} with signal #{signal_to_use}".red)
+        Invoker::Logger.puts("Removing #{command_label} with signal #{signal_to_use}".red)
         process_kill(worker.pid, signal_to_use)
       end
     end
@@ -173,7 +173,7 @@ module Invoker
       thread = Thread.new do
         Process.wait(pid)
         message = "Process with command #{command_label} exited with status #{$?.exitstatus}"
-        $stdout.puts("\n#{message}".red)
+        Invoker::Logger.puts("\n#{message}".red)
         notify_user(message)
         remove_worker(command_label)
       end

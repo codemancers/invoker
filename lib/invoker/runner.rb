@@ -21,7 +21,7 @@ module Invoker
       when 'remove'
         remove_command(selected_command)
       else
-        $stdout.puts "Invalid command"
+        Invoker::Logger.puts "Invalid command"
       end
     end
 
@@ -59,7 +59,7 @@ module Invoker
       if RUBY_PLATFORM.downcase.include?("darwin")
         command_path = `which terminal-notifier`
         if !command_path || command_path.empty?
-          $stdout.puts("You can enable OSX notification for processes by installing terminal-notifier gem".red)
+          Invoker::Logger.puts("You can enable OSX notification for processes by installing terminal-notifier gem".red)
         end
       end
     end

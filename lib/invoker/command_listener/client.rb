@@ -26,7 +26,7 @@ module Invoker
         when 'reload'
           Invoker::COMMANDER.reload_command(command_label, rest_args)
         else
-          $stdout.puts("\n Invalid command".red)
+          Invoker::Logger.puts("\n Invalid command".red)
         end
       end
     end

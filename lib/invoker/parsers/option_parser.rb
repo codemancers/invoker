@@ -9,7 +9,7 @@ module Invoker
         
         opts = Slop.parse(args, help: true) do
           on :v, "Print the version" do
-            $stdout.puts Invoker::VERSION
+            Invoker::Logger.puts Invoker::VERSION
           end
 
           command 'start' do
@@ -55,7 +55,7 @@ module Invoker
         if args.first && File.exists?(args.first) && File.file?(args.first)
           OpenStruct.new(:command => "start", :file => args.first)
         else
-          $stdout.puts opts.inspect
+          Invoker::Logger.puts opts.inspect
           false
         end
       end

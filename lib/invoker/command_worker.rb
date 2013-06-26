@@ -19,12 +19,12 @@ module Invoker
     end
 
     def unbind
-      # $stdout.print(".")
+      # Invoker::Logger.print(".")
     end
 
     # Print the lines received over the network
     def receive_line(line)
-      $stdout.puts "#{@command_label.send(color)} : #{line}"
+      Invoker::Logger.puts "#{@command_label.send(color)} : #{line}"
     end
   end
 end
