@@ -70,8 +70,13 @@ module Invoker
     #
     # @params command_label [String] Command label of process specified in config file.
     def reload_command(command_label, rest_args)
-      remove_command(command_label, rest_args)
-      event_manager.schedule_event(command_label, :exit) { add_command_by_label(command_label) }
+      if remove_command(command_label, rest_args)
+        event_manager.schedule_event(command_label, :worker_removed) {
+          add_command_by_label(command_label) 
+        }
+      else
+        add_command_by_label(command_label) 
+      end
     end
 
     # Remove a process from list of processes managed by invoker supervisor.It also
@@ -79,6 +84,7 @@ module Invoker
     #
     # @param command_label [String] Command label of process specified in config file
     # @param rest_args [Array] Additional option arguments, such as signal that can be used.
+    # @return [Boolean] if process existed and was removed else false
     def remove_command(command_label, rest_args)
       worker = workers[command_label]
       signal_to_use = rest_args ? Array(rest_args).first : 'INT'
@@ -86,7 +92,9 @@ module Invoker
       if worker
         Invoker::Logger.puts("Removing #{command_label} with signal #{signal_to_use}".red)
         process_kill(worker.pid, signal_to_use)
+        return true
       end
+      false
     end
 
     # Given a file descriptor returns the worker object
@@ -143,6 +151,7 @@ module Invoker
           @workers.delete(command_label)
         end
       end
+      event_manager.trigger(command_label, :worker_removed)
     end
 
     # add worker to global collections
@@ -170,12 +179,14 @@ module Invoker
 
     def wait_on_pid(command_label,pid)
       raise Invoker::Errors::ToomanyOpenConnections if @thread_group.enclosed?
+      event_manager.schedule_event(command_label, :exit) { remove_worker(command_label) }
+
       thread = Thread.new do
         Process.wait(pid)
         message = "Process with command #{command_label} exited with status #{$?.exitstatus}"
         Invoker::Logger.puts("\n#{message}".red)
         notify_user(message)
-        remove_worker(command_label)
+        event_manager.trigger(command_label, :exit)
       end
       @thread_group.add(thread)
     end

@@ -6,6 +6,7 @@ module Invoker
       def initialize
         @scheduled_events = Hash.new {|h,k| h[k] = [] }
         @triggered_events = []
+        @trigger_mutex = Mutex.new()
       end
 
       # Trigger an event. The event is not triggered immediately, but is just scheduled to be
@@ -14,9 +15,11 @@ module Invoker
       # @param command_label [String] Command for which event should be triggered
       # @param event_name [Symbol, nil] The optional event name
       def trigger(command_label, event_name = nil)
-        triggered_events << OpenStruct.new(
-          :command_label => command_label, 
-          :event_name => event_name)
+        @trigger_mutex.synchronize do
+          triggered_events << OpenStruct.new(
+            :command_label => command_label, 
+            :event_name => event_name)
+        end
       end
 
       # Schedule an Event. The event will only trigger when a scheduled event matches

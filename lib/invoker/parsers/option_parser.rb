@@ -39,6 +39,20 @@ module Invoker
               )
             end
           end
+
+          command 'reload' do
+            banner "Usage : invoker reload process_label \n Restart the process with given label"
+            on :s, :signal=, "Signal to send for killing the process, default is SIGINT", as: String
+
+            run do |cmd_opts, cmd_args|
+              signal_to_use = cmd_opts.to_hash[:signal] || 'INT'
+              selected_command = OpenStruct.new(
+                :command => 'reload', 
+                :command_key => cmd_args.first,
+                :signal => signal_to_use
+              )
+            end
+          end
         end
 
         selected_command || create_default_command(args, opts)

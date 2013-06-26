@@ -39,16 +39,27 @@ describe "Invoker::Commander" do
       describe "if a signal is specified" do
         it "should use that signal to kill the worker" do
           @commander.expects(:process_kill).with("bogus", "HUP").returns(true)
-          @commander.remove_command("resque", "HUP")
+          @commander.remove_command("resque", "HUP").should.be.true
         end
       end
 
       describe "if no signal is specified" do
         it "should use INT signal" do
           @commander.expects(:process_kill).with("bogus", "INT").returns(true)
-          @commander.remove_command("resque", nil)
+          @commander.remove_command("resque", nil).should.be.true
         end
       end
+
+      # describe "when a worker is not found" do
+      #   before do
+      #     @commander = Invoker::Commander.new()
+      #     @commander.workers.expects(:[]).returns(OpenStruct.new(:pid => "bogus"))
+      #   end
+
+      #   it "should return false" do
+          
+      #   end
+      # end
     end
 
     describe "when no worker is found" do
