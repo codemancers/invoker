@@ -35,18 +35,20 @@ module Invoker
       # On next iteration of event loop, this method is called and we try to match
       # scheduled events with events that were triggered. 
       def run_scheduled_events
+        filtered_events_by_name_and_command = []
+
         triggered_events.each_with_index do |triggered_event, index|
           matched_events = scheduled_events[triggered_event.command_label]
           if matched_events && !matched_events.empty?
-            filtered_matched_events, unmatched_events = 
+            filtered_events_by_name_and_command, unmatched_events = 
               filter_matched_events(matched_events, triggered_event)
-
-            filtered_matched_events.each {|event| yield event }
             triggered_events[index] = nil
             remove_scheduled_event(unmatched_events, triggered_event.command_label)
           end
         end
         triggered_events.compact!
+
+        filtered_events_by_name_and_command.each {|event| yield event }
       end
 
       private
@@ -63,7 +65,7 @@ module Invoker
       end
 
       def remove_scheduled_event(matched_events, command_label)
-        if matched_events.empty?
+        if !matched_events || matched_events.empty?
           scheduled_events.delete(command_label)
         else
           scheduled_events[command_label] = matched_events

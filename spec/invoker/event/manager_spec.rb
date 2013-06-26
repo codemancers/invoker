@@ -43,6 +43,21 @@ describe Invoker::Event::Manager do
       @event_manager.scheduled_events.should.be.a bar_containing_scheduled_event
     end
 
+    it "should handle multiple events for same command" do
+      @event_manager.schedule_event("foo", :exit) { 'exit foo' }
+      @event_manager.schedule_event("foo", :entry) { "entry bar"}
+      @event_manager.trigger("foo", :exit)
+
+      @event_manager.run_scheduled_events { |event| }
+
+
+      @event_manager.schedule_event("foo", :exit) { 'exit foo' }
+      @event_manager.trigger("foo", :exit)
+
+      @event_manager.scheduled_events.should.not.be.empty
+      @event_manager.triggered_events.should.not.be.empty
+    end
+
     it "should not run unmatched events" do
       @event_manager.schedule_event("bar", :entry) { "entry bar"}
       @event_manager.trigger("foo", :exit)
