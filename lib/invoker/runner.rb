@@ -39,29 +39,31 @@ module Invoker
     end
 
     def self.add_command(selected_command)
-      socket = UNIXSocket.open(Invoker::CommandListener::Server::SOCKET_PATH)
-      socket.puts("add #{selected_command.command_key}")
-      socket.flush()
-      socket.close()
+      Socket.unix(Invoker::CommandListener::Server::SOCKET_PATH) do |socket|
+        socket.puts("add #{selected_command.command_key}")
+        socket.flush()
+      end
     end
 
     def self.remove_command(selected_command)
-      socket = UNIXSocket.open(Invoker::CommandListener::Server::SOCKET_PATH)
-      socket.puts("remove #{selected_command.command_key} #{selected_command.signal}")
-      socket.flush()
-      socket.close()
+      Socket.unix(Invoker::CommandListener::Server::SOCKET_PATH) do |socket|
+        socket.puts("remove #{selected_command.command_key} #{selected_command.signal}")
+        socket.flush()
+      end
     end
 
     def self.refresh_command(selected_command)
-      socket = UNIXSocket.open(Invoker::CommandListener::Server::SOCKET_PATH)
-      socket.puts("reload #{selected_command.command_key} #{selected_command.signal}")
-      socket.flush()
-      socket.close()
+      Socket.unix(Invoker::CommandListener::Server::SOCKET_PATH) do |socket|
+        socket.puts("reload #{selected_command.command_key} #{selected_command.signal}")
+        socket.flush()
+      end
     end
 
     def self.list_commands(selected_command)
       Socket.unix(Invoker::CommandListener::Server::SOCKET_PATH) {|sock|
-        sock.write("list")
+        sock.puts("list")
+        data = sock.gets()
+        puts data
       }
     end
 

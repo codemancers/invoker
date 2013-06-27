@@ -7,7 +7,9 @@ module Invoker
       end
 
       def read_and_execute
-        command_info = client_socket.read()
+        command_info = client_socket.gets()
+        command_info && command_info.strip!
+
         if command_info && !command_info.empty?
           worker_command, command_label, rest_args = command_info.strip.split(" ")
           worker_command.strip!
@@ -25,7 +27,7 @@ module Invoker
           }
         when 'list'
           json = Invoker::COMMANDER.list_commands()
-          puts "Writing data #{json.inspect}"
+          client_socket.puts(json)
         when 'remove'
           Invoker::COMMANDER.on_next_tick(command_label, rest_args) { |b_command_label,b_rest_args|
             remove_command(b_command_label, b_rest_args)
