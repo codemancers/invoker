@@ -43,6 +43,15 @@ Now additionally you can control individual process by,
     # add and start running
     ~> invoker add dj
     
+    # List currently running processes managed by invoker
+    ~> invoker list
+
+    # Restart process given by command Label
+    ~> invoker reload dj
+
+    # Restart process given by command label using specific signal for killing
+    ~> invoker reload dj -s 9
+    
 You can also enable OSX notifications for crashed processes by installing `terminal-notifier` gem. It is not a dependency, but can be useful if something crashed and you weren't paying attention.   
 
 ## Using with rbenv or rvm ##
