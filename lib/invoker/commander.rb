@@ -58,8 +58,7 @@ module Invoker
 
     # List currently running commands
     def list_commands
-      data = workers.values.map {|worker| worker.to_h }
-      data.to_json
+      Invoker::ProcessPrinter.to_json(workers)
     end
 
     # Start executing given command by their label name.

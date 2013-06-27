@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   s.add_dependency("slop")
   s.add_dependency("iniparse")
   s.add_dependency("colored")
-  s.add_dependency("hirb")
+  s.add_dependency("formatador")
   s.add_development_dependency("bacon")
   s.add_development_dependency("mocha")
   s.add_development_dependency("mocha-on-bacon")

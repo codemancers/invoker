@@ -63,7 +63,7 @@ module Invoker
       Socket.unix(Invoker::CommandListener::Server::SOCKET_PATH) {|sock|
         sock.puts("list")
         data = sock.gets()
-        puts data
+        Invoker::ProcessPrinter.print_table(data)
       }
     end
 
