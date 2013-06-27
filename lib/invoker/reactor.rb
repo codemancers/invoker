@@ -32,6 +32,7 @@ module Invoker
         data = read_data(ready_fd)
         command_worker.receive_data(data)
       rescue Invoker::Errors::ProcessTerminated
+        remove_from_monitoring(command_worker.pipe_end)
         command_worker.unbind()
       end
     end

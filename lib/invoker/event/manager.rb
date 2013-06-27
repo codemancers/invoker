@@ -29,7 +29,9 @@ module Invoker
       # @param event_name [String, nil] Optional event name
       # @param block The block to execute when event actually triggers
       def schedule_event(command_label, event_name = nil, &block)
-        scheduled_events[command_label] << OpenStruct.new(:event_name => event_name, :block => block)
+        @trigger_mutex.synchronize do
+          scheduled_events[command_label] << OpenStruct.new(:event_name => event_name, :block => block)
+        end
       end
 
       # On next iteration of event loop, this method is called and we try to match

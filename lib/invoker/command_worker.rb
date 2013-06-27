@@ -19,7 +19,7 @@ module Invoker
     end
 
     def unbind
-      # Invoker::Logger.print(".")
+      Invoker::Logger.print(".")
     end
 
     # Print the lines received over the network
@@ -27,8 +27,8 @@ module Invoker
       Invoker::Logger.puts "#{@command_label.send(color)} : #{line}"
     end
 
-    def to_json(options = {})
-      {:command_label => command_label, :pid => pid}
+    def to_h
+      {:command_label => command_label, :pid => pid.to_s}
     end
   end
 end

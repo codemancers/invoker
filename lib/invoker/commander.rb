@@ -7,7 +7,7 @@ module Invoker
     MAX_PROCESS_COUNT = 10
     LABEL_COLORS = ['green', 'yellow', 'blue', 'magenta', 'cyan']
     attr_accessor :reactor, :workers, :thread_group, :open_pipes
-    attr_accessor :event_manager
+    attr_accessor :event_manager, :runnables
     
     def initialize
       # mapping between open pipes and worker classes
@@ -20,6 +20,7 @@ module Invoker
       @worker_mutex = Mutex.new()
 
       @event_manager = Invoker::Event::Manager.new()
+      @runnables = []
 
       @reactor = Invoker::Reactor.new
       Thread.abort_on_exception = true
@@ -57,7 +58,8 @@ module Invoker
 
     # List currently running commands
     def list_commands
-      workers.map {|worker| worker.to_json }.to_json
+      data = workers.values.map {|worker| worker.to_h }
+      data.to_json
     end
 
     # Start executing given command by their label name.
@@ -93,14 +95,11 @@ module Invoker
     # @return [Boolean] if process existed and was removed else false
     def remove_command(command_label, rest_args)
       worker = workers[command_label]
+      return false unless worker
       signal_to_use = rest_args ? Array(rest_args).first : 'INT'
 
-      if worker
-        Invoker::Logger.puts("Removing #{command_label} with signal #{signal_to_use}".red)
-        process_kill(worker.pid, signal_to_use)
-        return true
-      end
-      false
+      Invoker::Logger.puts("Removing #{command_label} with signal #{signal_to_use}".red)
+      kill_or_remove_process(worker.pid, signal_to_use, command_label)
     end
 
     # Given a file descriptor returns the worker object
@@ -118,19 +117,41 @@ module Invoker
     def get_worker_from_label(label)
       workers[label]
     end
+
+    def on_next_tick(*args, &block)
+      @worker_mutex.synchronize do
+        @runnables << OpenStruct.new(:args => args, :block => block)
+      end
+    end
+
+    def run_runnables
+      @runnables.each do |runnable|
+        instance_exec(*runnable.args, &runnable.block)
+      end
+      @runnables = []
+    end
     
     private
     def start_event_loop
       loop do
         reactor.watch_on_pipe()
+        run_runnables()
         run_scheduled_events()
       end
     end
-    
+
     def run_scheduled_events
       event_manager.run_scheduled_events do |event|
         event.block.call()
       end
+    end
+
+    def kill_or_remove_process(pid, signal_to_use, command_label)
+      process_kill(pid, signal_to_use)
+      true
+    rescue Errno::ESRCH
+      remove_worker(command_label, false)
+      false
     end
     
     def process_kill(pid, signal_to_use)
@@ -148,28 +169,29 @@ module Invoker
     end
     
     # Remove worker from all collections
-    def remove_worker(command_label)
-      @worker_mutex.synchronize do
-        worker = @workers[command_label]
-        if worker
-          @open_pipes.delete(worker.pipe_end.fileno)
-          @reactor.remove_from_monitoring(worker.pipe_end)
-          @workers.delete(command_label)
-        end
+    def remove_worker(command_label, trigger_event = true)
+      worker = @workers[command_label]
+      if worker
+        @open_pipes.delete(worker.pipe_end.fileno)
+        @workers.delete(command_label)
       end
-      event_manager.trigger(command_label, :worker_removed)
+      if trigger_event
+        event_manager.trigger(command_label, :worker_removed)
+      end
     end
 
     # add worker to global collections
     def add_worker(worker)
-      @worker_mutex.synchronize do
-        @open_pipes[worker.pipe_end.fileno] = worker
-        @workers[worker.command_label] = worker
-        @reactor.add_to_monitor(worker.pipe_end)
-      end
+      @open_pipes[worker.pipe_end.fileno] = worker
+      @workers[worker.command_label] = worker
+      @reactor.add_to_monitor(worker.pipe_end)
     end
 
     def run_command(process_info, write_pipe)
+      command_label = process_info.label
+
+      event_manager.schedule_event(command_label, :exit) { remove_worker(command_label) }
+
       if defined?(Bundler)
         Bundler.with_clean_env do
           spawn(process_info.cmd, 
@@ -185,7 +207,6 @@ module Invoker
 
     def wait_on_pid(command_label,pid)
       raise Invoker::Errors::ToomanyOpenConnections if @thread_group.enclosed?
-      event_manager.schedule_event(command_label, :exit) { remove_worker(command_label) }
 
       thread = Thread.new do
         Process.wait(pid)

@@ -60,11 +60,9 @@ module Invoker
     end
 
     def self.list_commands(selected_command)
-      socket = UNIXSocket.open(Invoker::CommandListener::Server::SOCKET_PATH)
-      puts "writing a command here"
-      socket.puts("list")
-      socket.flush()
-      socket.close()
+      Socket.unix(Invoker::CommandListener::Server::SOCKET_PATH) {|sock|
+        sock.write("list")
+      }
     end
 
     def self.warn_about_terminal_notifier

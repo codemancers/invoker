@@ -105,4 +105,30 @@ describe "Invoker::Commander" do
     end
   end
 
+  describe "#runnables" do
+    before do
+      @commander = Invoker::Commander.new()
+    end
+
+    it "should run runnables in reactor tick with one argument" do
+      @commander.on_next_tick("foo") { |cmd| add_command_by_label(cmd) }
+      @commander.expects(:add_command_by_label).returns(true)
+      @commander.run_runnables()
+    end
+
+    it "should run runnables with multiple args" do
+      @commander.on_next_tick("foo", "bar", "baz") { |t1,*rest|
+        remove_command(t1, rest)
+      }
+      @commander.expects(:remove_command).with("foo", ["bar", "baz"]).returns(true)
+      @commander.run_runnables()
+    end
+
+    it "should run runnable with no args" do
+      @commander.on_next_tick() { hello() }
+      @commander.expects(:hello).returns(true)
+      @commander.run_runnables()
+    end
+  end
+
 end
