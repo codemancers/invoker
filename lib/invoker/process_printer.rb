@@ -1,6 +1,6 @@
 module Invoker
   class ProcessPrinter
-    
+    MAX_COLUMN_WIDTH = 40
     def self.to_json(workers)
       final_json = []
       Invoker::CONFIG.processes.each do |process|
@@ -39,7 +39,12 @@ module Invoker
     private
     def self.colorize_hash(hash, color)
       hash.inject({}) do |mem,(key,obj)|
-        mem[key] = "[#{color}]#{obj}[/]"
+        if obj.to_s.length > MAX_COLUMN_WIDTH
+          short_command = "#{obj.to_s[0..MAX_COLUMN_WIDTH]}.."
+          mem[key] = "[#{color}]#{short_command}[/]"
+        else
+          mem[key] = "[#{color}]#{obj}[/]"
+        end
         mem
       end
     end
