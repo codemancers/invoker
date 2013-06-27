@@ -1,16 +1,18 @@
 $: << File.dirname(__FILE__) unless $:.include?(File.expand_path(File.dirname(__FILE__)))
 
 require "colored"
-require_relative "invoker/version"
-require_relative "invoker/runner"
-require_relative "invoker/command_listener"
-require_relative "invoker/errors"
-require_relative "invoker/config"
-require_relative "invoker/commander"
-require_relative "invoker/command_worker"
-require_relative "invoker/reactor"
-
-
-
-
-
+require "formatador"
+require "ostruct"
+require "invoker/version"
+require "invoker/logger"
+require "invoker/runner"
+require "invoker/command_listener/server"
+require "invoker/command_listener/client"
+require "invoker/errors"
+require "invoker/parsers/config"
+require "invoker/parsers/option_parser"
+require "invoker/commander"
+require "invoker/command_worker"
+require "invoker/reactor"
+require "invoker/event/manager"
+require "invoker/process_printer"

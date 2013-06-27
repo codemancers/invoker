@@ -13,12 +13,6 @@ module Invoker
       @monitored_fds.delete(fd)
     end
 
-    def start
-      loop do
-        watch_on_pipe
-      end
-    end
-
     def watch_on_pipe
       ready_read_fds,ready_write_fds,read_error_fds = select(monitored_fds,[],[],0.05)
 
@@ -38,6 +32,7 @@ module Invoker
         data = read_data(ready_fd)
         command_worker.receive_data(data)
       rescue Invoker::Errors::ProcessTerminated
+        remove_from_monitoring(command_worker.pipe_end)
         command_worker.unbind()
       end
     end
