@@ -16,7 +16,7 @@ command = ruby try_sleep.rb
         file.write(config_data)
         file.close
         lambda {
-          Invoker::Config.new(file.path)
+          Invoker::Parsers::Config.new(file.path)
         }.should.raise(Invoker::Errors::InvalidConfig)
       ensure
         file.unlink()

@@ -7,26 +7,37 @@ module Invoker
       end
 
       def read_and_execute
-        command_info = client_socket.read()
+        command_info = client_socket.gets()
+        command_info && command_info.strip!
+
         if command_info && !command_info.empty?
           worker_command, command_label, rest_args = command_info.strip.split(" ")
-          if worker_command && command_label
+          worker_command.strip!
+          if worker_command
             run_command(worker_command, command_label, rest_args)
           end
         end
-        client_socket.close()
       end
 
       def run_command(worker_command, command_label, rest_args = nil)
         case worker_command
         when 'add'
-          Invoker::COMMANDER.add_command_by_label(command_label)
+          Invoker::COMMANDER.on_next_tick(command_label) { |b_command_label|
+            add_command_by_label(b_command_label)
+          }
+        when 'list'
+          json = Invoker::COMMANDER.list_commands()
+          client_socket.puts(json)
         when 'remove'
-          Invoker::COMMANDER.remove_command(command_label, rest_args)
+          Invoker::COMMANDER.on_next_tick(command_label, rest_args) { |b_command_label,b_rest_args|
+            remove_command(b_command_label, b_rest_args)
+          }
         when 'reload'
-          Invoker::COMMANDER.reload_command(command_label)
+          Invoker::COMMANDER.on_next_tick(command_label, rest_args) { |b_command_label, b_rest_args|
+            reload_command(b_command_label, b_rest_args)
+          }
         else
-          $stdout.puts("\n Invalid command".red)
+          Invoker::Logger.puts("\n Invalid command".red)
         end
       end
     end

@@ -8,9 +8,8 @@ describe Invoker::CommandListener::Client do
     end
     
     it "should run if read from socket" do
-      invoker_commander.expects(:add_command_by_label).with("foo")
-      @client_socket.expects(:read).returns("add foo\n")
-      @client_socket.expects(:close)
+      invoker_commander.expects(:on_next_tick).with("foo")
+      @client_socket.expects(:gets).returns("add foo\n")
 
       @client.read_and_execute()
     end
@@ -23,17 +22,15 @@ describe Invoker::CommandListener::Client do
     end
 
     it "with specific signal" do
-      invoker_commander.expects(:remove_command).with("foo", "9")
-      @client_socket.expects(:read).returns("remove foo 9\n")
-      @client_socket.expects(:close)
+      invoker_commander.expects(:on_next_tick).with("foo", "9")
+      @client_socket.expects(:gets).returns("remove foo 9\n")
 
       @client.read_and_execute()
     end
 
     it "with default signal" do
-      invoker_commander.expects(:remove_command).with("foo",nil)
-      @client_socket.expects(:read).returns("remove foo\n")
-      @client_socket.expects(:close)
+      invoker_commander.expects(:on_next_tick).with("foo",nil)
+      @client_socket.expects(:gets).returns("remove foo\n")
 
       @client.read_and_execute()
     end
@@ -46,10 +43,8 @@ describe Invoker::CommandListener::Client do
     end
 
     it "should print error if read from socket" do
-      invoker_commander.expects(:remove_command).never()
-      invoker_commander.expects(:add_command_by_label).never()
-      @client_socket.expects(:read).returns("eugh foo\n")
-      @client_socket.expects(:close)
+      invoker_commander.expects(:on_next_tick).never()
+      @client_socket.expects(:gets).returns("eugh foo\n")
 
       @client.read_and_execute
     end

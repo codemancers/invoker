@@ -7,6 +7,7 @@ $: << __LIB_PATH__
 require "pry"
 require "invoker"
 
+ENV["INVOKER_TESTS"] = "true"
 
 def invoker_config
   if Invoker.const_defined?(:CONFIG)

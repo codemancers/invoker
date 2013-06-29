@@ -5,45 +5,8 @@ require "socket"
 module Invoker
   class Runner
     def self.run(args)
-
-      selected_command = nil
-      
-      opts = Slop.parse(args, help: true) do
-        on :v, "Print the version" do
-          $stdout.puts Invoker::VERSION
-        end
-
-        command 'start' do
-          banner "Usage : invoker start config.ini \n Start Invoker Process Manager"
-          run do |cmd_opts, cmd_args|
-            selected_command = OpenStruct.new(:command => 'start', :file => cmd_args.first)
-          end
-        end
-
-        command 'add' do
-          banner "Usage : invoker add process_label \n Start the process with given process_label"
-          run do |cmd_opts, cmd_args|
-            selected_command = OpenStruct.new(:command => 'add', :command_key => cmd_args.first)
-          end
-        end
-
-        command 'remove' do
-          banner "Usage : invoker remove process_label \n Stop the process with given label"
-          on :s, :signal=, "Signal to send for killing the process, default is SIGINT", as: String
-
-          run do |cmd_opts, cmd_args|
-            signal_to_use = cmd_opts.to_hash[:signal] || 'INT'
-            selected_command = OpenStruct.new(
-              :command => 'remove', 
-              :command_key => cmd_args.first,
-              :signal => signal_to_use
-            )
-          end
-        end
-      end
-      unless selected_command
-        $stdout.puts opts.inspect
-      else
+      selected_command = Invoker::Parsers::OptionParser.parse(args)
+      if selected_command
         run_command(selected_command)
       end
     end
@@ -55,15 +18,19 @@ module Invoker
         start_server(selected_command)
       when 'add'
         add_command(selected_command)
+      when 'reload'
+        refresh_command(selected_command)
+      when 'list'
+        list_commands(selected_command)
       when 'remove'
         remove_command(selected_command)
       else
-        $stdout.puts "Invalid command"
+        Invoker::Logger.puts "Invalid command"
       end
     end
 
     def self.start_server(selected_command)
-      config = Invoker::Config.new(selected_command.file)
+      config = Invoker::Parsers::Config.new(selected_command.file)
       Invoker.const_set(:CONFIG, config)
       warn_about_terminal_notifier()
       commander = Invoker::Commander.new()
@@ -72,31 +39,39 @@ module Invoker
     end
 
     def self.add_command(selected_command)
-      socket = UNIXSocket.open(Invoker::CommandListener::Server::SOCKET_PATH)
-      socket.puts("add #{selected_command.command_key}")
-      socket.flush()
-      socket.close()
+      Socket.unix(Invoker::CommandListener::Server::SOCKET_PATH) do |socket|
+        socket.puts("add #{selected_command.command_key}")
+        socket.flush()
+      end
     end
 
     def self.remove_command(selected_command)
-      socket = UNIXSocket.open(Invoker::CommandListener::Server::SOCKET_PATH)
-      socket.puts("remove #{selected_command.command_key} #{selected_command.signal}")
-      socket.flush()
-      socket.close()
+      Socket.unix(Invoker::CommandListener::Server::SOCKET_PATH) do |socket|
+        socket.puts("remove #{selected_command.command_key} #{selected_command.signal}")
+        socket.flush()
+      end
     end
 
     def self.refresh_command(selected_command)
-      socket = UNIXSocket.open(Invoker::CommandListener::Server::SOCKET_PATH)
-      socket.puts("reload #{selected_command.command_key}")
-      socket.flush()
-      socket.close()
+      Socket.unix(Invoker::CommandListener::Server::SOCKET_PATH) do |socket|
+        socket.puts("reload #{selected_command.command_key} #{selected_command.signal}")
+        socket.flush()
+      end
+    end
+
+    def self.list_commands(selected_command)
+      Socket.unix(Invoker::CommandListener::Server::SOCKET_PATH) {|sock|
+        sock.puts("list")
+        data = sock.gets()
+        Invoker::ProcessPrinter.print_table(data)
+      }
     end
 
     def self.warn_about_terminal_notifier
       if RUBY_PLATFORM.downcase.include?("darwin")
         command_path = `which terminal-notifier`
         if !command_path || command_path.empty?
-          $stdout.puts("You can enable OSX notification for processes by installing terminal-notification gem".red)
+          Invoker::Logger.puts("You can enable OSX notification for processes by installing terminal-notifier gem".red)
         end
       end
     end

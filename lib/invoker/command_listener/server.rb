@@ -6,13 +6,13 @@ module Invoker
       SOCKET_PATH = "/tmp/invoker"
       def initialize
         @open_clients = []
-        clean_old_socket()
-        UNIXServer.open(SOCKET_PATH) do |client|
-          loop do
-            client_socket = client.accept
-            process_client(client_socket)
+        Socket.unix_server_loop(SOCKET_PATH) {|sock, client_addrinfo|
+          begin
+            process_client(sock)
+          ensure
+            sock.close
           end
-        end
+        }
       end
 
       def clean_old_socket
