@@ -1,7 +1,7 @@
 Invoker is a gem for managing processes in development environment.
 
 [![Build Status](https://travis-ci.org/code-mancers/invoker.png)](https://travis-ci.org/code-mancers/invoker)
-
+[![Code Climate](https://codeclimate.com/repos/51b2b93d56b102620400ad68/badges/8d507902e1ba4af0400d/gpa.png)](https://codeclimate.com/repos/51b2b93d56b102620400ad68/feed)
 
 ## Usage ##
 
