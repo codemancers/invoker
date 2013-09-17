@@ -26,13 +26,12 @@ Gem::Specification.new do |s|
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.summary = %q{Something small for Process management}
-  s.add_dependency("slop")
-  s.add_dependency("iniparse")
-  s.add_dependency("colored")
-  s.add_dependency("formatador")
+  s.add_dependency("slop", "~> 3.4.6")
+  s.add_dependency("iniparse", "~> 1.1.6")
+  s.add_dependency("colored", "~> 1.2.0")
+  s.add_dependency("formatador", "~> 0.2.4")
   s.add_development_dependency("bacon")
   s.add_development_dependency("mocha")
   s.add_development_dependency("mocha-on-bacon")
   s.add_development_dependency("rake")
 end
-

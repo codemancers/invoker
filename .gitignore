@@ -1,4 +1,5 @@
 invoker.ini
 config/
 *.gem
-
+Gemfile.lock
+pkg/
