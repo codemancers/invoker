@@ -1,7 +1,7 @@
 module Invoker
   class CommandWorker
     attr_accessor :command_label, :pipe_end, :pid, :color
-    
+
     def initialize(command_label, pipe_end, pid, color)
       @command_label = command_label
       @pipe_end = pipe_end

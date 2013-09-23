@@ -8,14 +8,14 @@ module Invoker
     LABEL_COLORS = ['green', 'yellow', 'blue', 'magenta', 'cyan']
     attr_accessor :reactor, :workers, :thread_group, :open_pipes
     attr_accessor :event_manager, :runnables
-    
+
     def initialize
       # mapping between open pipes and worker classes
       @open_pipes = {}
 
       # mapping between command label and worker classes
       @workers = {}
-      
+
       @thread_group = ThreadGroup.new()
       @worker_mutex = Mutex.new()
 

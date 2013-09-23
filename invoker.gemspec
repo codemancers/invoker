@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
   s.add_dependency("iniparse", "~> 1.1.6")
   s.add_dependency("colored", "~> 1.2.0")
   s.add_dependency("formatador", "~> 0.2.4")
+  s.add_dependency("eventmachine", "~> 1.0.3")
   s.add_development_dependency("bacon")
   s.add_development_dependency("mocha")
   s.add_development_dependency("mocha-on-bacon")
