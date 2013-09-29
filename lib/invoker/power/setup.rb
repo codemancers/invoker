@@ -11,7 +11,7 @@ module Invoker
       end
 
       def install_resolver
-        File.open("/etc/resolver/invoker", "w") { |fl|
+        File.open("/etc/resolver/dev", "w") { |fl|
           fl.write(resolve_string)
         }
       rescue Errno::EACCES
