@@ -26,6 +26,35 @@ You need to start by creating a `ini` file which will define processes you want 
     directory = /home/gnufied/god_particle
     command = zsh -c 'bundle exec ruby script/event_server'
 
+## Invoker as Pow alternative
+
+Invoker now supports pow like `.dev` subdomain. It will automatically
+make all your app servers defined on subdomain `label.dev`.
+
+To make it work though, you need to run following command, just once from anywhere:
+
+    ~> sudo invoker setup
+
+Now because invoker is making your app server available on a subdomain. It requires
+control over port on which your applications will be listening. This can be simply
+done by replacing specific port number in `ini` file with `$PORT`. For example:
+
+    [spree]
+    directory = /home/gnufied/spree
+    command = zsh -c 'bundle exec rails s -p $PORT
+
+    [api]
+    directory = /home/gnufied/api
+    command = zsh -c 'bundle exec rails s -p $PORT
+
+    [events]
+    directory = /home/gnufied/god_particle
+    command = zsh -c 'bundle exec ruby script/event_server'
+
+The subdomain feature won't work for apps which don't use `$PORT` placeholder.
+
+## Running Invoker
+
 After that you can start process manager via:
 
     ~> invoker start invoker.ini

@@ -37,6 +37,10 @@ command = ruby try_sleep.rb -p $PORT
 [ls]
 directory = /tmp
 command = ls -p $PORT
+
+[noport]
+directory = /tmp
+command = ls
       EOD
         file.write(config_data)
         file.close
@@ -51,6 +55,10 @@ command = ls -p $PORT
 
         command2.port.should == 9002
         command2.cmd.should =~ /9002/
+
+        command2 = config.processes[2]
+
+        command2.port.should == nil
       ensure
         file.unlink()
       end

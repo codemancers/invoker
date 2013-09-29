@@ -21,20 +21,34 @@ module Invoker
         document = IniParse.parse(ini_content)
         document.map do |section|
           check_directory(section["directory"])
-          @port = @port + 1
-          OpenStruct.new(
-            port: @port,
-            label: section.key,
-            dir: section["directory"],
-            cmd: replace_port_in_command(section["command"], @port)
-          )
+          if supports_subdomain?(section['command'])
+            @port = @port + 1
+            make_option_for_subdomain(section, @port)
+          else
+            make_option(section)
+          end
         end
       end
 
-      def supports_subdomain?(command)
-        if command =~ /\$PORT/
+      def make_option_for_subdomain(section, port)
+        OpenStruct.new(
+          port: @port,
+          label: section.key,
+          dir: section["directory"],
+          cmd: replace_port_in_command(section["command"], @port)
+        )
+      end
 
-        end
+      def make_option(section)
+        OpenStruct.new(
+          label: section.key,
+          dir: section["directory"],
+          cmd: section["command"]
+        )
+      end
+
+      def supports_subdomain?(command)
+        command =~ /\$PORT/
       end
 
       def check_directory(app_dir)

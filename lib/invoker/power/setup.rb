@@ -2,21 +2,34 @@ module Invoker
   module Power
     # Installs firewalls required for power to work
     class Setup
+      RESOLVER_FILE = "/etc/resolver/dev"
       def self.install
         installer = new
-        installer.install_resolver
-        system(installer.firewall_command)
-        system("dscacheutil -flushcache")
-        installer
+        unless installer.check_if_already_setup?
+          installer.install_resolver
+          installer.install_firewall
+          system("dscacheutil -flushcache")
+          installer
+        else
+          Invoker::Logger.puts("The setup has been already run.")
+        end
       end
 
       def install_resolver
-        File.open("/etc/resolver/dev", "w") { |fl|
+        File.open(RESOLVER_FILE, "w") { |fl|
           fl.write(resolve_string)
         }
       rescue Errno::EACCES
         Invoker::Logger.puts("Running setup requires root access, please rerun it with sudo")
         raise
+      end
+
+      def check_if_already_setup?
+        File.exists?(RESOLVER_FILE)
+      end
+
+      def install_firewall
+        system(firewall_command)
       end
 
       def resolve_string
