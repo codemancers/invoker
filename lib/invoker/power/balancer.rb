@@ -49,6 +49,7 @@ module Invoker
           connection.server(session, host: '0.0.0.0', port: config.port)
           connection.relay_to_servers(@buffer.join)
         end
+        :stop
       end
 
       def upsteam_data(data)
@@ -66,6 +67,7 @@ module Invoker
       end
 
       def frontend_disconnect(backend, name)
+        puts "connection termination is not handled"
       end
     end
   end

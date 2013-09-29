@@ -4,18 +4,23 @@ require 'power/balancer'
 module Invoker
   module Power
     class Powerup
-      def self.run
+      def self.fork_and_start
+        powerup = new()
+        fork { powerup.run }
+      end
+
+      def run
         EM.epoll
         EM.run {
           term("TERM") { stop }
           term("INT") { stop }
           DNS.run_dns()
-          Balancer.new()
+          Balancer.run()
         }
       end
 
-      def self.stop
-        puts "Terminating Proxy/Server"
+      def stop
+        Invoker::Logger.puts "Terminating Proxy/Server"
         EventMachine.stop
       end
     end

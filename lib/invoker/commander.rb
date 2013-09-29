@@ -35,6 +35,7 @@ module Invoker
       install_interrupt_handler()
       unix_server_thread = Thread.new { Invoker::CommandListener::Server.new() }
       thread_group.add(unix_server_thread)
+      run_power_server()
       Invoker::CONFIG.processes.each { |process_info| add_command(process_info) }
       start_event_loop()
     end
@@ -127,7 +128,12 @@ module Invoker
       end
       @runnables = []
     end
-    
+
+    def run_power_server
+      powerup_id = Invoker::Power::Powerup.fork_and_start()
+      wait_on_pid("powerup_manager", powerup_id)
+    end
+
     private
     def start_event_loop
       loop do
@@ -150,7 +156,7 @@ module Invoker
       remove_worker(command_label, false)
       false
     end
-    
+
     def process_kill(pid, signal_to_use)
       if signal_to_use.to_i == 0
         Process.kill(signal_to_use, pid)
@@ -164,7 +170,7 @@ module Invoker
       LABEL_COLORS.push(selected_color)
       selected_color
     end
-    
+
     # Remove worker from all collections
     def remove_worker(command_label, trigger_event = true)
       worker = @workers[command_label]
