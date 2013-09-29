@@ -1,3 +1,7 @@
+require 'eventmachine'
+require 'rubydns'
+require 'http/parser'
+require 'em-proxy'
 require 'power/dns'
 require 'power/balancer'
 
