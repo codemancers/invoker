@@ -6,6 +6,7 @@ module Invoker
         installer = new
         installer.install_resolver
         system(installer.firewall_command)
+        system("dscacheutil -flushcache")
         installer
       end
 
@@ -13,6 +14,9 @@ module Invoker
         File.open("/etc/resolver/invoker", "w") { |fl|
           fl.write(resolve_string)
         }
+      rescue Errno::EACCES
+        Invoker::Logger.puts("Running setup requires root access, please rerun it with sudo")
+        raise
       end
 
       def resolve_string
