@@ -65,9 +65,7 @@ module Invoker
     #
     # @param command_label [String] Command label of process specified in config file.
     def add_command_by_label(command_label)
-      process_info = Invoker::CONFIG.processes.detect {|pconfig|
-        pconfig.label == command_label
-      }
+      process_info = Invoker::CONFIG.process(command_label)
       if process_info
         add_command(process_info)
       end

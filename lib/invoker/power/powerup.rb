@@ -10,6 +10,7 @@ module Invoker
           term("TERM") { stop }
           term("INT") { stop }
           DNS.run_dns()
+          Balancer.new()
         }
       end
 

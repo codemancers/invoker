@@ -10,6 +10,12 @@ module Invoker
         @processes = process_ini(@ini_content)
       end
 
+      def process(label)
+        processes.detect {|pconfig|
+          pconfig.label == command_label
+        }
+      end
+
       private
       def process_ini(ini_content)
         document = IniParse.parse(ini_content)
