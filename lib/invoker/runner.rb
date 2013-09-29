@@ -71,7 +71,7 @@ module Invoker
       if RUBY_PLATFORM.downcase.include?("darwin")
         command_path = `which terminal-notifier`
         if !command_path || command_path.empty?
-          Invoker::Logger.puts("You can enable OSX notification for processes by installing terminal-notifier gem".red)
+          Invoker::Logger.puts("You can enable OSX notification for processes by installing terminal-notifier gem".color(:red))
         end
       end
     end

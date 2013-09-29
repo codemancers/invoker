@@ -1,12 +1,11 @@
 module Invoker
   module Power
     class BalancerConnection < EventMachine::ProxyServer::Connection
-      attr_accessor :host_known, :host, :ip, :port
+      attr_accessor :host, :ip, :port
       def set_host(host, selected_backend)
         self.host = host
         self.ip = selected_backend[:host]
         self.port = selected_backend[:port]
-        self.host_known = true
       end
     end
 
@@ -29,31 +28,26 @@ module Invoker
       end
 
       def install_callbacks
-        http_parser.on_headers_complete method(:headers_received)
-        connection.on_data method(:upstream_data)
-        connection.on_response method(:backend_data)
-        connection.on_finish method(:frontend_disconnect)
-      end
-
-      def reset_parser
-        @buffer = []
-        @http_parser.clear()
+        http_parser.on_headers_complete = method(:headers_received)
+        connection.on_data {|data| upstream_data(data) }
+        connection.on_response { |backend, data| backend_data(backend, data) }
+        connection.on_finish { |backend, name| frontend_disconnect(backend, name) }
       end
 
       def headers_received(header)
         @session = UUID.generate()
-        host = header['Host']
-        selected_app = host.split(".",2)[1]
+        selected_app = header['Host'].match(/(\w+)\.dev$/)[1]
         config = Invoker::CONFIG.process(selected_app)
         if config
           connection.server(session, host: '0.0.0.0', port: config.port)
           connection.relay_to_servers(@buffer.join)
+          @buffer = []
         end
         :stop
       end
 
-      def upsteam_data(data)
-        if session
+      def upstream_data(data)
+        unless session
           @buffer << data
           @http_parser << data
           nil
@@ -67,7 +61,7 @@ module Invoker
       end
 
       def frontend_disconnect(backend, name)
-        puts "connection termination is not handled"
+        connection.unbind if backend == session
       end
     end
   end

@@ -12,7 +12,7 @@ module Invoker
 
       def process(label)
         processes.detect {|pconfig|
-          pconfig.label == command_label
+          pconfig.label == label
         }
       end
 

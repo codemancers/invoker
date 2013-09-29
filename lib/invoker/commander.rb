@@ -5,7 +5,7 @@ require "json"
 module Invoker
   class Commander
     MAX_PROCESS_COUNT = 10
-    LABEL_COLORS = ['green', 'yellow', 'blue', 'magenta', 'cyan']
+    LABEL_COLORS = [:green, :yellow, :blue, :magenta, :cyan]
     attr_accessor :reactor, :workers, :thread_group, :open_pipes
     attr_accessor :event_manager, :runnables
 
@@ -96,7 +96,7 @@ module Invoker
       return false unless worker
       signal_to_use = rest_args ? Array(rest_args).first : 'INT'
 
-      Invoker::Logger.puts("Removing #{command_label} with signal #{signal_to_use}".red)
+      Invoker::Logger.puts("Removing #{command_label} with signal #{signal_to_use}".color(:red))
       kill_or_remove_process(worker.pid, signal_to_use, command_label)
     end
 
@@ -132,6 +132,11 @@ module Invoker
     def run_power_server
       powerup_id = Invoker::Power::Powerup.fork_and_start()
       wait_on_pid("powerup_manager", powerup_id)
+      at_exit {
+        begin
+          Process.kill("INT", powerup_id)
+        rescue Errno::ESRCH; end
+      }
     end
 
     private
@@ -214,7 +219,7 @@ module Invoker
       thread = Thread.new do
         Process.wait(pid)
         message = "Process with command #{command_label} exited with status #{$?.exitstatus}"
-        Invoker::Logger.puts("\n#{message}".red)
+        Invoker::Logger.puts("\n#{message}".color(:red))
         notify_user(message)
         event_manager.trigger(command_label, :exit)
       end
@@ -251,6 +256,5 @@ module Invoker
         exit(0)
       end
     end
-
   end
 end
