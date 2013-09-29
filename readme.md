@@ -41,11 +41,11 @@ done by replacing specific port number in `ini` file with `$PORT`. For example:
 
     [spree]
     directory = /home/gnufied/spree
-    command = zsh -c 'bundle exec rails s -p $PORT
+    command = zsh -c 'bundle exec rails s -p $PORT'
 
     [api]
     directory = /home/gnufied/api
-    command = zsh -c 'bundle exec rails s -p $PORT
+    command = zsh -c 'bundle exec rails s -p $PORT'
 
     [events]
     directory = /home/gnufied/god_particle
