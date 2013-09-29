@@ -31,6 +31,12 @@ module Invoker
         end
       end
 
+      def supports_subdomain?(command)
+        if command =~ /\$PORT/
+
+        end
+      end
+
       def check_directory(app_dir)
         if app_dir && !app_dir.empty? && !File.directory?(app_dir)
           raise Invoker::Errors::InvalidConfig.new("Invalid directory #{app_dir}")

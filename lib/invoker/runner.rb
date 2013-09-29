@@ -14,6 +14,8 @@ module Invoker
     def self.run_command(selected_command)
       return unless selected_command
       case selected_command.command
+      when 'setup'
+        setup_pow(selected_command)
       when 'start'
         start_server(selected_command)
       when 'add'
@@ -27,6 +29,10 @@ module Invoker
       else
         Invoker::Logger.puts "Invalid command"
       end
+    end
+
+    def self.setup_pow(selected_command)
+      Invoker::Power::Setup.install()
     end
 
     def self.start_server(selected_command)

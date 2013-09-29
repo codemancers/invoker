@@ -24,6 +24,13 @@ module Invoker
             end
           end
 
+          command 'setup' do
+            banner "Usage : invoker setup \n Sets up firewall rules for subdomains"
+            run do |cmd_opts, cmd_args|
+              selected_command = OpenStruct.new(:command => 'setup')
+            end
+          end
+
           command 'list' do
             banner "Usage : invoker list\n List processes managed by invoker"
             run do |cmd_opts, cmd_args|
