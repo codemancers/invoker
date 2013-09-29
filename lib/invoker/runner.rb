@@ -30,7 +30,7 @@ module Invoker
     end
 
     def self.start_server(selected_command)
-      config = Invoker::Parsers::Config.new(selected_command.file)
+      config = Invoker::Parsers::Config.new(selected_command.file, selected_command.port)
       Invoker.const_set(:CONFIG, config)
       warn_about_terminal_notifier()
       commander = Invoker::Commander.new()

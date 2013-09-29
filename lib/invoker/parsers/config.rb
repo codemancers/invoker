@@ -4,8 +4,9 @@ module Invoker
   module Parsers
     class Config
       attr_accessor :processes
-      def initialize(filename)
+      def initialize(filename, port)
         @ini_content = File.read(filename)
+        @port = port
         @processes = process_ini(@ini_content)
       end
 
@@ -14,7 +15,13 @@ module Invoker
         document = IniParse.parse(ini_content)
         document.map do |section|
           check_directory(section["directory"])
-          OpenStruct.new(label: section.key, dir: section["directory"], cmd: section["command"])
+          @port = @port + 1
+          OpenStruct.new(
+            port: @port,
+            label: section.key,
+            dir: section["directory"],
+            cmd: replace_port_in_command(section["command"], @port)
+          )
         end
       end
 
@@ -23,7 +30,10 @@ module Invoker
           raise Invoker::Errors::InvalidConfig.new("Invalid directory #{app_dir}")
         end
       end
+
+      def replace_port_in_command(command, port)
+        command.gsub(/\$PORT/i, port.to_s)
+      end
     end
   end
 end
-

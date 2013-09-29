@@ -6,7 +6,6 @@ module Invoker
     class OptionParser
       def self.parse(args)
         selected_command = nil
-        
         opts = Slop.parse(args, help: true) do
           on :v, "Print the version" do
             Invoker::Logger.puts Invoker::VERSION
@@ -14,8 +13,14 @@ module Invoker
 
           command 'start' do
             banner "Usage : invoker start config.ini \n Start Invoker Process Manager"
+            on :p, :port=, "Port series to be used for starting rack servers", as: Integer
             run do |cmd_opts, cmd_args|
-              selected_command = OpenStruct.new(:command => 'start', :file => cmd_args.first)
+              port = cmd_opts.to_hash[:port] || 9000
+              selected_command = OpenStruct.new(
+                :command => 'start', 
+                :file => cmd_args.first,
+                :port => port
+              )
             end
           end
 

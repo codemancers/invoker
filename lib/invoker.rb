@@ -2,6 +2,9 @@ $: << File.dirname(__FILE__) unless $:.include?(File.expand_path(File.dirname(__
 
 require "colored"
 require "formatador"
+require 'rubydns'
+require 'em-proxy'
+require 'http/parser'
 require "ostruct"
 require "invoker/version"
 require "invoker/logger"
