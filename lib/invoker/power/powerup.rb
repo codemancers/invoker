@@ -2,8 +2,6 @@ require 'eventmachine'
 require 'rubydns'
 require 'http/parser'
 require 'em-proxy'
-require 'power/dns'
-require 'power/balancer'
 
 module Invoker
   module Power
@@ -16,8 +14,8 @@ module Invoker
       def run
         EM.epoll
         EM.run {
-          term("TERM") { stop }
-          term("INT") { stop }
+          trap("TERM") { stop }
+          trap("INT") { stop }
           DNS.run_dns()
           Balancer.run()
         }
