@@ -1,3 +1,3 @@
 module Invoker
-  VERSION = "0.1.2"
+  VERSION = "1.0.0-pre"
 end
