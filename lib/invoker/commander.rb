@@ -37,6 +37,7 @@ module Invoker
       thread_group.add(unix_server_thread)
       run_power_server()
       Invoker::CONFIG.processes.each { |process_info| add_command(process_info) }
+      at_exit { kill_workers }
       start_event_loop()
     end
 
@@ -247,14 +248,18 @@ module Invoker
 
     def install_interrupt_handler
       Signal.trap("INT") do
-        @workers.each {|key,worker|
-          begin
-            Process.kill("INT", worker.pid) 
-          rescue Errno::ESRCH
-          end
-        }
+        kill_workers()
         exit(0)
       end
+    end
+
+    def kill_workers
+      @workers.each {|key,worker|
+        begin
+          Process.kill("INT", worker.pid) 
+        rescue Errno::ESRCH
+        end
+      }
     end
   end
 end
