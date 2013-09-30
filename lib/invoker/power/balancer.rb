@@ -67,12 +67,10 @@ module Invoker
         @session = UUID.generate()
         config = select_backend_config(header['Host'])
         if config
-          Invoker::Logger.puts("Config is #{config}")
           connection.server(session, host: '0.0.0.0', port: config.port)
           connection.relay_to_servers(@buffer.join)
           @buffer = []
         else
-          Invoker::Logger.puts("**********There is no config #{config}")
           connection.unbind
         end
       end
