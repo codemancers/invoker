@@ -65,11 +65,14 @@ module Invoker
 
       def headers_received(header)
         @session = UUID.generate()
-        if config = select_backend_config(header['Host'])
+        config = select_backend_config(header['Host'])
+        if config
+          Invoker::Logger.puts("Config is #{config}")
           connection.server(session, host: '0.0.0.0', port: config.port)
           connection.relay_to_servers(@buffer.join)
           @buffer = []
         else
+          Invoker::Logger.puts("**********There is no config #{config}")
           connection.unbind
         end
       end
@@ -96,9 +99,12 @@ module Invoker
       private
       def select_backend_config(host)
         matching_string = host.match(/(\w+)\.dev$/)
-        matching_string &&
-          selected_app = matching_string[1] &&
+        return nil unless matching_string
+        if selected_app = matching_string[1]
           Invoker::CONFIG.process(selected_app)
+        else
+          nil
+        end
       end
     end
   end
