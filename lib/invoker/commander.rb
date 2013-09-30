@@ -260,6 +260,7 @@ module Invoker
         rescue Errno::ESRCH
         end
       }
+      @workers = {}
     end
   end
 end
