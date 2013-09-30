@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
   s.add_dependency("em-proxy", "~> 0.1.8")
   s.add_dependency("rubydns", "~> 0.6.5")
   s.add_dependency("uuid", "~> 2.3.7")
-  s.add_dependency("http_parser.rb", "~> 0.5.3")
+  s.add_dependency("http-parser-lite", "~> 0.6.0")
   s.add_development_dependency("bacon")
   s.add_development_dependency("mocha")
   s.add_development_dependency("mocha-on-bacon")

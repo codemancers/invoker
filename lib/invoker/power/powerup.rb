@@ -1,8 +1,3 @@
-require 'eventmachine'
-require 'rubydns'
-require 'http/parser'
-require 'em-proxy'
-
 module Invoker
   # power is really a stupid pun on pow.
   module Power
