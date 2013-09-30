@@ -65,17 +65,10 @@ module Invoker
 
       def headers_received(header)
         @session = UUID.generate()
-        matching_string = header['Host'].match(/(\w+)\.dev$/)
-        http_parser.reset()
-        if matching_string && selected_app = matching_string[1]
-          config = Invoker::CONFIG.process(selected_app)
-          if config
-            connection.server(session, host: '0.0.0.0', port: config.port)
-            connection.relay_to_servers(@buffer.join)
-            @buffer = []
-          else
-            connection.unbind
-          end
+        if config = select_backend_config(header['Host'])
+          connection.server(session, host: '0.0.0.0', port: config.port)
+          connection.relay_to_servers(@buffer.join)
+          @buffer = []
         else
           connection.unbind
         end
@@ -96,7 +89,16 @@ module Invoker
       end
 
       def frontend_disconnect(backend, name)
+        http_parser.reset()
         connection.unbind if backend == session
+      end
+
+      private
+      def select_backend_config(host)
+        matching_string = host.match(/(\w+)\.dev$/)
+        matching_string &&
+          selected_app = matching_string[1] &&
+          Invoker::CONFIG.process(selected_app)
       end
     end
   end
