@@ -10,6 +10,7 @@ module Invoker
           on :v, "Print the version" do
             Invoker::Logger.puts Invoker::VERSION
           end
+          on :p, :port=, "Port series to be used for starting rack servers", as: Integer
 
           command 'start' do
             banner "Usage : invoker start config.ini \n Start Invoker Process Manager"
@@ -17,7 +18,7 @@ module Invoker
             run do |cmd_opts, cmd_args|
               port = cmd_opts.to_hash[:port] || 9000
               selected_command = OpenStruct.new(
-                :command => 'start', 
+                :command => 'start',
                 :file => cmd_args.first,
                 :port => port
               )
@@ -66,7 +67,7 @@ module Invoker
             run do |cmd_opts, cmd_args|
               signal_to_use = cmd_opts.to_hash[:signal] || 'INT'
               selected_command = OpenStruct.new(
-                :command => 'reload', 
+                :command => 'reload',
                 :command_key => cmd_args.first,
                 :signal => signal_to_use
               )
@@ -77,7 +78,6 @@ module Invoker
         selected_command || create_default_command(args, opts)
       end
 
-      
       # If user specifies no command either show help message or start the invoker
       # process supervisor.
       #
@@ -86,7 +86,8 @@ module Invoker
       # @return [OpenStruct, false] returns default command or nil
       def self.create_default_command(args, opts)
         if args.first && File.exists?(args.first) && File.file?(args.first)
-          OpenStruct.new(:command => "start", :file => args.first)
+          port = opts.to_hash[:port] || 9000
+          OpenStruct.new(:command => "start", :file => args.first, :port => port)
         else
           Invoker::Logger.puts opts.inspect
           false
