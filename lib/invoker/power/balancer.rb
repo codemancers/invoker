@@ -15,7 +15,9 @@ module Invoker
         @parser = HTTP::Parser.new()
         @header = {}
         @parser.on_headers_complete { headers_received() }
-        @parser.on_header_field { |field_name| @last_key = field_name }
+        @parser.on_header_field { |field_name|
+          @last_key = field_name
+        }
         @parser.on_header_value { |value| header_value_received(value) }
       end
 
@@ -89,7 +91,7 @@ module Invoker
         http_parser << data
       rescue HTTP::Parser::Error
         http_parser.reset
-        connection.unbind
+        connection.close_connection_after_writing
       end
 
       def backend_data(backend, data)
@@ -98,12 +100,12 @@ module Invoker
 
       def frontend_disconnect(backend, name)
         http_parser.reset()
-        connection.unbind if backend == session
+        connection.close_connection_after_writing() if backend == session
       end
 
       private
       def select_backend_config(host)
-        matching_string = host.match(/(\w+)\.dev$/)
+        matching_string = host.match(/(\w+)\.dev(\:\d+)?$/)
         return nil unless matching_string
         if selected_app = matching_string[1]
           Invoker::CONFIG.process(selected_app)
