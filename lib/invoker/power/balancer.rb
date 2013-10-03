@@ -78,11 +78,18 @@ module Invoker
       def upstream_data(data)
         unless session
           @buffer << data
-          @http_parser << data
+          append_for_http_parsing(data)
           nil
         else
           data
         end
+      end
+
+      def append_for_http_parsing(data)
+        http_parser << data
+      rescue HTTP::Parser::Error
+        http_parser.reset
+        connection.unbind
       end
 
       def backend_data(backend, data)
