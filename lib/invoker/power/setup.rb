@@ -1,6 +1,5 @@
 module Invoker
   module Power
-    # Installs firewalls required for power to work
     class Setup
       RESOLVER_FILE = "/etc/resolver/dev"
       def self.install
@@ -11,7 +10,7 @@ module Invoker
           system("dscacheutil -flushcache")
           installer
         else
-          Invoker::Logger.puts("The setup has been already run.")
+          Invoker::Logger.puts("The setup has been already run.".color(:red))
         end
       end
 
@@ -20,7 +19,7 @@ module Invoker
           fl.write(resolve_string)
         }
       rescue Errno::EACCES
-        Invoker::Logger.puts("Running setup requires root access, please rerun it with sudo")
+        Invoker::Logger.puts("Running setup requires root access, please rerun it with sudo".color(:red))
         raise
       end
 
