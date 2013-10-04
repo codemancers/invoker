@@ -1,0 +1,5 @@
+Todos for current release
+
+* Implement port support via config file
+* Fix setup command and make it eaiser for people who have pow configured.
+* Possibly add support for foreman?
