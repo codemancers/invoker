@@ -9,6 +9,3 @@ rescue LoadError
 end
 
 Invoker::Runner.run(ARGV)
-
-
-

@@ -28,8 +28,12 @@ Gem::Specification.new do |s|
   s.summary = %q{Something small for Process management}
   s.add_dependency("slop", "~> 3.4.6")
   s.add_dependency("iniparse", "~> 1.1.6")
-  s.add_dependency("colored", "~> 1.2.0")
   s.add_dependency("formatador", "~> 0.2.4")
+  s.add_dependency("eventmachine", "~> 1.0.3")
+  s.add_dependency("em-proxy", "~> 0.1.8")
+  s.add_dependency("rubydns", "~> 0.6.5")
+  s.add_dependency("uuid", "~> 2.3.7")
+  s.add_dependency("http-parser-lite", "~> 0.6.0")
   s.add_development_dependency("bacon")
   s.add_development_dependency("mocha")
   s.add_development_dependency("mocha-on-bacon")

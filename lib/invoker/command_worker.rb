@@ -1,7 +1,7 @@
 module Invoker
   class CommandWorker
     attr_accessor :command_label, :pipe_end, :pid, :color
-    
+
     def initialize(command_label, pipe_end, pid, color)
       @command_label = command_label
       @pipe_end = pipe_end
@@ -24,7 +24,7 @@ module Invoker
 
     # Print the lines received over the network
     def receive_line(line)
-      Invoker::Logger.puts "#{@command_label.send(color)} : #{line}"
+      Invoker::Logger.puts "#{@command_label.color(color)} : #{line}"
     end
 
     def to_h
