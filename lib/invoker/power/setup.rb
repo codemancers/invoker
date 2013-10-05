@@ -6,7 +6,6 @@ module Invoker
         installer = new
         unless installer.check_if_already_setup?
           installer.setup_invoker
-          installer
         else
           Invoker::Logger.puts("The setup has been already run.".color(:red))
         end
@@ -16,6 +15,7 @@ module Invoker
         install_resolver
         install_firewall
         system("dscacheutil -flushcache")
+        self
       end
 
       def install_resolver
