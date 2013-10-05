@@ -3,6 +3,7 @@ require 'iniparse'
 module Invoker
   module Parsers
     class Config
+      PORT_REGEX = /\$PORT/
       attr_accessor :processes
       def initialize(filename, port)
         @ini_content = File.read(filename)
@@ -21,21 +22,31 @@ module Invoker
         document = IniParse.parse(ini_content)
         document.map do |section|
           check_directory(section["directory"])
-          if supports_subdomain?(section['command'])
-            @port = @port + 1
-            make_option_for_subdomain(section, @port)
+          if supports_subdomain?(section)
+            port = pick_port(section)
+            make_option_for_subdomain(section, port)
           else
             make_option(section)
           end
         end
       end
 
+      def pick_port(section)
+        if section['command'] =~ PORT_REGEX
+          @port += 1
+        elsif section['port']
+          section['port']
+        else
+          nil
+        end
+      end
+
       def make_option_for_subdomain(section, port)
         OpenStruct.new(
-          port: @port,
+          port: port,
           label: section.key,
           dir: section["directory"],
-          cmd: replace_port_in_command(section["command"], @port)
+          cmd: replace_port_in_command(section["command"], port)
         )
       end
 
@@ -47,8 +58,8 @@ module Invoker
         )
       end
 
-      def supports_subdomain?(command)
-        command =~ /\$PORT/
+      def supports_subdomain?(section)
+        (section['command'] =~ PORT_REGEX) || section['port']
       end
 
       def check_directory(app_dir)
@@ -58,8 +69,13 @@ module Invoker
       end
 
       def replace_port_in_command(command, port)
-        command.gsub(/\$PORT/i, port.to_s)
+        if command =~ PORT_REGEX
+          command.gsub(PORT_REGEX, port.to_s)
+        else
+          command
+        end
       end
+
     end
   end
 end
