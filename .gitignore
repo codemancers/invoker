@@ -5,3 +5,4 @@ Gemfile.lock
 pkg/
 local.ini
 multi.ini
+tags
