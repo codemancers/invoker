@@ -6,6 +6,7 @@ require 'em-proxy'
 require 'http-parser'
 require "ostruct"
 require "uuid"
+require "highline"
 require "invoker/version"
 require "invoker/logger"
 require "invoker/runner"
@@ -20,3 +21,24 @@ require "invoker/command_worker"
 require "invoker/reactor"
 require "invoker/event/manager"
 require "invoker/process_printer"
+
+module Invoker
+  def self.darwin?
+    ruby_platform.downcase.include?("darwin")
+  end
+
+  def self.ruby_platform
+    RUBY_PLATFORM
+  end
+
+  def self.can_run_balancer?(throw_warning = true)
+    return false unless darwin?
+    return true if File.exists?(Invoker::Power::Config::CONFIG_LOCATION)
+
+    if throw_warning
+      Invoker::Logger.puts("Invoker has detected setup has not been run. Subdomain feature will not work without running setup command.")
+    end
+    false
+  end
+end
+

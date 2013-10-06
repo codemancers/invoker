@@ -238,7 +238,7 @@ module Invoker
     end
 
     def check_and_notify_with_terminal_notifier(message)
-      return unless RUBY_PLATFORM.downcase.include?("darwin")
+      return unless Invoker.darwin?
 
       command_path = `which terminal-notifier`
       if command_path && !command_path.empty?

@@ -4,11 +4,23 @@ module Invoker
   module Parsers
     class Config
       PORT_REGEX = /\$PORT/
-      attr_accessor :processes
+      attr_accessor :processes, :power_config
+
       def initialize(filename, port)
         @ini_content = File.read(filename)
         @port = port
         @processes = process_ini(@ini_content)
+        if Invoker.can_run_balancer?
+          @power_config = Invoker::Power::Config.load_config()
+        end
+      end
+
+      def http_port
+        power_config && power_config.http_port
+      end
+
+      def dns_port
+        power_config && power_config.dns_port
       end
 
       def process(label)
