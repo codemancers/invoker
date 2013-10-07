@@ -37,7 +37,7 @@ module Invoker
             reload_command(b_command_label, b_rest_args)
           }
         else
-          Invoker::Logger.puts("\n Invalid command".red)
+          Invoker::Logger.puts("\n Invalid command".color(:red))
         end
       end
     end

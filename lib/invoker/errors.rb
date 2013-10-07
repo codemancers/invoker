@@ -9,6 +9,7 @@ module Invoker
       end
     end
 
+    class NoValidPortFound < StandardError; end
     class InvalidConfig < StandardError; end
   end
 end

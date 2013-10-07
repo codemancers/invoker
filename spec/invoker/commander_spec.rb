@@ -23,6 +23,7 @@ describe "Invoker::Commander" do
 
     it "should find command by label and start it, if found" do
       invoker_config.stubs(:processes).returns([OpenStruct.new(:label => "resque", :cmd => "foo", :dir => "bar")])
+      invoker_config.expects(:process).returns(OpenStruct.new(:label => "resque", :cmd => "foo", :dir => "bar"))
       @commander.expects(:add_command).returns(true)
       
       @commander.add_command_by_label("resque")
@@ -97,8 +98,7 @@ describe "Invoker::Commander" do
 
       worker.should.not.equal nil
       worker.command_label.should.equal "sleep"
-      worker.color.should.equal "green"
-
+      worker.color.should.equal :green
 
       pipe_end_worker = @commander.open_pipes[worker.pipe_end.fileno]
       pipe_end_worker.should.not.equal nil
