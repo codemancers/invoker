@@ -21,8 +21,4 @@ describe "Invoker Power configuration" do
       end
     end
   end
-
-  describe "#load_config" do
-    it "should work if config file does not exist"
-  end
 end
