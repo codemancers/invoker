@@ -73,6 +73,7 @@ module Invoker
         system("launchctl load -Fw #{FIREWALL_PLIST_FILE} 2>/dev/null")
       end
 
+      # Ripped from POW code
       def plist_string(balancer_port)
         plist =<<-EOD
 <?xml version="1.0" encoding="UTF-8"?>
@@ -105,8 +106,10 @@ port #{dns_port}
         string
       end
 
+      # Ripped from Pow code
       def firewall_command(balancer_port)
-        "ipfw add fwd 127.0.0.1,#{balancer_port} tcp from any to me dst-port 80 in"
+        "ipfw add fwd 127.0.0.1,#{balancer_port} tcp from any to me dst-port 80 in"\
+          "&amp;&amp; sysctl -w net.inet.ip.forwarding=1"
       end
 
       def setup_resolver_file
