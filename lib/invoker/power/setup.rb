@@ -60,7 +60,8 @@ module Invoker
       end
 
       def install_firewall(balancer_port)
-        system(firewall_command(balancer_port))
+        output = `#{firewall_command(balancer_port)}`
+        output.split.first
       end
 
       def resolve_string(dns_port)
