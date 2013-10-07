@@ -84,6 +84,9 @@ port #{dns_port}
 
       def setup_resolver_file
         return true unless File.exists?(RESOLVER_FILE)
+        Invoker::Logger.puts "Invoker has detected an existing Pow installation. We recommend "\
+          "that you uninstall pow and rerun this setup."
+
         agree("Invoker has detected a pre-configured Pow setup, do you want to overwrite it : y/n?")
       end
     end
