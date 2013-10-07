@@ -69,7 +69,8 @@ module Invoker
         File.open(FIREWALL_PLIST_FILE, "w") { |fl|
           fl.write(plist_string(balancer_port))
         }
-        system("launchctl load -Fw #{FIREWALL_PLIST_FILE}")
+        system("launchctl unload -w #{FIREWALL_PLIST_FILE} 2>/dev/null")
+        system("launchctl load -Fw #{FIREWALL_PLIST_FILE} 2>/dev/null")
       end
 
       def plist_string(balancer_port)
