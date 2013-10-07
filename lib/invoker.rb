@@ -36,9 +36,8 @@ module Invoker
     return true if File.exists?(Invoker::Power::Config::CONFIG_LOCATION)
 
     if throw_warning
-      Invoker::Logger.puts("Invoker has detected setup has not been run. Subdomain feature will not work without running setup command.")
+      Invoker::Logger.puts("Invoker has detected setup has not been run. Domain feature will not work without running setup command.".color(:red))
     end
     false
   end
 end
-

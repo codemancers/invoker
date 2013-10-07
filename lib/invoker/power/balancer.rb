@@ -44,7 +44,7 @@ module Invoker
       attr_accessor :connection, :http_parser, :session
 
       def self.run(options = {})
-        EventMachine.start_server('0.0.0.0', 23401,
+        EventMachine.start_server('0.0.0.0', Invoker::CONFIG.http_port,
                                   BalancerConnection, options) do |connection|
           balancer = Balancer.new(connection)
           balancer.install_callbacks

@@ -131,6 +131,8 @@ module Invoker
     end
 
     def run_power_server
+      return unless Invoker.can_run_balancer?(false)
+
       powerup_id = Invoker::Power::Powerup.fork_and_start()
       wait_on_pid("powerup_manager", powerup_id)
       at_exit {

@@ -18,8 +18,9 @@ module Invoker
           find_open_ports
           install_resolver(port_finder.dns_port)
           ipfw_number = install_firewall(port_finder.http_port)
-          create_config_file(ipfw_number)
           flush_dns_rules()
+          EventMachine.set_effective_user(ENV["SUDO_USER"])
+          create_config_file(ipfw_number)
         else
           Invoker::Logger.puts("Invoker is not configured to serve from subdomains".color(:red))
         end

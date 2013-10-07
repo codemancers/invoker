@@ -1,3 +1,4 @@
+require "yaml"
 module Invoker
   module Power
     # Save and Load Invoker::Power config
