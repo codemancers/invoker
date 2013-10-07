@@ -115,7 +115,7 @@ port #{dns_port}
           "that you uninstall pow and rerun this setup.".color(:red)
 
         Invoker::Logger.puts "If you have already uninstalled Pow, proceed with installation"\
-          " process by pressing y/n."
+          " proceed by pressing y/n."
 
         replace_resolver_flag = agree("Replace Pow configuration (y/n) : ")
 
