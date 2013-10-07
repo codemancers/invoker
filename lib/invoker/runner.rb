@@ -14,6 +14,8 @@ module Invoker
     def self.run_command(selected_command)
       return unless selected_command
       case selected_command.command
+      when 'setup'
+        setup_pow(selected_command)
       when 'start'
         start_server(selected_command)
       when 'add'
@@ -29,8 +31,12 @@ module Invoker
       end
     end
 
+    def self.setup_pow(selected_command)
+      Invoker::Power::Setup.install()
+    end
+
     def self.start_server(selected_command)
-      config = Invoker::Parsers::Config.new(selected_command.file)
+      config = Invoker::Parsers::Config.new(selected_command.file, selected_command.port)
       Invoker.const_set(:CONFIG, config)
       warn_about_terminal_notifier()
       commander = Invoker::Commander.new()
@@ -71,7 +77,7 @@ module Invoker
       if RUBY_PLATFORM.downcase.include?("darwin")
         command_path = `which terminal-notifier`
         if !command_path || command_path.empty?
-          Invoker::Logger.puts("You can enable OSX notification for processes by installing terminal-notifier gem".red)
+          Invoker::Logger.puts("You can enable OSX notification for processes by installing terminal-notifier gem".color(:red))
         end
       end
     end

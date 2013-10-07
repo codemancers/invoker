@@ -5,17 +5,17 @@ require "json"
 module Invoker
   class Commander
     MAX_PROCESS_COUNT = 10
-    LABEL_COLORS = ['green', 'yellow', 'blue', 'magenta', 'cyan']
+    LABEL_COLORS = [:green, :yellow, :blue, :magenta, :cyan]
     attr_accessor :reactor, :workers, :thread_group, :open_pipes
     attr_accessor :event_manager, :runnables
-    
+
     def initialize
       # mapping between open pipes and worker classes
       @open_pipes = {}
 
       # mapping between command label and worker classes
       @workers = {}
-      
+
       @thread_group = ThreadGroup.new()
       @worker_mutex = Mutex.new()
 
@@ -35,7 +35,9 @@ module Invoker
       install_interrupt_handler()
       unix_server_thread = Thread.new { Invoker::CommandListener::Server.new() }
       thread_group.add(unix_server_thread)
+      run_power_server()
       Invoker::CONFIG.processes.each { |process_info| add_command(process_info) }
+      at_exit { kill_workers }
       start_event_loop()
     end
 
@@ -65,9 +67,7 @@ module Invoker
     #
     # @param command_label [String] Command label of process specified in config file.
     def add_command_by_label(command_label)
-      process_info = Invoker::CONFIG.processes.detect {|pconfig|
-        pconfig.label == command_label
-      }
+      process_info = Invoker::CONFIG.process(command_label)
       if process_info
         add_command(process_info)
       end
@@ -97,7 +97,7 @@ module Invoker
       return false unless worker
       signal_to_use = rest_args ? Array(rest_args).first : 'INT'
 
-      Invoker::Logger.puts("Removing #{command_label} with signal #{signal_to_use}".red)
+      Invoker::Logger.puts("Removing #{command_label} with signal #{signal_to_use}".color(:red))
       kill_or_remove_process(worker.pid, signal_to_use, command_label)
     end
 
@@ -129,7 +129,19 @@ module Invoker
       end
       @runnables = []
     end
-    
+
+    def run_power_server
+      return unless Invoker.can_run_balancer?(false)
+
+      powerup_id = Invoker::Power::Powerup.fork_and_start()
+      wait_on_pid("powerup_manager", powerup_id)
+      at_exit {
+        begin
+          Process.kill("INT", powerup_id)
+        rescue Errno::ESRCH; end
+      }
+    end
+
     private
     def start_event_loop
       loop do
@@ -152,7 +164,7 @@ module Invoker
       remove_worker(command_label, false)
       false
     end
-    
+
     def process_kill(pid, signal_to_use)
       if signal_to_use.to_i == 0
         Process.kill(signal_to_use, pid)
@@ -166,7 +178,7 @@ module Invoker
       LABEL_COLORS.push(selected_color)
       selected_color
     end
-    
+
     # Remove worker from all collections
     def remove_worker(command_label, trigger_event = true)
       worker = @workers[command_label]
@@ -210,7 +222,7 @@ module Invoker
       thread = Thread.new do
         Process.wait(pid)
         message = "Process with command #{command_label} exited with status #{$?.exitstatus}"
-        Invoker::Logger.puts("\n#{message}".red)
+        Invoker::Logger.puts("\n#{message}".color(:red))
         notify_user(message)
         event_manager.trigger(command_label, :exit)
       end
@@ -228,7 +240,7 @@ module Invoker
     end
 
     def check_and_notify_with_terminal_notifier(message)
-      return unless RUBY_PLATFORM.downcase.include?("darwin")
+      return unless Invoker.darwin?
 
       command_path = `which terminal-notifier`
       if command_path && !command_path.empty?
@@ -238,15 +250,19 @@ module Invoker
 
     def install_interrupt_handler
       Signal.trap("INT") do
-        @workers.each {|key,worker|
-          begin
-            Process.kill("INT", worker.pid) 
-          rescue Errno::ESRCH
-          end
-        }
+        kill_workers()
         exit(0)
       end
     end
 
+    def kill_workers
+      @workers.each {|key,worker|
+        begin
+          Process.kill("INT", worker.pid) 
+        rescue Errno::ESRCH
+        end
+      }
+      @workers = {}
+    end
   end
 end
