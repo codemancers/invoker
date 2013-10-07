@@ -26,20 +26,19 @@ describe "Setup" do
     Invoker::Power::Setup.const_set(:RESOLVER_FILE, @old_resolver)
   }
 
-  describe "When no setup existis" do
+  describe "When no setup exists" do
     it "should create a config file with port etc" do
       setup = Invoker::Power::Setup.new()
       setup.expects(:install_resolver).returns(true)
       setup.expects(:flush_dns_rules).returns(true)
       setup.expects(:drop_to_normal_user).returns(true)
-      setup.expects(:install_firewall).returns("010")
+      setup.expects(:install_firewall).once()
 
       setup.setup_invoker
 
       config = Invoker::Power::Config.load_config()
       config.http_port.should.not == nil
       config.dns_port.should.not == nil
-      config.ipfw_rule_number.should == "010"
     end
   end
 
@@ -67,7 +66,7 @@ describe "Setup" do
         @setup.expects(:drop_to_normal_user).returns(true)
         @setup.expects(:install_resolver).returns(true)
         @setup.expects(:flush_dns_rules).returns(true)
-        @setup.expects(:install_firewall).returns("010")
+        @setup.expects(:install_firewall).once()
 
         @setup.setup_invoker
       end

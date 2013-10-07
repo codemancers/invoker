@@ -4,6 +4,7 @@ module Invoker
   module Power
     class Setup
       RESOLVER_FILE = "/etc/resolver/dev"
+      FIREWALL_PLIST_FILE = "/Library/LaunchDaemons/com.codemancers.invoker.firewall.plist"
       def self.install
         installer = new
         unless installer.check_if_already_setup?
@@ -17,11 +18,11 @@ module Invoker
         if setup_resolver_file
           find_open_ports
           install_resolver(port_finder.dns_port)
-          ipfw_number = install_firewall(port_finder.http_port)
+          install_firewall(port_finder.http_port)
           flush_dns_rules()
           # Before writing the config file, drop down to a normal user
           drop_to_normal_user()
-          create_config_file(ipfw_number)
+          create_config_file()
         else
           Invoker::Logger.puts("Invoker is not configured to serve from subdomains".color(:red))
         end
@@ -36,11 +37,10 @@ module Invoker
         system("dscacheutil -flushcache")
       end
 
-      def create_config_file(ipfw_number)
+      def create_config_file
         Invoker::Power::Config.create(
           dns_port: port_finder.dns_port,
-          http_port: port_finder.http_port,
-          ipfw_rule_number: ipfw_number
+          http_port: port_finder.http_port
         )
       end
 
@@ -66,8 +66,34 @@ module Invoker
       end
 
       def install_firewall(balancer_port)
-        output = `#{firewall_command(balancer_port)}`
-        output.split.first
+        File.open(FIREWALL_PLIST_FILE, "w") { |fl|
+          fl.write(plist_string(balancer_port))
+        }
+        system("launchctl load -Fw #{FIREWALL_PLIST_FILE}")
+      end
+
+      def plist_string(balancer_port)
+        plist =<<-EOD
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+<key>Label</key>
+<string>com.codemancers.invoker</string>
+<key>ProgramArguments</key>
+<array>
+<string>sh</string>
+<string>-c</string>
+<string>#{firewall_command(balancer_port)}</string>
+</array>
+<key>RunAtLoad</key>
+<true/>
+<key>UserName</key>
+<string>root</string>
+</dict>
+</plist>
+        EOD
+        plist
       end
 
       def resolve_string(dns_port)
