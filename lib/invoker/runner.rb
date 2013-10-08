@@ -16,6 +16,8 @@ module Invoker
       case selected_command.command
       when 'setup'
         setup_pow(selected_command)
+      when 'uninstall'
+        uninstall_pow(selected_command)
       when 'start'
         start_server(selected_command)
       when 'add'
@@ -33,6 +35,10 @@ module Invoker
 
     def self.setup_pow(selected_command)
       Invoker::Power::Setup.install()
+    end
+
+    def self.uninstall_pow(selected_command)
+      Invoker::Power::Setup.uninstall()
     end
 
     def self.start_server(selected_command)

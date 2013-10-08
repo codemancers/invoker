@@ -32,6 +32,13 @@ module Invoker
             end
           end
 
+          command 'uninstall' do
+            banner "Usage : invoker uninstall \n Removes firewall rules created by setup"
+            run do |cmd_opts, cmd_args|
+              selected_command = OpenStruct.new(:command => 'uninstall')
+            end
+          end
+
           command 'list' do
             banner "Usage : invoker list\n List processes managed by invoker"
             run do |cmd_opts, cmd_args|
