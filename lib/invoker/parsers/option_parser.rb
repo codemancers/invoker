@@ -96,7 +96,7 @@ module Invoker
           port = opts.to_hash[:port] || 9000
           OpenStruct.new(:command => "start", :file => args.first, :port => port)
         else
-          Invoker::Logger.puts opts.inspect
+          Invoker::Logger.puts opts
           false
         end
       end
