@@ -14,6 +14,11 @@ module Invoker
         end
       end
 
+      def self.uninstall
+        installer = new
+        installer.uninstall_invoker
+      end
+
       def setup_invoker
         if setup_resolver_file
           find_open_ports
@@ -27,6 +32,18 @@ module Invoker
           Invoker::Logger.puts("Invoker is not configured to serve from subdomains".color(:red))
         end
         self
+      end
+
+      def uninstall_invoker
+        uninstall_invoker_flag = agree("Are you sure you want to uninstall firewall rules created by setup (y/n) : ")
+
+        if uninstall_invoker_flag
+          remove_resolver_file
+          unload_firewall_rule(true)
+          flush_dns_rules
+          Invoker::Power::Config.delete
+          Invoker::Logger.puts("Firewall rules were removed")
+        end
       end
 
       def drop_to_normal_user
@@ -61,6 +78,15 @@ module Invoker
         raise
       end
 
+      def remove_resolver_file
+        if File.exists?(RESOLVER_FILE)
+          File.delete(RESOLVER_FILE)
+        end
+      rescue Errno::EACCES
+        Invoker::Logger.puts("Running uninstall requires root access, please rerun it with sudo".color(:red))
+        raise
+      end
+
       def check_if_already_setup?
         File.exists?(Invoker::Power::Config::CONFIG_LOCATION)
       end
@@ -69,8 +95,17 @@ module Invoker
         File.open(FIREWALL_PLIST_FILE, "w") { |fl|
           fl.write(plist_string(balancer_port))
         }
-        system("launchctl unload -w #{FIREWALL_PLIST_FILE} 2>/dev/null")
+        unload_firewall_rule
+        load_firewall_rule
+      end
+
+      def load_firewall_rule
         system("launchctl load -Fw #{FIREWALL_PLIST_FILE} 2>/dev/null")
+      end
+
+      def unload_firewall_rule(remove = false)
+        system("launchctl unload -w #{FIREWALL_PLIST_FILE} 2>/dev/null")
+        system("rm -rf #{FIREWALL_PLIST_FILE}") if remove
       end
 
       # Ripped from POW code

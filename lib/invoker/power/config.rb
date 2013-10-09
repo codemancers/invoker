@@ -17,6 +17,12 @@ module Invoker
         config.save
       end
 
+      def self.delete
+        if File.exists?(CONFIG_LOCATION)
+          File.delete(CONFIG_LOCATION)
+        end
+      end
+
       def initialize(options = {})
         @config = options
       end

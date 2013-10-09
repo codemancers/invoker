@@ -84,4 +84,18 @@ describe "Setup" do
       end
     end
   end
+
+  describe "uninstalling firewall rules" do
+    it "should uninstall firewall rules and remove all files created by setup" do
+      setup = Invoker::Power::Setup.new
+
+      HighLine.any_instance.expects(:agree).returns(true)
+      setup.expects(:remove_resolver_file).once
+      setup.expects(:unload_firewall_rule).with(true).once
+      setup.expects(:flush_dns_rules).once
+      Invoker::Power::Config.expects(:delete).once
+
+      setup.uninstall_invoker
+    end
+  end
 end

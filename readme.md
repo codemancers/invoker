@@ -53,6 +53,11 @@ done by replacing specific port number in `ini` file with `$PORT`. For example:
 
 The subdomain feature won't work for apps which don't use `$PORT` placeholder.
 
+Should you chose to remove `Invoker` you can remove things configured by `setup`
+command using:
+
+    ~> sudo invoker uninstall
+
 ## Running Invoker
 
 After that you can start process manager via:
