@@ -2,6 +2,8 @@ require "spec_helper"
 
 describe "Setup" do
   before {
+    @original_verbosity = $VERBOSE
+    $VERBOSE = nil
     @old_config = Invoker::Power::Config::CONFIG_LOCATION
     Invoker::Power::Config.const_set(:CONFIG_LOCATION, "/tmp/.invoker")
 
@@ -24,6 +26,7 @@ describe "Setup" do
     File.exists?(Invoker::Power::Setup::RESOLVER_FILE) &&
       File.delete(Invoker::Power::Setup::RESOLVER_FILE)
     Invoker::Power::Setup.const_set(:RESOLVER_FILE, @old_resolver)
+    $VERBOSE = @original_verbosity
   }
 
   describe "When no setup exists" do
@@ -39,6 +42,14 @@ describe "Setup" do
       config = Invoker::Power::Config.load_config()
       config.http_port.should.not == nil
       config.dns_port.should.not == nil
+    end
+  end
+
+  describe "setup on non osx systems" do
+    it "should not run setup" do
+      Invoker.expects(:ruby_platform).returns("i686-linux")
+      Invoker::Power::Setup.any_instance.expects(:check_if_setup_can_run?).never()
+      Invoker::Power::Setup.install
     end
   end
 
