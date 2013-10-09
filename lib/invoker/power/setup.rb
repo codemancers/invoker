@@ -7,11 +7,16 @@ module Invoker
       FIREWALL_PLIST_FILE = "/Library/LaunchDaemons/com.codemancers.invoker.firewall.plist"
       def self.install
         installer = new
-        unless installer.check_if_already_setup?
-          installer.setup_invoker
+        if Invoker.darwin?
+          if installer.check_if_setup_can_run?
+            installer.setup_invoker
+          else
+            Invoker::Logger.puts("The setup has been already run.".color(:red))
+          end
         else
-          Invoker::Logger.puts("The setup has been already run.".color(:red))
+          Invoker::Logger.puts("Domain feature is currently not supported on systems other than OSX".color(:red))
         end
+        installer
       end
 
       def self.uninstall
@@ -87,8 +92,8 @@ module Invoker
         raise
       end
 
-      def check_if_already_setup?
-        File.exists?(Invoker::Power::Config::CONFIG_LOCATION)
+      def check_if_setup_can_run?
+        !File.exists?(Invoker::Power::Config::CONFIG_LOCATION)
       end
 
       def install_firewall(balancer_port)

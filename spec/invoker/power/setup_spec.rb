@@ -42,6 +42,14 @@ describe "Setup" do
     end
   end
 
+  describe "setup on non osx systems" do
+    it "should not run setup" do
+      Invoker.expects(:ruby_platform).returns("i686-linux")
+      Invoker::Power::Setup.any_instance.expects(:check_if_setup_can_run?).never()
+      Invoker::Power::Setup.install
+    end
+  end
+
   describe "when a setup file exists" do
     it "should throw error about existing file" do
       File.open(Invoker::Power::Config::CONFIG_LOCATION, "w") {|fl|
