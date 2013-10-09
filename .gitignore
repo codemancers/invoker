@@ -6,3 +6,5 @@ pkg/
 local.ini
 multi.ini
 tags
+.rvmrc
+vendor/
