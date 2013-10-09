@@ -2,6 +2,8 @@ require "spec_helper"
 
 describe "Setup" do
   before {
+    @original_verbosity = $VERBOSE
+    $VERBOSE = nil
     @old_config = Invoker::Power::Config::CONFIG_LOCATION
     Invoker::Power::Config.const_set(:CONFIG_LOCATION, "/tmp/.invoker")
 
@@ -24,6 +26,7 @@ describe "Setup" do
     File.exists?(Invoker::Power::Setup::RESOLVER_FILE) &&
       File.delete(Invoker::Power::Setup::RESOLVER_FILE)
     Invoker::Power::Setup.const_set(:RESOLVER_FILE, @old_resolver)
+    $VERBOSE = @original_verbosity
   }
 
   describe "When no setup exists" do
