@@ -13,7 +13,7 @@ Currently it only works with Ruby 1.9.3 and 2.0.
 
 ## Manual ##
 
-Information about configuring and using Invoker can be found on: [Invoker Manual](http://invoker.codemancers.com)
+Information about configuring and using Invoker can be found on -  [Invoker Website](http://invoker.codemancers.com)
 
 ## Bug reports and Feature requests
 
