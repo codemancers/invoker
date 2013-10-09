@@ -14,6 +14,8 @@ module Invoker
     def self.run_command(selected_command)
       return unless selected_command
       case selected_command.command
+      when 'version'
+        emit_version
       when 'setup'
         setup_pow(selected_command)
       when 'uninstall'
@@ -31,6 +33,10 @@ module Invoker
       else
         Invoker::Logger.puts "Invalid command"
       end
+    end
+
+    def self.emit_version
+      Invoker::Logger.puts Invoker::VERSION
     end
 
     def self.setup_pow(selected_command)
