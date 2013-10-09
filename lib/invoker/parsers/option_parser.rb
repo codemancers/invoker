@@ -8,7 +8,7 @@ module Invoker
         selected_command = nil
         opts = Slop.parse(args, help: true) do
           on :v, "Print the version" do
-            Invoker::Logger.puts Invoker::VERSION
+            selected_command = OpenStruct.new(:command => 'version')
           end
           on :p, :port=, "Port series to be used for starting rack servers", as: Integer
 
