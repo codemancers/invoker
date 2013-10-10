@@ -1,4 +1,5 @@
 require 'iniparse'
+require 'dotenv'
 
 module Invoker
   module Parsers
@@ -7,9 +8,17 @@ module Invoker
       attr_accessor :processes, :power_config
 
       def initialize(filename, port)
-        @ini_content = File.read(filename)
+        @filename = filename
         @port = port
-        @processes = process_ini(@ini_content)
+        load_env
+        @processes = if is_ini?
+          process_ini
+        elsif is_procfile?
+          process_procfile
+        else
+          Invoker::Logger.puts("\n Invalid config file. Invoker requires an ini or a Procfile.".color(:red))
+          exit
+        end
         if Invoker.can_run_balancer?
           @power_config = Invoker::Power::Config.load_config()
         end
@@ -30,7 +39,8 @@ module Invoker
       end
 
       private
-      def process_ini(ini_content)
+      def process_ini
+        ini_content = File.read(@filename)
         document = IniParse.parse(ini_content)
         document.map do |section|
           check_directory(section["directory"])
@@ -41,6 +51,23 @@ module Invoker
             make_option(section)
           end
         end
+      end
+
+      def process_procfile
+        procfile = Invoker::Parsers::Procfile.new(@filename)
+        procfile.entries.map do |name, command|
+          section = { "label" => name, "command" => command }
+          if supports_subdomain?(section)
+            port = pick_port(section)
+            make_option_for_subdomain(section, port)
+          else
+            make_option(section)
+          end
+        end
+      end
+
+      def load_env
+        Dotenv.load
       end
 
       def pick_port(section)
@@ -56,7 +83,7 @@ module Invoker
       def make_option_for_subdomain(section, port)
         OpenStruct.new(
           port: port,
-          label: section.key,
+          label: section["label"] || section.key,
           dir: section["directory"],
           cmd: replace_port_in_command(section["command"], port)
         )
@@ -64,7 +91,7 @@ module Invoker
 
       def make_option(section)
         OpenStruct.new(
-          label: section.key,
+          label: section["label"] || section.key,
           dir: section["directory"],
           cmd: section["command"]
         )
@@ -88,6 +115,13 @@ module Invoker
         end
       end
 
+      def is_ini?
+        File.extname(@filename) == '.ini'
+      end
+
+      def is_procfile?
+        @filename =~ /Procfile/
+      end
     end
   end
 end
