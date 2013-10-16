@@ -10,15 +10,7 @@ module Invoker
       def initialize(filename, port)
         @filename = filename
         @port = port
-        load_env
-        @processes = if is_ini?
-          process_ini
-        elsif is_procfile?
-          process_procfile
-        else
-          Invoker::Logger.puts("\n Invalid config file. Invoker requires an ini or a Procfile.".color(:red))
-          exit
-        end
+        @processes = load_config
         if Invoker.can_run_balancer?
           @power_config = Invoker::Power::Config.load_config()
         end
@@ -33,36 +25,45 @@ module Invoker
       end
 
       def process(label)
-        processes.detect {|pconfig|
-          pconfig.label == label
-        }
+        processes.detect { |pconfig| pconfig.label == label }
       end
 
       private
+      def load_config
+        if is_ini?
+          process_ini
+        elsif is_procfile?
+          process_procfile
+        else
+          Invoker::Logger.puts("\n Invalid config file. Invoker requires an ini or a Procfile.".color(:red))
+          abort
+        end
+      end
+
       def process_ini
         ini_content = File.read(@filename)
         document = IniParse.parse(ini_content)
         document.map do |section|
           check_directory(section["directory"])
-          if supports_subdomain?(section)
-            port = pick_port(section)
-            make_option_for_subdomain(section, port)
-          else
-            make_option(section)
-          end
+          process_command_from_section(section)
         end
       end
 
       def process_procfile
+        load_env
         procfile = Invoker::Parsers::Procfile.new(@filename)
         procfile.entries.map do |name, command|
           section = { "label" => name, "command" => command }
-          if supports_subdomain?(section)
-            port = pick_port(section)
-            make_option_for_subdomain(section, port)
-          else
-            make_option(section)
-          end
+          process_command_from_section(section)
+        end
+      end
+
+      def process_command_from_section(section)
+        if supports_subdomain?(section)
+          port = pick_port(section)
+          make_option_for_subdomain(section, port)
+        else
+          make_option(section)
         end
       end
 
