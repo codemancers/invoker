@@ -143,7 +143,7 @@ web: bundle exec rails s -p $PORT
         command1.port.should == 9001
         command1.cmd.should =~ /bundle exec rails/
       ensure
-        puts "remove file"
+        File.delete("/tmp/Procfile")
       end
     end
 
@@ -168,5 +168,3 @@ web: bundle exec rails s -p $PORT
     end
   end
 end
-
-
