@@ -206,12 +206,12 @@ module Invoker
       if defined?(Bundler)
         Bundler.with_clean_env do
           spawn(process_info.cmd, 
-            :chdir => process_info.dir || "/", :out => write_pipe, :err => write_pipe
+            :chdir => process_info.dir || ENV['PWD'], :out => write_pipe, :err => write_pipe
           )
         end
       else
         spawn(process_info.cmd, 
-          :chdir => process_info.dir || "/", :out => write_pipe, :err => write_pipe
+          :chdir => process_info.dir || ENV['PWD'], :out => write_pipe, :err => write_pipe
         )
       end
     end
