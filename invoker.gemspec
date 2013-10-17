@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
   s.add_dependency("uuid", "~> 2.3.7")
   s.add_dependency("highline", "~> 1.6.19")
   s.add_dependency("http-parser-lite", "~> 0.6.0")
+  s.add_dependency("dotenv", "~> 0.9.0")
   s.add_development_dependency("bacon")
   s.add_development_dependency("mocha")
   s.add_development_dependency("mocha-on-bacon")
