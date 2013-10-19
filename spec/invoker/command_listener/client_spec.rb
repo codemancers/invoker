@@ -6,7 +6,7 @@ describe Invoker::CommandListener::Client do
       @client_socket = mock()
       @client = Invoker::CommandListener::Client.new(@client_socket)
     end
-    
+
     it "should run if read from socket" do
       invoker_commander.expects(:on_next_tick).with("foo")
       @client_socket.expects(:gets).returns("add foo\n")

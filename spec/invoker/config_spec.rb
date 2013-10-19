@@ -17,7 +17,7 @@ command = ruby try_sleep.rb
         file.close
         lambda {
           Invoker::Parsers::Config.new(file.path, 9000)
-        }.should.raise(Invoker::Errors::InvalidConfig)
+        }.should raise_error(Invoker::Errors::InvalidConfig)
       ensure
         file.unlink()
       end

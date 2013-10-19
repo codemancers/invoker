@@ -12,7 +12,7 @@ describe "Invoker::Commander" do
 
       lambda {
         @commander.start_manager()
-      }.should.raise(Invoker::Errors::InvalidConfig)
+      }.should raise_error(Invoker::Errors::InvalidConfig)
     end
   end
 
@@ -40,14 +40,14 @@ describe "Invoker::Commander" do
       describe "if a signal is specified" do
         it "should use that signal to kill the worker" do
           @commander.expects(:process_kill).with("bogus", "HUP").returns(true)
-          @commander.remove_command("resque", "HUP").should.be.true
+          @commander.remove_command("resque", "HUP").should be_true
         end
       end
 
       describe "if no signal is specified" do
         it "should use INT signal" do
           @commander.expects(:process_kill).with("bogus", "INT").returns(true)
-          @commander.remove_command("resque", nil).should.be.true
+          @commander.remove_command("resque", nil).should be_true
         end
       end
 
@@ -91,17 +91,17 @@ describe "Invoker::Commander" do
     it "should populate workers and open_pipes" do
       @commander.expects(:start_event_loop)
       @commander.start_manager()
-      @commander.open_pipes.should.not.be.empty
-      @commander.workers.should.not.be.empty
+      @commander.open_pipes.should_not be_empty
+      @commander.workers.should_not be_empty
 
       worker = @commander.workers['sleep']
 
-      worker.should.not.equal nil
-      worker.command_label.should.equal "sleep"
-      worker.color.should.equal :green
+      worker.should_not == nil
+      worker.command_label.should == "sleep"
+      worker.color.should == :green
 
       pipe_end_worker = @commander.open_pipes[worker.pipe_end.fileno]
-      pipe_end_worker.should.not.equal nil
+      pipe_end_worker.should_not == nil
     end
   end
 

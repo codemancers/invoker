@@ -11,11 +11,11 @@ describe Invoker::Event::Manager do
       @event_manager.trigger("foo", :exit)
 
       @event_manager.run_scheduled_events do |event|
-        event.block.call.should.equal("exit foo")
+        event.block.call.should == "exit foo"
       end
 
-      @event_manager.scheduled_events.should.be.empty
-      @event_manager.triggered_events.should.be.empty
+      @event_manager.scheduled_events.should be_empty
+      @event_manager.triggered_events.should be_empty
     end
 
     it "should remove triggrered and scheduld events on run" do
@@ -25,22 +25,17 @@ describe Invoker::Event::Manager do
       @event_manager.trigger("baz", :exit)
 
       @event_manager.run_scheduled_events do |event|
-        event.block.call.should.equal("exit foo")
+        event.block.call.should == "exit foo"
       end
 
-      @event_manager.scheduled_events.should.not.be.empty
-      @event_manager.triggered_events.should.not.be.empty
+      @event_manager.scheduled_events.should_not be_empty
+      @event_manager.triggered_events.should_not be_empty
 
-      baz_containing_event = lambda do |events| 
-        events.detect {|event| event.command_label == "baz" }
-      end
+      baz_containing_event = @event_manager.triggered_events.map(&:command_label)
+      baz_containing_event.should include("baz")
 
-      bar_containing_scheduled_event = lambda do |events|
-        events.keys.detect {|event_key| event_key == "bar" }
-      end
-
-      @event_manager.triggered_events.should.be.a baz_containing_event
-      @event_manager.scheduled_events.should.be.a bar_containing_scheduled_event
+      bar_containing_scheduled_event = @event_manager.scheduled_events.keys
+      bar_containing_scheduled_event.should include("bar")
     end
 
     it "should handle multiple events for same command" do
@@ -54,8 +49,8 @@ describe Invoker::Event::Manager do
       @event_manager.schedule_event("foo", :exit) { 'exit foo' }
       @event_manager.trigger("foo", :exit)
 
-      @event_manager.scheduled_events.should.not.be.empty
-      @event_manager.triggered_events.should.not.be.empty
+      @event_manager.scheduled_events.should_not be_empty
+      @event_manager.triggered_events.should_not be_empty
     end
 
     it "should not run unmatched events" do
@@ -66,7 +61,7 @@ describe Invoker::Event::Manager do
       @event_manager.run_scheduled_events do |event|
         events_ran = true
       end
-      events_ran.should.be.false
+      events_ran.should be_false
     end
   end
 end
