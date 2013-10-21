@@ -9,12 +9,12 @@ describe "Invoker Power configuration" do
         config = Invoker::Power::Config.create(
           dns_port: 1200, http_port: 1201, ipfw_rule_number: 010
         )
-        File.exists?(Invoker::Power::Config::CONFIG_LOCATION).should == true
+        expect(File.exists?(Invoker::Power::Config::CONFIG_LOCATION)).to be_true
 
         config = Invoker::Power::Config.load_config()
-        config.dns_port.should == 1200
-        config.http_port.should == 1201
-        config.ipfw_rule_number.should == 010
+        expect(config.dns_port).to eq(1200)
+        expect(config.http_port).to eq(1201)
+        expect(config.ipfw_rule_number).to eq(010)
       ensure
         File.exists?(Invoker::Power::Config::CONFIG_LOCATION) &&
           File.delete(Invoker::Power::Config::CONFIG_LOCATION)

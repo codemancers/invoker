@@ -11,11 +11,11 @@ describe Invoker::Event::Manager do
       @event_manager.trigger("foo", :exit)
 
       @event_manager.run_scheduled_events do |event|
-        event.block.call.should == "exit foo"
+        expect(event.block.call).to eq("exit foo")
       end
 
-      @event_manager.scheduled_events.should be_empty
-      @event_manager.triggered_events.should be_empty
+      expect(@event_manager.scheduled_events).to be_empty
+      expect(@event_manager.triggered_events).to be_empty
     end
 
     it "should remove triggrered and scheduld events on run" do
@@ -25,17 +25,17 @@ describe Invoker::Event::Manager do
       @event_manager.trigger("baz", :exit)
 
       @event_manager.run_scheduled_events do |event|
-        event.block.call.should == "exit foo"
+        expect(event.block.call).to eq("exit foo")
       end
 
-      @event_manager.scheduled_events.should_not be_empty
-      @event_manager.triggered_events.should_not be_empty
+      expect(@event_manager.scheduled_events).not_to be_empty
+      expect(@event_manager.triggered_events).not_to be_empty
 
       baz_containing_event = @event_manager.triggered_events.map(&:command_label)
-      baz_containing_event.should include("baz")
+      expect(baz_containing_event).to include("baz")
 
       bar_containing_scheduled_event = @event_manager.scheduled_events.keys
-      bar_containing_scheduled_event.should include("bar")
+      expect(bar_containing_scheduled_event).to include("bar")
     end
 
     it "should handle multiple events for same command" do
@@ -49,8 +49,8 @@ describe Invoker::Event::Manager do
       @event_manager.schedule_event("foo", :exit) { 'exit foo' }
       @event_manager.trigger("foo", :exit)
 
-      @event_manager.scheduled_events.should_not be_empty
-      @event_manager.triggered_events.should_not be_empty
+      expect(@event_manager.scheduled_events).not_to be_empty
+      expect(@event_manager.triggered_events).not_to be_empty
     end
 
     it "should not run unmatched events" do
@@ -61,7 +61,7 @@ describe Invoker::Event::Manager do
       @event_manager.run_scheduled_events do |event|
         events_ran = true
       end
-      events_ran.should be_false
+      expect(events_ran).to be_false
     end
   end
 end

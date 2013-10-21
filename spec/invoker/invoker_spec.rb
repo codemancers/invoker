@@ -4,12 +4,12 @@ describe "Invoker" do
   describe "#darwin?" do
     it "should return true on osx" do
       Invoker.expects(:ruby_platform).returns("x86_64-darwin12.4.0")
-      Invoker.darwin?.should == true
+      expect(Invoker.darwin?).to be_true
     end
 
     it "should return false on linux" do
       Invoker.expects(:ruby_platform).returns("i686-linux")
-      Invoker.darwin?.should == false
+      expect(Invoker.darwin?).to be_false
     end
   end
 
@@ -26,12 +26,12 @@ describe "Invoker" do
 
     it "should return false if setup command was not run on osx" do
       Invoker.expects(:ruby_platform).returns("x86_64-darwin12.4.0")
-      Invoker.can_run_balancer?.should ==false
+      expect(Invoker.can_run_balancer?).to be_false
     end
 
     it "should return false if platform is not osx" do
       Invoker.expects(:ruby_platform).returns("i686-linux")
-      Invoker.can_run_balancer?.should == false
+      expect(Invoker.can_run_balancer?).to be_false
     end
 
     it "should return true if setup was run properly" do
@@ -40,7 +40,7 @@ describe "Invoker" do
         fl.write("hello")
       }
 
-      Invoker.can_run_balancer?.should === true
+      expect(Invoker.can_run_balancer?).to be_true
     end
 
     it "should not print warning if setup is not run when flag is false" do
