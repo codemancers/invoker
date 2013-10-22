@@ -1,5 +1,7 @@
-desc "Run the tests"
-task :spec do
-  spec_files = Dir["spec/**/*.rb"]
-  sh("bacon -I spec #{spec_files.join(" ")}")
-end
+require "bundler/gem_tasks"
+require "rspec/core/rake_task"
+
+RSpec::Core::RakeTask.new
+
+task :default => :spec
+task :test => :spec

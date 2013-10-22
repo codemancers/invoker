@@ -40,8 +40,8 @@ describe "Setup" do
       setup.setup_invoker
 
       config = Invoker::Power::Config.load_config()
-      config.http_port.should.not == nil
-      config.dns_port.should.not == nil
+      expect(config.http_port).not_to be_nil
+      expect(config.dns_port).not_to be_nil
     end
   end
 

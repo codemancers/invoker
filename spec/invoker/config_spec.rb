@@ -15,9 +15,9 @@ command = ruby try_sleep.rb
       EOD
         file.write(config_data)
         file.close
-        lambda {
+        expect {
           Invoker::Parsers::Config.new(file.path, 9000)
-        }.should.raise(Invoker::Errors::InvalidConfig)
+        }.to raise_error(Invoker::Errors::InvalidConfig)
       ensure
         file.unlink()
       end
@@ -48,17 +48,17 @@ command = ls
         config = Invoker::Parsers::Config.new(file.path, 9000)
         command1 = config.processes.first
 
-        command1.port.should == 9001
-        command1.cmd.should =~ /9001/
+        expect(command1.port).to eq(9001)
+        expect(command1.cmd).to match(/9001/)
 
         command2 = config.processes[1]
 
-        command2.port.should == 9002
-        command2.cmd.should =~ /9002/
+        expect(command2.port).to eq(9002)
+        expect(command2.cmd).to match(/9002/)
 
         command2 = config.processes[2]
 
-        command2.port.should == nil
+        expect(command2.port).to be_nil
       ensure
         file.unlink()
       end
@@ -87,16 +87,16 @@ command = ls
         config = Invoker::Parsers::Config.new(file.path, 9000)
         command1 = config.processes.first
 
-        command1.port.should == 9001
-        command1.cmd.should =~ /9001/
+        expect(command1.port).to eq(9001)
+        expect(command1.cmd).to match(/9001/)
 
         command2 = config.processes[1]
 
-        command2.port.should == 3000
+        expect(command2.port).to eq(3000)
 
         command2 = config.processes[2]
 
-        command2.port.should == nil
+        expect(command2.port).to be_nil
       ensure
         file.unlink()
       end
@@ -140,8 +140,8 @@ web: bundle exec rails s -p $PORT
         config = Invoker::Parsers::Config.new("/tmp/Procfile", 9000)
         command1 = config.processes.first
 
-        command1.port.should == 9001
-        command1.cmd.should =~ /bundle exec rails/
+        expect(command1.port).to eq(9001)
+        expect(command1.cmd).to match(/bundle exec rails/)
       ensure
         File.delete("/tmp/Procfile")
       end
@@ -161,7 +161,7 @@ web: bundle exec rails s -p $PORT
           EOD
         }
         config = Invoker::Parsers::Config.new("/tmp/Procfile", 9000)
-        ENV["TEST"].should == "test env"
+        expect(ENV["TEST"]).to eq("test env")
       ensure
         File.delete("#{ENV['PWD']}/.env")
       end

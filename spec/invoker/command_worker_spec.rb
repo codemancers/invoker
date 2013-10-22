@@ -9,7 +9,7 @@ describe "Command Worker" do
     end
 
     it "should print json" do
-      @workers.values.map {|worker| worker.to_h }.to_json.should.not.be.empty
+      expect(@workers.values.map {|worker| worker.to_h }.to_json).not_to be_empty
     end
   end
 end

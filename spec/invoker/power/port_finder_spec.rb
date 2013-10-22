@@ -7,10 +7,10 @@ describe "PortFinder" do
   end
 
   it "should find a http port" do
-    @port_finder.http_port.should.not == nil
+    expect(@port_finder.http_port).not_to be_nil
   end
 
   it "should find a dns port" do
-    @port_finder.dns_port.should.not == nil
+    expect(@port_finder.dns_port).not_to be_nil
   end
 end
