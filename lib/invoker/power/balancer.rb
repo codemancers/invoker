@@ -99,7 +99,8 @@ module Invoker
       end
 
       def backend_data(backend, data)
-        @backend_data = data
+        @backend_data = true
+        data
       end
 
       def frontend_disconnect(backend, name)
@@ -111,7 +112,7 @@ module Invoker
           http_response.use_file_as_body(File.join(File.dirname(__FILE__), "templates/error_page.html"))
           connection.send_data(http_response.http_string)
         end
-        @backend_data = nil
+        @backend_data = false
         connection.close_connection_after_writing() if backend == session
       end
 
