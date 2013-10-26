@@ -73,10 +73,7 @@ module Invoker
           connection.relay_to_servers(@buffer.join)
           @buffer = []
         else
-          http_response = Invoker::Power::HttpResponse.new()
-          http_response.status = 404
-          http_response.use_file_as_body(File.join(File.dirname(__FILE__), "templates/error_page.html"))
-          connection.send_data(http_response.http_string)
+          return_error_page(404)
           connection.close_connection_after_writing
         end
       end
@@ -106,11 +103,8 @@ module Invoker
       def frontend_disconnect(backend, name)
         http_parser.reset()
         unless @backend_data
-          Invoker::Logger.puts("\nBackend not running. Returning error page.".color(:red))
-          http_response = Invoker::Power::HttpResponse.new()
-          http_response.status = 503
-          http_response.use_file_as_body(File.join(File.dirname(__FILE__), "templates/error_page.html"))
-          connection.send_data(http_response.http_string)
+          Invoker::Logger.puts("\nApplication not running. Returning error page.".color(:red))
+          return_error_page(503)
         end
         @backend_data = false
         connection.close_connection_after_writing() if backend == session
@@ -125,6 +119,13 @@ module Invoker
         else
           nil
         end
+      end
+
+      def return_error_page(status)
+        http_response = Invoker::Power::HttpResponse.new()
+        http_response.status = status
+        http_response.use_file_as_body(File.join(File.dirname(__FILE__), "templates/#{status}.html"))
+        connection.send_data(http_response.http_string)
       end
     end
   end
