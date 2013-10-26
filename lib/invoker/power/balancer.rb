@@ -73,7 +73,11 @@ module Invoker
           connection.relay_to_servers(@buffer.join)
           @buffer = []
         else
-          connection.unbind
+          http_response = Invoker::Power::HttpResponse.new()
+          http_response.status = 404
+          http_response.use_file_as_body(File.join(File.dirname(__FILE__), "templates/error_page.html"))
+          connection.send_data(http_response.http_string)
+          connection.close_connection_after_writing
         end
       end
 
