@@ -29,6 +29,6 @@ describe Invoker::Power::HttpResponse do
 
   it "should allow user to set status" do
     @http_response.status = 503
-    expect(@http_response.http_string).to include(@http_response.status_maps(503))
+    expect(@http_response.http_string).to include(Invoker::Power::HttpResponse::STATUS_MAPS[503])
   end
 end

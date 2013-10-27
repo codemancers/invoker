@@ -1,30 +1,28 @@
 module Invoker
   module Power
     class HttpResponse
-      def status_maps(status)
-        {
-          200 => "OK",
-          201 => "Created",
-          202 => "Accepted",
-          204 => "No Content",
-          205 => "Reset Content",
-          206 => "Partial Content",
-          301 => "Moved Permanently",
-          302 => "Found",
-          304 => "Not Modified",
-          400 => "Bad Request",
-          401 => "Unauthorized",
-          402 => "Payment Required",
-          403 => "Forbidden",
-          404 => "Not Found",
-          411 => "Length Required",
-          500 => "Internal Server Error",
-          501 => "Not Implemented",
-          502 => "Bad Gateway",
-          503 => "Service Unavailable",
-          504 => "Gateway Timeout"
-        }[status]
-      end
+      STATUS_MAPS = {
+        200 => "OK",
+        201 => "Created",
+        202 => "Accepted",
+        204 => "No Content",
+        205 => "Reset Content",
+        206 => "Partial Content",
+        301 => "Moved Permanently",
+        302 => "Found",
+        304 => "Not Modified",
+        400 => "Bad Request",
+        401 => "Unauthorized",
+        402 => "Payment Required",
+        403 => "Forbidden",
+        404 => "Not Found",
+        411 => "Length Required",
+        500 => "Internal Server Error",
+        501 => "Not Implemented",
+        502 => "Bad Gateway",
+        503 => "Service Unavailable",
+        504 => "Gateway Timeout"
+      }
 
       attr_accessor :header, :body, :status
 
@@ -51,7 +49,7 @@ module Invoker
 
       def http_string
         final_string = []
-        final_string << "HTTP/1.1 #{status} #{status_maps(status)}"
+        final_string << "HTTP/1.1 #{status} #{STATUS_MAPS[status]}"
 
         if header['Transfer-Encoding'].nil? && body.empty?
           header['Content-Length'] = body.length
