@@ -124,6 +124,7 @@ module Invoker
       def return_error_page(status)
         http_response = Invoker::Power::HttpResponse.new()
         http_response.status = status
+        http_response['Content-Type'] = "text/html; charset=utf-8"
         http_response.use_file_as_body(File.join(File.dirname(__FILE__), "templates/#{status}.html"))
         connection.send_data(http_response.http_string)
       end
