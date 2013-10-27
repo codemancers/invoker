@@ -26,6 +26,17 @@ module Invoker
         504 => "Gateway Timeout"
       }
 
+      HTTP_HEADER_FIELDS = [
+        'Cache-Control', 'Connection', 'Date',
+        'Pragma', 'Trailer', 'Transfer-Encoding',
+        'Accept-Ranges', 'Age', 'Etag',
+        'Server', 'Location', 'Allow',
+        'Content-Encoding', 'Content-Language', 'Content-Location',
+        'Content-MD5', 'Content-Range',
+        'Content-Type', 'Expires',
+        'Last-Modified', 'extension-header'
+      ]
+
       attr_accessor :header, :body, :status
 
       def initialize
@@ -57,92 +68,10 @@ module Invoker
           header['Content-Length'] = body.length
         end
 
-        if cache_control = header['Cache-Control']
-          final_string << "Cache-Control: #{cache_control}"
-        end
-
-        if connection = header['Connection']
-          final_string << "Connection: #{connection}"
-        end
-
-        if date = header['Date']
-          final_string << "Date: #{date}"
-        end
-
-        if pragma = header['Pragma']
-          final_string << "Pragma: #{pragma}"
-        end
-
-        if trailer = header['Trailer']
-          final_string << "Trailer: #{trailer}"
-        end
-
-        if transefer_encoding = header['Transfer-Encoding']
-          final_string << "Transfer-Encoding: #{transefer_encoding}"
-        end
-
-        if accept_ranges = header['Accept-Ranges']
-          final_string << "Accept-Ranges: #{accept_ranges}"
-        end
-
-        if age = header['Age']
-          final_string << "Age: #{age}"
-        end
-
-        if etag = header['Etag']
-          final_string << "Etag: #{etag}"
-        end
-
-        if server = header['Server']
-          final_string << "Server: #{server}"
-        end
-
-        if location = header['Location']
-          final_string << "Location: #{location}"
-        end
-
-        if allow = header['Allow']
-          final_string << "Allow: #{allow}"
-        end
-
-        if content_encoding = header['Content-Encoding']
-          final_string << "Content-Encoding: #{content_encoding}"
-        end
-
-        if content_length = header['Content-Length']
-          final_string << "Content-Length: #{content_length}"
-        end
-
-        if content_language = header['Content-Language']
-          final_string << "Content-Language: #{content_language}"
-        end
-
-        if content_location = header['Content-Location']
-          final_string << "Content-Location: #{content_location}"
-        end
-
-        if content_md5 = header['Content-MD5']
-          final_string << "Content-MD5: #{content_md5}"
-        end
-
-        if content_range = header['Content-Range']
-          final_string << "Content-Range: #{content_range}"
-        end
-
-        if content_type = header['Content-Type']
-          final_string << "Content-Type: #{content_type}"
-        end
-
-        if expires = header['Expires']
-          final_string << "Expires: #{expires}"
-        end
-
-        if last_modified = header['Last-Modified']
-          final_string << "Last-Modified: #{last_modified}"
-        end
-
-        if extension_header = header['extension-header']
-          final_string << "extension_header: #{extension_header}"
+        HTTP_HEADER_FIELDS.each do |key|
+          if value = header[key]
+            final_string << "#{key}: #{value}"
+          end
         end
 
         final_string.join("\r\n") + "\r\n\r\n" + body
