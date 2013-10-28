@@ -161,6 +161,7 @@ module Invoker
       process_kill(pid, signal_to_use)
       true
     rescue Errno::ESRCH
+      Invoker::Logger.puts("Killing process with #{pid} and name #{command_label} failed".color(:red))
       remove_worker(command_label, false)
       false
     end
