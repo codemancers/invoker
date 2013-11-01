@@ -168,9 +168,9 @@ module Invoker
 
     def process_kill(pid, signal_to_use)
       if signal_to_use.to_i == 0
-        Process.kill(signal_to_use, pid)
+        Process.kill(signal_to_use, -Process.getpgid(pid))
       else
-        Process.kill(signal_to_use.to_i, pid)
+        Process.kill(signal_to_use.to_i, -Process.getpgid(pid))
       end
     end
 
@@ -207,12 +207,14 @@ module Invoker
       if defined?(Bundler)
         Bundler.with_clean_env do
           spawn(process_info.cmd, 
-            :chdir => process_info.dir || ENV['PWD'], :out => write_pipe, :err => write_pipe
+            :chdir => process_info.dir || ENV['PWD'], :out => write_pipe, :err => write_pipe,
+            :pgroup => true, :close_others => true, :in => :close
           )
         end
       else
         spawn(process_info.cmd, 
-          :chdir => process_info.dir || ENV['PWD'], :out => write_pipe, :err => write_pipe
+          :chdir => process_info.dir || ENV['PWD'], :out => write_pipe, :err => write_pipe,
+          :pgroup => true, :close_others => true, :in => :close
         )
       end
     end
@@ -259,8 +261,9 @@ module Invoker
     def kill_workers
       @workers.each {|key,worker|
         begin
-          Process.kill("INT", worker.pid) 
+          Process.kill("INT", -Process.getpgid(worker.pid))
         rescue Errno::ESRCH
+          puts "Error killing #{key}"
         end
       }
       @workers = {}
