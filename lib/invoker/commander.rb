@@ -204,18 +204,17 @@ module Invoker
 
       event_manager.schedule_event(command_label, :exit) { remove_worker(command_label) }
 
+      spawn_options = {
+        :chdir => process_info.dir || ENV['PWD'], :out => write_pipe, :err => write_pipe,
+        :pgroup => true, :close_others => true, :in => :close
+      }
+
       if defined?(Bundler)
         Bundler.with_clean_env do
-          spawn(process_info.cmd, 
-            :chdir => process_info.dir || ENV['PWD'], :out => write_pipe, :err => write_pipe,
-            :pgroup => true, :close_others => true, :in => :close
-          )
+          spawn(process_info.cmd, spawn_options)
         end
       else
-        spawn(process_info.cmd, 
-          :chdir => process_info.dir || ENV['PWD'], :out => write_pipe, :err => write_pipe,
-          :pgroup => true, :close_others => true, :in => :close
-        )
+        spawn(process_info.cmd, spawn_options)
       end
     end
 
