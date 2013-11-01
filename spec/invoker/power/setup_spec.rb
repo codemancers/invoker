@@ -1,34 +1,6 @@
 require "spec_helper"
 
 describe "Setup" do
-  before {
-    @original_verbosity = $VERBOSE
-    $VERBOSE = nil
-    @old_config = Invoker::Power::Config::CONFIG_LOCATION
-    Invoker::Power::Config.const_set(:CONFIG_LOCATION, "/tmp/.invoker")
-
-    File.exists?(Invoker::Power::Config::CONFIG_LOCATION) &&
-      File.delete(Invoker::Power::Config::CONFIG_LOCATION)
-
-    @old_resolver = Invoker::Power::Setup::RESOLVER_FILE
-    Invoker::Power::Setup.const_set(:RESOLVER_FILE, "/tmp/invoker-dev")
-
-    File.exists?(Invoker::Power::Setup::RESOLVER_FILE) &&
-      File.delete(Invoker::Power::Setup::RESOLVER_FILE)
-  }
-
-  after {
-    File.exists?(Invoker::Power::Config::CONFIG_LOCATION) &&
-      File.delete(Invoker::Power::Config::CONFIG_LOCATION)
-
-    Invoker::Power::Config.const_set(:CONFIG_LOCATION, @old_config)
-
-    File.exists?(Invoker::Power::Setup::RESOLVER_FILE) &&
-      File.delete(Invoker::Power::Setup::RESOLVER_FILE)
-    Invoker::Power::Setup.const_set(:RESOLVER_FILE, @old_resolver)
-    $VERBOSE = @original_verbosity
-  }
-
   describe "When no setup exists" do
     it "should create a config file with port etc" do
       setup = Invoker::Power::Setup.new()
@@ -107,6 +79,26 @@ describe "Setup" do
       Invoker::Power::Config.expects(:delete).once
 
       setup.uninstall_invoker
+    end
+  end
+
+  describe "setup on fresh osx install" do
+    context "when resolver directory does not exist" do
+      before do
+        @setup = Invoker::Power::Setup.new()
+        FileUtils.rm_rf(Invoker::Power::Setup::RESOLVER_DIR)
+      end
+
+      it "should create the directory and install" do
+        @setup.expects(:setup_resolver_file).returns(true)
+        @setup.expects(:drop_to_normal_user).returns(true)
+        @setup.expects(:flush_dns_rules).returns(true)
+        @setup.expects(:install_firewall).once()
+
+        @setup.setup_invoker()
+
+        expect(Dir.exists?(Invoker::Power::Setup::RESOLVER_DIR)).to be_true
+      end
     end
   end
 end
