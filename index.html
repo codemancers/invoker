@@ -86,15 +86,15 @@
 
 [rails]
 directory = /home/gnufied/god_particle
-command = zsh -c 'bundle exec rails s -p 5000'
+command = bundle exec rails s -p 5000
 
 [dj]
 directory = /home/gnufied/god_particle
-command = zsh -c 'bundle exec ruby script/delayed_job'
+command = bundle exec ruby script/delayed_job
 
 [events]
 directory = /home/gnufied/god_particle
-command = zsh -c 'bundle exec ruby script/event_server'
+command = bundle exec ruby script/event_server
 
           </pre>
         </code>
@@ -154,6 +154,30 @@ command = bundle exec rails s -p $PORT
           Now these services can be accessed via <span class="in-path">http://terminal.dev</span> , <span class="in-path">http://cms.dev</span>
           <span class="in-path">http://typo.dev</span>. You can also access them via wildcard subdomains such as <span class="in-path">*.*.dev</span>.
         </p>
+      </section>
+
+      <section>
+        <h2> Procfile support </h2>
+        <p>
+          Since version <span class="in-path">1.0.3</span> Invoker has added support
+          for <span class="in-path">Procfile</span>. Now If you already have a <span class="in-path">Procfile</span> you need not even create a <span class="in-path">ini</span>
+          file for using Invoker.
+        </p>
+
+        <p>
+          The only thing to remember is, your <span class="in-path">Procfile</span>
+          must have <span class="in-path">$PORT</span> in command - for <span class="in-path">.dev</span> domain feature to work
+        </p>
+
+        <code>
+          <pre>
+
+rails: cd $HOME/rails_app && bundle exec rails s -p $PORT
+cms: cd $HOME/cms && python manage.py runserver $PORT
+
+          </pre>
+        </code>
+
       </section>
 
       <section>
