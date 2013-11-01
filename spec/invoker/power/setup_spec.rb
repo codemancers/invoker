@@ -1,34 +1,6 @@
 require "spec_helper"
 
 describe "Setup" do
-  before {
-    @original_verbosity = $VERBOSE
-    $VERBOSE = nil
-    @old_config = Invoker::Power::Config::CONFIG_LOCATION
-    Invoker::Power::Config.const_set(:CONFIG_LOCATION, "/tmp/.invoker")
-
-    File.exists?(Invoker::Power::Config::CONFIG_LOCATION) &&
-      File.delete(Invoker::Power::Config::CONFIG_LOCATION)
-
-    @old_resolver = Invoker::Power::Setup::RESOLVER_FILE
-    Invoker::Power::Setup.const_set(:RESOLVER_FILE, "/tmp/invoker-dev")
-
-    File.exists?(Invoker::Power::Setup::RESOLVER_FILE) &&
-      File.delete(Invoker::Power::Setup::RESOLVER_FILE)
-  }
-
-  after {
-    File.exists?(Invoker::Power::Config::CONFIG_LOCATION) &&
-      File.delete(Invoker::Power::Config::CONFIG_LOCATION)
-
-    Invoker::Power::Config.const_set(:CONFIG_LOCATION, @old_config)
-
-    File.exists?(Invoker::Power::Setup::RESOLVER_FILE) &&
-      File.delete(Invoker::Power::Setup::RESOLVER_FILE)
-    Invoker::Power::Setup.const_set(:RESOLVER_FILE, @old_resolver)
-    $VERBOSE = @original_verbosity
-  }
-
   describe "When no setup exists" do
     it "should create a config file with port etc" do
       setup = Invoker::Power::Setup.new()

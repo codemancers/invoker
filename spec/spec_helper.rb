@@ -16,6 +16,36 @@ RSpec.configure do |config|
   config.filter_run :focus
   config.mock_framework = :mocha
 
+  config.before(:each) do
+    @original_verbosity = $VERBOSE
+    $VERBOSE = nil
+    @old_config = Invoker::Power::Config::CONFIG_LOCATION
+    Invoker::Power::Config.const_set(:CONFIG_LOCATION, "/tmp/.invoker")
+
+    File.exists?(Invoker::Power::Config::CONFIG_LOCATION) &&
+      File.delete(Invoker::Power::Config::CONFIG_LOCATION)
+
+    @old_resolver = Invoker::Power::Setup::RESOLVER_FILE
+    Invoker::Power::Setup.const_set(:RESOLVER_FILE, "/tmp/invoker-dev")
+
+    File.exists?(Invoker::Power::Setup::RESOLVER_FILE) &&
+      File.delete(Invoker::Power::Setup::RESOLVER_FILE)
+  end
+
+  config.after(:each) do
+    File.exists?(Invoker::Power::Config::CONFIG_LOCATION) &&
+      File.delete(Invoker::Power::Config::CONFIG_LOCATION)
+
+    Invoker::Power::Config.const_set(:CONFIG_LOCATION, @old_config)
+
+    File.exists?(Invoker::Power::Setup::RESOLVER_FILE) &&
+      File.delete(Invoker::Power::Setup::RESOLVER_FILE)
+
+    Invoker::Power::Setup.const_set(:RESOLVER_FILE, @old_resolver)
+
+    $VERBOSE = @original_verbosity
+  end
+
   # Run specs in random order to surface order dependencies. If you find an
   # order dependency and want to debug it, you can fix the order by providing
   # the seed, which is printed after each run.

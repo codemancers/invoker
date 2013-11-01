@@ -1,9 +1,12 @@
 require "highline/import"
+require "fileutils"
 
 module Invoker
   module Power
     class Setup
       RESOLVER_FILE = "/etc/resolver/dev"
+      RESOLVER_DIR = "/etc/resolver"
+
       FIREWALL_PLIST_FILE = "/Library/LaunchDaemons/com.codemancers.invoker.firewall.plist"
       def self.install
         installer = new
@@ -75,7 +78,7 @@ module Invoker
       end
 
       def install_resolver(dns_port)
-        File.open(RESOLVER_FILE, "w") { |fl|
+        open_resolver_for_write { |fl|
           fl.write(resolve_string(dns_port))
         }
       rescue Errno::EACCES
@@ -169,6 +172,21 @@ port #{dns_port}
         end
         replace_resolver_flag
       end
+
+      private
+      def open_resolver_for_write
+        fl = nil
+        if Dir.exists?(RESOLVER_DIR)
+          fl = File.open(RESOLVER_FILE, "w")
+        else
+          FileUtils.mkdir(RESOLVER_DIR)
+          fl = File.open(RESOLVER_FILE, "w")
+        end
+        yield fl
+      ensure
+        fl.close()
+      end
+
     end
   end
 end
