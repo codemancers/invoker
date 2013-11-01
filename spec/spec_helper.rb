@@ -26,7 +26,12 @@ RSpec.configure do |config|
       File.delete(Invoker::Power::Config::CONFIG_LOCATION)
 
     @old_resolver = Invoker::Power::Setup::RESOLVER_FILE
-    Invoker::Power::Setup.const_set(:RESOLVER_FILE, "/tmp/invoker-dev")
+    Invoker::Power::Setup.const_set(:RESOLVER_FILE, "/tmp/resolver/invoker-dev")
+    Invoker::Power::Setup.const_set(:RESOLVER_DIR, "/tmp/resolver")
+
+    unless Dir.exists?(Invoker::Power::Setup::RESOLVER_DIR)
+      FileUtils.mkdir(Invoker::Power::Setup::RESOLVER_DIR)
+    end
 
     File.exists?(Invoker::Power::Setup::RESOLVER_FILE) &&
       File.delete(Invoker::Power::Setup::RESOLVER_FILE)
@@ -41,6 +46,7 @@ RSpec.configure do |config|
     File.exists?(Invoker::Power::Setup::RESOLVER_FILE) &&
       File.delete(Invoker::Power::Setup::RESOLVER_FILE)
 
+    FileUtils.rm_rf(Invoker::Power::Setup::RESOLVER_DIR)
     Invoker::Power::Setup.const_set(:RESOLVER_FILE, @old_resolver)
 
     $VERBOSE = @original_verbosity

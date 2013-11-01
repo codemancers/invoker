@@ -81,4 +81,24 @@ describe "Setup" do
       setup.uninstall_invoker
     end
   end
+
+  describe "setup on fresh osx install" do
+    context "when resolver directory does not exist" do
+      before do
+        @setup = Invoker::Power::Setup.new()
+        FileUtils.rm_rf(Invoker::Power::Setup::RESOLVER_DIR)
+      end
+
+      it "should create the directory and install" do
+        @setup.expects(:setup_resolver_file).returns(true)
+        @setup.expects(:drop_to_normal_user).returns(true)
+        @setup.expects(:flush_dns_rules).returns(true)
+        @setup.expects(:install_firewall).once()
+
+        @setup.setup_invoker()
+
+        expect(Dir.exists?(Invoker::Power::Setup::RESOLVER_DIR)).to be_true
+      end
+    end
+  end
 end

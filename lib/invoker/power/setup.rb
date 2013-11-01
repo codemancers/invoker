@@ -1,5 +1,4 @@
 require "highline/import"
-require "fileutils"
 
 module Invoker
   module Power
@@ -175,16 +174,11 @@ port #{dns_port}
 
       private
       def open_resolver_for_write
-        fl = nil
-        if Dir.exists?(RESOLVER_DIR)
-          fl = File.open(RESOLVER_FILE, "w")
-        else
-          FileUtils.mkdir(RESOLVER_DIR)
-          fl = File.open(RESOLVER_FILE, "w")
-        end
+        FileUtils.mkdir(RESOLVER_DIR) unless Dir.exists?(RESOLVER_DIR)
+        fl = File.open(RESOLVER_FILE, "w")
         yield fl
       ensure
-        fl.close()
+        fl && fl.close()
       end
 
     end
