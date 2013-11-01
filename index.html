@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Invoker</title>
+    <link rel="stylesheet" href="css/style.css" media="all">
+    <meta name="description" content="A Utility for managing processes in development environment">
+    <meta name="keywords" content="invoker,pow,foreman,domain,dev" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-31204667-3', 'codemancers.com');
+  ga('send', 'pageview');
+
+</script>
+
+  </head>
+  <body>
+    <header>
+      <h1 class="in-logo">
+        <div class="container">
+          <a href="index.html" title="Invoker "><img src="img/logo.png" alt="Invoker"></a>
+          <a href="#" onclick="window.open('https://twitter.com/share?text=Introducing Invoker 1.0 - release with runtime agnostic .dev local domains support&amp;url=http://invoker.codemancers.com/&amp;via=codemancershq', '', 'width=600, height=400')" class="social-icon"><span class="icon-t"></span></a>
+          <a href="#" onclick="window.open('https://plusone.google.com/_/+1/confirm?hl=en&amp;url=http://invoker.codemancers.com/', '', 'width=600, height=250')" class="social-icon"><span class="icon-g"></span></a>
+        </div>
+      </h1>
+    </header>
+
+    <div class="in-main-content">
+      <div class="in-double-line"></div>
+      <a href="https://github.com/code-mancers/invoker">
+        <img style="position: absolute; top: 0; left: 0; border: 0;"
+             src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png"
+             alt="Fork me on GitHub">
+      </a>
+      <section class="cf">
+        <div>
+          <h2> What is Invoker ? </h2>
+          <p>
+            Invoker is a utility belt for managing processes in development environment.
+            Use it for managing multiple processes with ease.
+
+            Use it for developing web applications on different local domains without
+            <span class="in-path">/etc/hosts</span> hacks.
+          </p>
+        </div>
+      </section>
+      <section class="in-screencast">
+        <div>
+          <iframe width="640" height="480" src="http://www.youtube.com/embed/uu6NZrYvSQ8" frameborder="0" allowfullscreen></iframe>
+        </div>
+      </section>
+      <section>
+        <div class="supported-runtimes">
+          <div class="logos">
+            <img src="img/python-grey.png">
+            <img src="img/node-grey.png">
+            <img src="img/ruby-grey.png">
+          </div>
+          <div class="in-double-line"></div>
+          <div class="runtime-message">
+            Works with <em>Django</em>, <em>express.js</em> or any <em>Ruby and Rack</em> application.
+          </div>
+        </div>
+
+      </section>
+      <section>
+        <h2>How to use it?</h2>
+
+        <p>First we need to install invoker gem to get command line utility called invoker, we can do that via:</p>
+
+
+        <code>~> gem install invoker</code>
+
+
+        <p>Currently it only works with Ruby 1.9.3 and 2.0.</p>
+
+        <p>You need to start by creating a <span class="in-path">ini</span> file which will define processes you want to manage using invoker. An example
+          ini file is
+          included in the repo.</p>
+        <code><pre>
+
+[rails]
+directory = /home/gnufied/god_particle
+command = zsh -c 'bundle exec rails s -p 5000'
+
+[dj]
+directory = /home/gnufied/god_particle
+command = zsh -c 'bundle exec ruby script/delayed_job'
+
+[events]
+directory = /home/gnufied/god_particle
+command = zsh -c 'bundle exec ruby script/event_server'
+
+          </pre>
+        </code>
+
+        <p>After that you can start process manager via:</p>
+
+        <code>~> invoker start invoker.ini</code>
+
+        <p>Above command will start all your processes in one terminal with their stdout/stderr merged and labelled.</p>
+      </section>
+      <section>
+        <h2> .dev TLD support for local apps</h2>
+        <p>
+          You can access http services managed by invoker via <span class="in-path">command_label.dev</span> domain locally.
+        </p>
+        <p>
+          This feature currently works only on <em> Mac OSX </em>.
+        </p>
+        <p>
+          To make it work though, you need to run following command, just once from anywhere:
+          <code>
+            ~> sudo invoker setup # read below if you are migrating from Pow
+          </code>
+          <p>
+            Above command installs a local <span class="in-path">.dev</span> DNS resolver
+            and a port forwarding rule that forwards all incoming requests on <span class="in-path">127.0.0.1:80</span>
+            to Invoker HTTP proxy.
+          </p>
+          <p>
+            If you decide to remove Invoker, you can remove things installed by Invoker using command
+          </p>
+          <code><pre>~> sudo invoker uninstall </pre></code>
+          <p>
+            Now because invoker is making your app server available on a domain. It requires
+            control over port(or needs to know the port) on which your applications will be listening. This can be simply
+            done by replacing specific port number in `ini` file with <span class="in-path">$PORT</span> or by specifying
+            a port key. For example:
+          </p>
+        </p>
+        <code><pre>
+
+[terminal]
+directory = /home/gnufied/ayr-terminal
+port = 3000
+command = node app
+
+[cms]
+directory = /home/gnufied/mezzainine
+command = python manage.py runserver $PORT --noreload
+
+[typo]
+directory = /home/gnufied/typo
+command = bundle exec rails s -p $PORT
+
+        </pre></code>
+        <p>
+          Now these services can be accessed via <span class="in-path">http://terminal.dev</span> , <span class="in-path">http://cms.dev</span>
+          <span class="in-path">http://typo.dev</span>. You can also access them via wildcard subdomains such as <span class="in-path">*.*.dev</span>.
+        </p>
+      </section>
+
+      <section>
+        <h2> Process managment </h2>
+        <p>
+          Additionally Invoker allows you to manage individual processes. You can start/stop/restart
+          different processes managed by invoker without affecting others.
+        </p>
+        <code><pre>
+# Will try to stop running delayed job by sending SIGINT to the process
+~> invoker remove dj
+
+# If Process can't be killed by SIGINT send a custom signal
+~> invoker remove dj -s 9
+
+# add and start running
+~> invoker add dj
+
+# List currently running processes managed by invoker
+~> invoker list
+
+# Restart process given by command Label
+~> invoker reload dj
+
+# Restart process given by command label using specific signal for killing
+~> invoker reload dj -s 9</pre>
+        </code>
+
+        <p>You can also enable OSX notifications for crashed processes by installing terminal-notifier gem. It is not a
+          dependency, but can be useful if something crashed and you weren't paying attention.
+        </p>
+      </section>
+
+      <section>
+        <h2> Migrating from Pow </h2>
+        <p>
+          If you are migrating from Pow then first step before running <span class="in-path">invoker setup</span> is to uninstall Pow:
+        </p>
+        <code><pre>
+curl get.pow.cx/uninstall.sh | sh </pre>
+        </code>
+        <p>
+          After that you should run <span class="in-path">invoker setup</span>
+          as usual. If for some reason you can't uninstall Pow via above
+          command (in case you installed Pow using homebrew), then you
+          should remove Pow daemon manually.
+        </p>
+        <p>
+          After running <span class="in-path">invoker setup</span> you will
+          have to <em>switch off wi-fi and then switch it on </em> for
+          resettng OSX network configuration.
+        </p>
+      </section>
+
+      <section>
+        <h2> Using Invoker with rbenv or rvm </h2>
+        <p>
+          The way <span class="in-path">rbenv</span> and <span class="in-path">rvm</span> work sometimes creates problems when you are trying to use a process supervisor like invoker. There are couple of things to keep in mind,
+If you are running invoker with Ruby version x, but your application requires Ruby version Y:
+        </p>
+        <ul class="code-points">
+          <li>
+            <p>
+              When using rbenv and zsh, remember that <span class="in-path">.zshrc</span>
+              is not read for commands run via <span class="in-path">zsh -c</span>. So first
+              add:
+            </p>
+<code><pre>
+~> cat > ~/.zshenv
+eval "$(rbenv init -)"
+</pre></code>
+
+            and then run it using:
+
+<code><pre>
+command = RBENV_VERSION=2.0.0-p0 zsh -c "bundle exec rails s"
+</pre></code>
+          </li>
+          <li>
+            <p>
+              Unless version of Ruby using which you are running invoker command and version of Ruby you are using in the application is same, you almost always will want to use
+              <span class="in-path">zsh -c</span> or <span class="in-path">bash -c</span>. RVM in particular requires a login shell and hence sometimes you may have to use <span class="in-path">bash -lc</span>. For example:
+            </p>
+<code><pre>
+command = bash -lc "rvm 2.0.0-p0 do bundle exec rails s"
+</pre></code>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2> FAQ </h2>
+        <p>
+          <ul>
+            <li>
+              <p> <em>Question : </em> Does Invoker work with pow?</p>
+              <p>
+                <em> Answer : </em> If you have already installed pow, Invoker will
+                have a conflict with it.
+                You will be prompted to overwrite pow setup with Invoker. You should
+                uninstall pow before running Invoker setup.
+
+                If DNS does not work after running invoker setup. Try turning wi-fi on and off.
+              </p>
+            </li>
+            <li>
+              <p>
+                <em> Question : </em> How do I undo Invoker setup?
+              </p>
+              <p>
+                <em> Answer : </em> Invoker installs a resolver file in
+                <span class="in-path">/etc/resolver/dev</span> and a firewall rule to
+                port forward incoming requests on port 80 to another port.
+
+                You can remove Invoker setup by removing <span class="in-path">/etc/resolver/dev</span> and by running <span class="in-path">sudo launchctl unload -w com.codemancers.invoker.firewall.plist</span>. Finally remove this file <span class="in-path">/Library/LaunchDaemons/com.codemancers.invoker.firewall.plist</span>.
+              </p>
+            </li>
+            <li>
+              <p>
+                <em> Question : </em> Invoker does not restart my process correctly.
+              </p>
+              <p>
+                <em> Answer : </em> Some commands when ran - start more than one process behind the scenes. Invoker currently
+                does not restart such processes properly. Good news is - we are working on a fix!
+              </p>
+            </li>
+          </ul>
+        </p>
+      </section>
+
+      <section>
+        <h2> Credits </h2>
+        <p>
+          Invoker is hugely inspired by <a href="http://pow.cx">pow</a> and <a href="https://github.com/ddollar/foreman">Foreman</a>.
+          It stands on the shoulder of awesome work done by folks who created Pow & Foreman. The Codemancers team is immensely grateful to them.
+
+        </p>
+      </section>
+    </div>
+
+    <footer>
+      <div class="in-footer-content cf">
+        <div class="in-double-line"></div>
+        <div class="col-1-of-2">
+          <div class="in-hire-us">
+            <div>
+              <a href="http://codemancers.com/hire_us/index.html" target="_blank" class="in-btn">Hire us</a>
+              <p>to support</p>
+            </div>
+            <img src="img/logo.png" alt="Invoker ">
+          </div>
+
+        </div>
+        <div class="col-1-of-2 align-right">
+          <div class="in-geeks">
+            <p>Built by</p>
+            <a href="http://codemancers.com/who_we_are/index.html" target="_blank"> <img src="img/GeeksLogo.png" alt="geeks "> <span>@Codemancers.com</span>    </a>
+          </div>
+
+        </div>
+        <p>&copy;2013 <a href="http://www.codemancers.com" target="_blank">Codemacers.com</a></p>
+      </div>
+    </footer>
+
+  </body>
+</html>
