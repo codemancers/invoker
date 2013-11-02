@@ -58,6 +58,9 @@
           <li>
             <a href="#versions"> Using with RVM or rbenv </a>
           </li>
+          <li>
+            <a href="https://github.com/code-mancers/invoker/issues"> Bug Report </a>
+          </li>
 
           <li>
             <a href="#faq"> FAQ </a>
@@ -303,15 +306,6 @@ command = bash -lc "rvm 2.0.0-p0 do bundle exec rails s" </pre></code>
                   port forward incoming requests on port 80 to another port.
 
                   You can remove Invoker setup by removing <span class="in-path">/etc/resolver/dev</span> and by running <span class="in-path">sudo launchctl unload -w com.codemancers.invoker.firewall.plist</span>. Finally remove this file <span class="in-path">/Library/LaunchDaemons/com.codemancers.invoker.firewall.plist</span>.
-                </p>
-              </li>
-              <li>
-                <p>
-                  <em> Question : </em> Invoker does not restart my process correctly.
-                </p>
-                <p>
-                  <em> Answer : </em> Some commands when ran - start more than one process behind the scenes. Invoker currently
-                  does not restart such processes properly. Good news is - we are working on a fix!
                 </p>
               </li>
             </ul>
