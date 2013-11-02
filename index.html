@@ -112,21 +112,17 @@
             ini file is
             included in the repo.</p>
           <code><pre>
+[rails]
+directory = /home/gnufied/god_particle
+command = bundle exec rails s -p 5000
 
-              [rails]
-              directory = /home/gnufied/god_particle
-              command = bundle exec rails s -p 5000
+[dj]
+directory = /home/gnufied/god_particle
+command = bundle exec ruby script/delayed_job
 
-              [dj]
-              directory = /home/gnufied/god_particle
-              command = bundle exec ruby script/delayed_job
-
-              [events]
-              directory = /home/gnufied/god_particle
-              command = bundle exec ruby script/event_server
-
-            </pre>
-          </code>
+[events]
+directory = /home/gnufied/god_particle
+command = bundle exec ruby script/event_server </pre> </code>
 
           <p>After that you can start process manager via:</p>
 
@@ -164,21 +160,18 @@
           </p>
           </p>
           <code><pre>
+[terminal]
+directory = /home/gnufied/ayr-terminal
+port = 3000
+command = node app
 
-              [terminal]
-              directory = /home/gnufied/ayr-terminal
-              port = 3000
-              command = node app
+[cms]
+directory = /home/gnufied/mezzainine
+command = python manage.py runserver $PORT --noreload
 
-              [cms]
-              directory = /home/gnufied/mezzainine
-              command = python manage.py runserver $PORT --noreload
-
-              [typo]
-              directory = /home/gnufied/typo
-              command = bundle exec rails s -p $PORT
-
-          </pre></code>
+[typo]
+directory = /home/gnufied/typo
+command = bundle exec rails s -p $PORT </pre></code>
           <p>
             Now these services can be accessed via <span class="in-path">http://terminal.dev</span> , <span class="in-path">http://cms.dev</span>
             <span class="in-path">http://typo.dev</span>. You can also access them via wildcard subdomains such as <span class="in-path">*.*.dev</span>.
@@ -198,15 +191,9 @@
             must have <span class="in-path">$PORT</span> in command - for <span class="in-path">.dev</span> domain feature to work
           </p>
 
-          <code>
-            <pre>
-
-              rails: cd $HOME/rails_app && bundle exec rails s -p $PORT
-              cms: cd $HOME/cms && python manage.py runserver $PORT
-
-            </pre>
-          </code>
-
+          <code> <pre>
+rails: cd $HOME/rails_app && bundle exec rails s -p $PORT
+cms: cd $HOME/cms && python manage.py runserver $PORT </pre> </code>
         </section>
 
         <section>
@@ -216,24 +203,23 @@
             different processes managed by invoker without affecting others.
           </p>
           <code><pre>
-              # Will try to stop running delayed job by sending SIGINT to the process
-              ~> invoker remove dj
+# Will try to stop running delayed job by sending SIGINT to the process
+~> invoker remove dj
 
-              # If Process can't be killed by SIGINT send a custom signal
-              ~> invoker remove dj -s 9
+# If Process can't be killed by SIGINT send a custom signal
+~> invoker remove dj -s 9
 
-              # add and start running
-              ~> invoker add dj
+# add and start running
+~> invoker add dj
 
-              # List currently running processes managed by invoker
-              ~> invoker list
+# List currently running processes managed by invoker
+~> invoker list
 
-              # Restart process given by command Label
-              ~> invoker reload dj
+# Restart process given by command Label
+~> invoker reload dj
 
-              # Restart process given by command label using specific signal for killing
-              ~> invoker reload dj -s 9</pre>
-          </code>
+# Restart process given by command label using specific signal for killing
+~> invoker reload dj -s 9</pre> </code>
 
           <p>You can also enable OSX notifications for crashed processes by installing terminal-notifier gem. It is not a
             dependency, but can be useful if something crashed and you weren't paying attention.
@@ -246,8 +232,7 @@
             If you are migrating from Pow then first step before running <span class="in-path">invoker setup</span> is to uninstall Pow:
           </p>
           <code><pre>
-              curl get.pow.cx/uninstall.sh | sh </pre>
-          </code>
+curl get.pow.cx/uninstall.sh | sh </pre> </code>
           <p>
             After that you should run <span class="in-path">invoker setup</span>
             as usual. If for some reason you can't uninstall Pow via above
@@ -275,15 +260,12 @@
                 add:
               </p>
               <code><pre>
-                  ~> cat > ~/.zshenv
-                  eval "$(rbenv init -)"
-              </pre></code>
-
+~> cat > ~/.zshenv
+eval "$(rbenv init -)" </pre></code>
               and then run it using:
 
               <code><pre>
-                  command = RBENV_VERSION=2.0.0-p0 zsh -c "bundle exec rails s"
-              </pre></code>
+command = RBENV_VERSION=2.0.0-p0 zsh -c "bundle exec rails s" </pre></code>
             </li>
             <li>
               <p>
@@ -291,8 +273,7 @@
                 <span class="in-path">zsh -c</span> or <span class="in-path">bash -c</span>. RVM in particular requires a login shell and hence sometimes you may have to use <span class="in-path">bash -lc</span>. For example:
               </p>
               <code><pre>
-                  command = bash -lc "rvm 2.0.0-p0 do bundle exec rails s"
-              </pre></code>
+command = bash -lc "rvm 2.0.0-p0 do bundle exec rails s" </pre></code>
             </li>
           </ul>
         </section>
