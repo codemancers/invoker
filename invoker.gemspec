@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.version = Invoker::VERSION
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Codemancers Tech"]
+  s.authors = ["Hemant Kumar", "Amitava Basak"]
   s.date = %q{2013-05-04}
   s.description = %q{Something small for process management}
   s.email = %q{hemant@codemancers.com}
