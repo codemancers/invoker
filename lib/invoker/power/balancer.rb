@@ -112,7 +112,7 @@ module Invoker
 
       private
       def select_backend_config(host)
-        matching_string = host.match(/(\w+)\.dev(\:\d+)?$/)
+        matching_string = host.match(/([\w-]+)\.dev(\:\d+)?$/)
         return nil unless matching_string
         if selected_app = matching_string[1]
           Invoker::CONFIG.process(selected_app)
