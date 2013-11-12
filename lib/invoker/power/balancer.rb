@@ -42,6 +42,7 @@ module Invoker
 
     class Balancer
       attr_accessor :connection, :http_parser, :session
+      DEV_MATCH_REGEX = /([\w-]+)\.dev(\:\d+)?$/
 
       def self.run(options = {})
         EventMachine.start_server('0.0.0.0', Invoker::CONFIG.http_port,
@@ -112,7 +113,7 @@ module Invoker
 
       private
       def select_backend_config(host)
-        matching_string = host.match(/(\w+)\.dev(\:\d+)?$/)
+        matching_string = host.match(DEV_MATCH_REGEX)
         return nil unless matching_string
         if selected_app = matching_string[1]
           Invoker::CONFIG.process(selected_app)
