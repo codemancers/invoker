@@ -111,9 +111,13 @@ module Invoker
         connection.close_connection_after_writing() if backend == session
       end
 
+      def extract_host_from_domain(host)
+        host.match(DEV_MATCH_REGEX)
+      end
+
       private
       def select_backend_config(host)
-        matching_string = host.match(DEV_MATCH_REGEX)
+        matching_string = extract_host_from_domain(host)
         return nil unless matching_string
         if selected_app = matching_string[1]
           Invoker::CONFIG.process(selected_app)

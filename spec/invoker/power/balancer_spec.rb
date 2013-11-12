@@ -2,8 +2,12 @@ require 'spec_helper'
 
 describe Invoker::Power::Balancer do
   context "matching domain part of incoming request" do
+    before do
+      @balancer = Invoker::Power::Balancer.new(mock("connection"))
+    end
+
     it "should do foo.dev match" do
-      match = "foo.dev".match(Invoker::Power::Balancer::DEV_MATCH_REGEX)
+      match = @balancer.extract_host_from_domain("foo.dev")
       expect(match).to_not be_nil
 
       matching_string = match[1]
@@ -11,7 +15,7 @@ describe Invoker::Power::Balancer do
     end
 
     it "should match foo.dev:1080" do
-      match = "foo.dev:1080".match(Invoker::Power::Balancer::DEV_MATCH_REGEX)
+      match = @balancer.extract_host_from_domain("foo.dev:1080")
       expect(match).to_not be_nil
 
       matching_string = match[1]
@@ -19,7 +23,7 @@ describe Invoker::Power::Balancer do
     end
 
     it "should match emacs.bar.dev" do
-      match = "emacs.bar.dev".match(Invoker::Power::Balancer::DEV_MATCH_REGEX)
+      match = @balancer.extract_host_from_domain("emacs.bar.dev")
       expect(match).to_not be_nil
 
       matching_string = match[1]
@@ -27,7 +31,7 @@ describe Invoker::Power::Balancer do
     end
 
     it "should match hello-world.dev" do
-      match = "hello-world.dev".match(Invoker::Power::Balancer::DEV_MATCH_REGEX)
+      match = @balancer.extract_host_from_domain("hello-world.dev")
       expect(match).to_not be_nil
 
       matching_string = match[1]
