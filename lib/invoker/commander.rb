@@ -45,6 +45,11 @@ module Invoker
     #
     # @param process_info [OpenStruct(command, directory)]
     def add_command(process_info)
+      if process_running?(process_info.label)
+        Invoker::Logger.puts "\nProcess '#{process_info.label}' is already running".color(:red)
+        return false
+      end
+
       m, s = PTY.open
       s.raw! # disable newline conversion.
 
@@ -266,6 +271,10 @@ module Invoker
         end
       }
       @workers = {}
+    end
+
+    def process_running?(command_label)
+      !!workers[command_label]
     end
   end
 end

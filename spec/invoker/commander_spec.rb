@@ -1,12 +1,12 @@
 require "spec_helper"
 
 describe "Invoker::Commander" do
-  
+
   describe "With no processes configured" do
     before do
       @commander = Invoker::Commander.new()
     end
-    
+
     it "should throw error" do
       invoker_config.stubs(:processes).returns([])
 
@@ -25,7 +25,7 @@ describe "Invoker::Commander" do
       invoker_config.stubs(:processes).returns([OpenStruct.new(:label => "resque", :cmd => "foo", :dir => "bar")])
       invoker_config.expects(:process).returns(OpenStruct.new(:label => "resque", :cmd => "foo", :dir => "bar"))
       @commander.expects(:add_command).returns(true)
-      
+
       @commander.add_command_by_label("resque")
     end
   end
@@ -58,7 +58,7 @@ describe "Invoker::Commander" do
       #   end
 
       #   it "should return false" do
-          
+
       #   end
       # end
     end
@@ -102,6 +102,12 @@ describe "Invoker::Commander" do
 
       pipe_end_worker = @commander.open_pipes[worker.pipe_end.fileno]
       expect(pipe_end_worker).not_to be_nil
+    end
+
+    it "should not start already running process" do
+      @commander.workers.expects(:[]).returns(OpenStruct.new(:pid => "bogus"))
+      Invoker::Logger.expects(:puts).once
+      expect(@commander.add_command(OpenStruct.new(:label => "sleep"))).to be_false
     end
   end
 
