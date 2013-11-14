@@ -1,12 +1,12 @@
 require "spec_helper"
 
 describe "Invoker::Commander" do
-  
+
   describe "With no processes configured" do
     before do
       @commander = Invoker::Commander.new()
     end
-    
+
     it "should throw error" do
       invoker_config.stubs(:processes).returns([])
 
@@ -25,8 +25,13 @@ describe "Invoker::Commander" do
       invoker_config.stubs(:processes).returns([OpenStruct.new(:label => "resque", :cmd => "foo", :dir => "bar")])
       invoker_config.expects(:process).returns(OpenStruct.new(:label => "resque", :cmd => "foo", :dir => "bar"))
       @commander.expects(:add_command).returns(true)
-      
+
       @commander.add_command_by_label("resque")
+    end
+
+    it "should not start already running process" do
+      @commander.workers.expects(:[]).returns(OpenStruct.new(:pid => "bogus"))
+      expect(@commander.add_command_by_label("resque")).to be_false
     end
   end
 
@@ -58,7 +63,7 @@ describe "Invoker::Commander" do
       #   end
 
       #   it "should return false" do
-          
+
       #   end
       # end
     end
