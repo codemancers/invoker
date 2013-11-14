@@ -28,6 +28,11 @@ describe "Invoker::Commander" do
 
       @commander.add_command_by_label("resque")
     end
+
+    it "should not start already running process" do
+      @commander.workers.expects(:[]).returns(OpenStruct.new(:pid => "bogus"))
+      expect(@commander.add_command_by_label("resque")).to be_false
+    end
   end
 
   describe "#remove_command" do
@@ -102,12 +107,6 @@ describe "Invoker::Commander" do
 
       pipe_end_worker = @commander.open_pipes[worker.pipe_end.fileno]
       expect(pipe_end_worker).not_to be_nil
-    end
-
-    it "should not start already running process" do
-      @commander.workers.expects(:[]).returns(OpenStruct.new(:pid => "bogus"))
-      Invoker::Logger.expects(:puts).once
-      expect(@commander.add_command(OpenStruct.new(:label => "sleep"))).to be_false
     end
   end
 

@@ -45,11 +45,6 @@ module Invoker
     #
     # @param process_info [OpenStruct(command, directory)]
     def add_command(process_info)
-      if process_running?(process_info.label)
-        Invoker::Logger.puts "\nProcess '#{process_info.label}' is already running".color(:red)
-        return false
-      end
-
       m, s = PTY.open
       s.raw! # disable newline conversion.
 
@@ -72,6 +67,11 @@ module Invoker
     #
     # @param command_label [String] Command label of process specified in config file.
     def add_command_by_label(command_label)
+      if process_running?(command_label)
+        Invoker::Logger.puts "\nProcess '#{command_label}' is already running".color(:red)
+        return false
+      end
+
       process_info = Invoker::CONFIG.process(command_label)
       if process_info
         add_command(process_info)
