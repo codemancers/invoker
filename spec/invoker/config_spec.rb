@@ -145,25 +145,5 @@ web: bundle exec rails s -p $PORT
         File.delete("/tmp/Procfile")
       end
     end
-
-    it "should load environment variables from .env file" do
-      begin
-        env_file = File.new("#{ENV['PWD']}/.env", "w")
-        env_data =<<-EOD
-TEST="test env"
-        EOD
-        env_file.write(env_data)
-        env_file.close()
-        File.open("/tmp/Procfile", "w") {|fl| 
-          fl.write <<-EOD
-web: bundle exec rails s -p $PORT
-          EOD
-        }
-        config = Invoker::Parsers::Config.new("/tmp/Procfile", 9000)
-        expect(ENV["TEST"]).to eq("test env")
-      ensure
-        File.delete("#{ENV['PWD']}/.env")
-      end
-    end
   end
 end
