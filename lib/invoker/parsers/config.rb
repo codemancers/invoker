@@ -1,5 +1,4 @@
 require 'iniparse'
-require 'dotenv'
 
 module Invoker
   module Parsers
@@ -50,7 +49,6 @@ module Invoker
       end
 
       def process_procfile
-        load_env
         procfile = Invoker::Parsers::Procfile.new(@filename)
         procfile.entries.map do |name, command|
           section = { "label" => name, "command" => command }
@@ -65,10 +63,6 @@ module Invoker
         else
           make_option(section)
         end
-      end
-
-      def load_env
-        Dotenv.load
       end
 
       def pick_port(section)

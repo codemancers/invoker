@@ -1,6 +1,7 @@
 require "io/console"
 require 'pty'
 require "json"
+require "dotenv"
 
 module Invoker
   class Commander
@@ -147,6 +148,16 @@ module Invoker
       }
     end
 
+    def load_env(directory = nil)
+      directory ||= ENV['PWD']
+      default_env = File.join(directory, '.env')
+      if File.exist?(default_env)
+        Dotenv::Environment.new(default_env)
+      else
+        {}
+      end
+    end
+
     private
     def start_event_loop
       loop do
@@ -209,6 +220,8 @@ module Invoker
 
       event_manager.schedule_event(command_label, :exit) { remove_worker(command_label) }
 
+      env_options = load_env(process_info.dir)
+
       spawn_options = {
         :chdir => process_info.dir || ENV['PWD'], :out => write_pipe, :err => write_pipe,
         :pgroup => true, :close_others => true, :in => :close
@@ -216,10 +229,10 @@ module Invoker
 
       if defined?(Bundler)
         Bundler.with_clean_env do
-          spawn(process_info.cmd, spawn_options)
+          spawn(env_options, process_info.cmd, spawn_options)
         end
       else
-        spawn(process_info.cmd, spawn_options)
+        spawn(env_options, process_info.cmd, spawn_options)
       end
     end
 

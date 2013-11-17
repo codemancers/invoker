@@ -95,6 +95,7 @@ describe "Invoker::Commander" do
 
     it "should populate workers and open_pipes" do
       @commander.expects(:start_event_loop)
+      @commander.expects(:load_env).returns({})
       @commander.start_manager()
       expect(@commander.open_pipes).not_to be_empty
       expect(@commander.workers).not_to be_empty
@@ -136,4 +137,49 @@ describe "Invoker::Commander" do
     end
   end
 
+  describe "#load_env" do
+    before do
+      @commander = Invoker::Commander.new()
+    end
+
+    it "should load .env file from the specified directory" do
+      dir = "/tmp"
+      begin
+        env_file = File.new("#{dir}/.env", "w")
+        env_data =<<-EOD
+FOO=foo
+BAR=bar
+        EOD
+        env_file.write(env_data)
+        env_file.close
+        env_options = @commander.load_env(dir)
+        expect(env_options).to include("FOO" => "foo", "BAR" => "bar")
+      ensure
+        File.delete(env_file.path)
+      end
+    end
+
+    it "should default to current directory if no directory is specified" do
+      dir = ENV["HOME"]
+      ENV.stubs(:[]).with("PWD").returns(dir)
+      begin
+        env_file = File.new("#{dir}/.env", "w")
+        env_data =<<-EOD
+FOO=bar
+BAR=foo
+        EOD
+        env_file.write(env_data)
+        env_file.close
+        env_options = @commander.load_env
+        expect(env_options).to include("FOO" => "bar", "BAR" => "foo")
+      ensure
+        File.delete(env_file.path)
+      end
+    end
+
+    it "should return empty hash if there is no .env file" do
+      dir = "/tmp"
+      expect(@commander.load_env(dir)).to eq({})
+    end
+  end
 end
