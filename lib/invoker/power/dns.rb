@@ -1,9 +1,7 @@
 require "logger"
 
 module Invoker
-
   module Power
-
     class DNS
       IN = Resolv::DNS::Resource::IN
       def self.server_ports
@@ -30,8 +28,6 @@ module Invoker
           end
         end
       end
-
     end
-
   end
 end
