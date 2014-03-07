@@ -1,0 +1,30 @@
+AllCops:
+  RunRailsCops: true
+  Excludes:
+    - db/**
+
+HashSyntax:
+  Description: 'Use either hash rocket or 1.9 styled hashes.'
+  Enabled: false
+
+LineLength:
+  Max: 100
+
+# Disable Certain Tests
+
+Documentation:
+  Description: 'Document classes and non-namespace modules.'
+  Enabled: false
+
+StringLiterals:
+  Description: 'Checks if uses of quotes match the configured preference.'
+  Enabled: false
+
+Encoding:
+  Description: 'Use UTF-8 as the source file encoding.'
+  Enabled: false
+
+SignalException:
+  Description: 'Do not enforce use of fail when raising exceptions.'
+  # Valid values are: semantic, only_raise and only_fail
+  EnforcedStyle: only_raise

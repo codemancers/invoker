@@ -116,6 +116,7 @@ module Invoker
       end
 
       private
+
       def select_backend_config(host)
         matching_string = extract_host_from_domain(host)
         return nil unless matching_string
