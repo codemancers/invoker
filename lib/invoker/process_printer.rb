@@ -37,6 +37,7 @@ module Invoker
     end
 
     private
+
     def self.colorize_hash(hash, color)
       hash.inject({}) do |mem,(key,obj)|
         if obj.to_s.length > MAX_COLUMN_WIDTH

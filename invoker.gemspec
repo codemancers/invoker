@@ -36,6 +36,7 @@ Gem::Specification.new do |s|
   s.add_dependency("highline", "~> 1.6")
   s.add_dependency("http-parser-lite", "~> 0.6")
   s.add_dependency("dotenv", "~> 0.9")
+  s.add_dependency("yajl-ruby", "~> 1.2")
   s.add_development_dependency("rspec")
   s.add_development_dependency("mocha")
   s.add_development_dependency("rake")

@@ -1,18 +1,14 @@
 require "fileutils"
 
 module Invoker
-  module CommandListener
+  module IPC
     class Server
       SOCKET_PATH = "/tmp/invoker"
       def initialize
         @open_clients = []
-        Socket.unix_server_loop(SOCKET_PATH) {|sock, client_addrinfo|
-          begin
-            process_client(sock)
-          ensure
-            sock.close
-          end
-        }
+        Socket.unix_server_loop(SOCKET_PATH) do |sock, client_addrinfo|
+          Thread.new { process_client(sock) }
+        end
       end
 
       def clean_old_socket
@@ -22,8 +18,10 @@ module Invoker
       end
 
       def process_client(client_socket)
-        client = Invoker::CommandListener::Client.new(client_socket)
+        client = Invoker::IPC::Client.new(client_socket)
         client.read_and_execute
+      ensure
+        client_socket.close
       end
     end
   end
