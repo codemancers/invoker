@@ -12,7 +12,7 @@ module Invoker
       end
 
       def clean_old_socket
-        if File.exists?(SOCKET_PATH)
+        if File.exist?(SOCKET_PATH)
           FileUtils.rm(SOCKET_PATH, :force => true)
         end
       end

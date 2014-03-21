@@ -6,8 +6,17 @@ module Invoker
           base.extend ClassMethods
         end
 
-        def to_json
-          attributes.to_json
+        def as_json
+          attributes.merge(command: command)
+        end
+
+        def message_attributes
+          self.class.message_attributes
+        end
+
+        def attributes
+          message_attribute_keys = message_attributes || []
+          message_attribute_keys.inject({}) { |mem, obj| mem[obj] = send(obj); mem }
         end
 
         module ClassMethods
@@ -22,13 +31,62 @@ module Invoker
           def from_ruby_object(ruby_object)
           end
 
+          def message_attributes(*incoming_attributes)
+            if incoming_attributes.empty? && defined?(@message_attributes)
+              @message_attributes
+            else
+              @message_attributes ||= []
+              new_attributes = incoming_attributes.flatten
+              @message_attributes += new_attributes
+              attr_accessor * new_attributes
+            end
+          end
+
           def parser
             Yajl::Parser.new
           end
         end
       end
 
-      class Add < Struct(:command_name)
+      class Base
+        def initialize(options)
+          options.each do |key, value|
+            if self.respond_to?("#{key}=")
+              self.key = value
+            else
+              Invoker::Logger.puts("Ignoring message key #{key} for message #{self.class}")
+            end
+          end
+        end
+
+        def command
+          Invoker::IPC.underscore(self.class.name)
+        end
+
+        def deliver!
+          Socket.unix(Invoker::IPC::Server::SOCKET_PATH) do |socket|
+            Yajl::Encoder.encode(as_json, socket)
+          end
+        end
+      end
+
+      class Add < Base
+        include Serialization
+        message_attributes :process_name
+      end
+
+      class Reload < Base
+        include Serialization
+        message_attributes :process_name, :signal
+      end
+
+      class List
+        include Serialization
+      end
+
+      class Remove < Base
+        include Serialization
+        message_attributes :process_name, :signal
       end
     end
   end

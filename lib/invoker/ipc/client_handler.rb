@@ -1,6 +1,6 @@
 module Invoker
   module CommandListener
-    class Client
+    class ClientHandler
       attr_accessor :client_socket
       def initialize(client_socket)
         @client_socket = client_socket

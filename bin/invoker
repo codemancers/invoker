@@ -1,11 +1,7 @@
 #!/usr/bin/env ruby
 
-begin
-  require "invoker"
-rescue LoadError
-  invoker_lib_path = File.expand_path('../../lib', __FILE__)
-  $:.unshift(invoker_lib_path)
-  require "invoker"
-end
+invoker_lib_path = File.expand_path('../../lib', __FILE__)
+$:.unshift(invoker_lib_path)
+require "invoker"
 
-Invoker::Runner.run(ARGV)
+Invoker::CLI.start(ARGV)
