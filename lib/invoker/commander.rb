@@ -34,7 +34,7 @@ module Invoker
         raise Invoker::Errors::InvalidConfig.new("No processes configured in config file")
       end
       install_interrupt_handler()
-      unix_server_thread = Thread.new { Invoker::CommandListener::Server.new() }
+      unix_server_thread = Thread.new { Invoker::IPC::Server.new() }
       thread_group.add(unix_server_thread)
       run_power_server()
       Invoker::CONFIG.processes.each { |process_info| add_command(process_info) }
@@ -60,8 +60,8 @@ module Invoker
     end
 
     # List currently running commands
-    def list_commands
-      Invoker::ProcessPrinter.to_json(workers)
+    def process_list
+      Invoker::IPC::Message::ListResponse.from_workers(workers)
     end
 
     # Start executing given command by their label name.
@@ -82,26 +82,26 @@ module Invoker
     # Reload a process given by command label
     #
     # @params command_label [String] Command label of process specified in config file.
-    def reload_command(command_label, rest_args)
-      if remove_command(command_label, rest_args)
+    def reload_command(reload_message)
+      command_label = reload_message.process_name
+      if remove_command(reload_message.remove_message)
         event_manager.schedule_event(command_label, :worker_removed) {
-          add_command_by_label(command_label) 
+          add_command_by_label(command_label)
         }
       else
-        add_command_by_label(command_label) 
+        add_command_by_label(command_label)
       end
     end
 
     # Remove a process from list of processes managed by invoker supervisor.It also
     # kills the process before removing it from the list.
     #
-    # @param command_label [String] Command label of process specified in config file
-    # @param rest_args [Array] Additional option arguments, such as signal that can be used.
+    # @param remove_message [Invoker::IPC::Message::Remove]
     # @return [Boolean] if process existed and was removed else false
-    def remove_command(command_label, rest_args)
-      worker = workers[command_label]
+    def remove_command(remove_message)
+      worker = workers[remove_message.process_name]
       return false unless worker
-      signal_to_use = rest_args ? Array(rest_args).first : 'INT'
+      signal_to_use = remove_message.signal || 'INT'
 
       Invoker::Logger.puts("Removing #{command_label} with signal #{signal_to_use}".color(:red))
       kill_or_remove_process(worker.pid, signal_to_use, command_label)

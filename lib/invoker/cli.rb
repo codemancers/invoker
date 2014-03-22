@@ -3,7 +3,6 @@ require "thor"
 
 module Invoker
   class CLI < Thor
-    require "invoker/cli/connection"
     desc "setup", "Run Invoker setup"
     def setup
       Invoker::Power::Setup.install
@@ -22,7 +21,7 @@ module Invoker
 
     desc "start invoker.ini", "Start Invoker Server"
     option :port, type: :numeric, banner: "Port series to be used for starting rack servers"
-    def start(filename)
+    def start(file)
       port = options[:port] || 9000
       Invoker::Parsers::Config.new(file, port).tap do |config|
         Invoker.const_set(:CONFIG, config)
@@ -69,7 +68,7 @@ module Invoker
     private
 
     def unix_socket
-      Connection.new()
+      Invoker::IPC::UnixClient.new
     end
 
     def warn_about_terminal_notifier

@@ -1,6 +1,6 @@
 module Invoker
   module IPC
-    class Remove
+    class TailCommand < BaseCommand
     end
   end
 end

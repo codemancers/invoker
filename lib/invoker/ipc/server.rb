@@ -18,7 +18,7 @@ module Invoker
       end
 
       def process_client(client_socket)
-        client = Invoker::IPC::Client.new(client_socket)
+        client = Invoker::IPC::ClientHandler.new(client_socket)
         client.read_and_execute
       ensure
         client_socket.close

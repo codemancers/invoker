@@ -3,8 +3,8 @@ module Invoker
     def self.message_from_io(io)
       yajl_parser = Yajl::Parser.new
       ruby_object_hash = yajl_parser.parse(io)
-      command_name = ruby_object_hash['command']
-      command_klass = Invoker::IPC.const_set(command_name.capitalize)
+      command_name = camelize(ruby_object_hash['type'])
+      command_klass = Invoker::IPC::Message.const_get(command_name)
       command_klass.new(ruby_object_hash)
     end
 
@@ -28,12 +28,15 @@ module Invoker
   end
 end
 
+require "invoker/ipc/base_command"
 require 'invoker/ipc/message'
-require 'invoker/ipc/add'
-require 'invoker/ipc/client'
-require 'invoker/ipc/dns_check'
-require 'invoker/ipc/list'
-require 'invoker/ipc/remove'
+require 'invoker/ipc/add_command'
+require 'invoker/ipc/client_handler'
+require 'invoker/ipc/dns_check_command'
+require 'invoker/ipc/list_command'
+require 'invoker/ipc/remove_command'
 require 'invoker/ipc/server'
-require 'invoker/ipc/stop'
-require 'invoker/ipc/tail'
+require 'invoker/ipc/stop_command'
+require "invoker/ipc/reload_command"
+require 'invoker/ipc/tail_command'
+require 'invoker/ipc/unix_client'

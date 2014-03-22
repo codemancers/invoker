@@ -1,24 +1,6 @@
 module Invoker
   class ProcessPrinter
     MAX_COLUMN_WIDTH = 40
-    def self.to_json(workers)
-      final_json = []
-      Invoker::CONFIG.processes.each do |process|
-        if worker = workers[process.label]
-          final_json << {
-            :command => process.cmd, :command_label => process.label, 
-            :dir => process.dir, :pid => worker.pid
-          }
-        else
-          final_json << {
-            :command => process.cmd, :command_label => process.label, 
-            :dir => process.dir
-          }
-        end
-      end
-
-      final_json.to_json
-    end
 
     def self.print_table(json_data)
       final_json = JSON.parse(json_data)

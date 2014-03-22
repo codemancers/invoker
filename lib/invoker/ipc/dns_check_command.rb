@@ -1,6 +1,6 @@
 module Invoker
   module IPC
-    class Stop
+    class DnsCheckCommand < BaseCommand
     end
   end
 end

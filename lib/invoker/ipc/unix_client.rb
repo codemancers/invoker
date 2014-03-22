@@ -1,6 +1,6 @@
 module Invoker
-  class CLI
-    class Connection
+  module IPC
+    class UnixClient
       def send_command(command, message = {})
         message_object = get_message_object(command, message)
         open_client_socket do |socket|

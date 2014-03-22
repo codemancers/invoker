@@ -8,6 +8,7 @@ require 'http-parser'
 require "ostruct"
 require "uuid"
 require "highline"
+require "yajl"
 require "invoker/version"
 require "invoker/logger"
 require "invoker/cli"

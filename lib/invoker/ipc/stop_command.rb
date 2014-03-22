@@ -1,6 +1,6 @@
 module Invoker
   module IPC
-    class AddCommand
+    class StopCommand < BaseCommand
     end
   end
 end
