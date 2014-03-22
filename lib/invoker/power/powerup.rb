@@ -12,8 +12,8 @@ module Invoker
         EM.run {
           trap("TERM") { stop }
           trap("INT") { stop }
-          DNS.run(listen: DNS.server_ports)
-          Balancer.run()
+          DNS.new.run(listen: DNS.server_ports)
+          Balancer.run
         }
       end
 
