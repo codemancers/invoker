@@ -3,6 +3,15 @@ require "thor"
 
 module Invoker
   class CLI < Thor
+    def self.start(*args)
+      cli_args = args.flatten
+      # If it is not a valid task, it is probably file argument
+      if cli_args.length == 1 && !tasks.keys.include?(cli_args.first)
+        args = [cli_args.unshift("start")]
+      end
+      super(*args)
+    end
+
     desc "setup", "Run Invoker setup"
     def setup
       Invoker::Power::Setup.install
@@ -19,7 +28,7 @@ module Invoker
       Invoker::Power::Setup.uninstall
     end
 
-    desc "start invoker.ini", "Start Invoker Server"
+    desc "start CONFIG_FILE", "Start Invoker Server"
     option :port, type: :numeric, banner: "Port series to be used for starting rack servers"
     def start(file)
       port = options[:port] || 9000
@@ -32,6 +41,7 @@ module Invoker
         end
       end
     end
+    default_task :start
 
     desc "add process", "Add a program to Invoker server"
     def add(name)
@@ -62,8 +72,6 @@ module Invoker
       signal = options[:signal] || 'INT'
       unix_socket.send_command('remove', process_name: name, signal: signal)
     end
-
-    default_task :start
 
     private
 
