@@ -20,10 +20,12 @@ module Invoker
       def process_client(client_socket)
         client = Invoker::IPC::ClientHandler.new(client_socket)
         client.read_and_execute
+      rescue StandardError => error
+        Invoker::Logger.puts error.message
+        Invoker::Logger.puts error.backtrace
       ensure
         client_socket.close
       end
     end
   end
-
 end

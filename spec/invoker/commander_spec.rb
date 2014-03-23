@@ -4,21 +4,21 @@ describe "Invoker::Commander" do
 
   describe "With no processes configured" do
     before do
-      @commander = Invoker::Commander.new()
+      @commander = Invoker::Commander.new
     end
 
     it "should throw error" do
       invoker_config.stubs(:processes).returns([])
 
       expect {
-        @commander.start_manager()
+        @commander.start_manager
       }.to raise_error(Invoker::Errors::InvalidConfig)
     end
   end
 
   describe "#add_command_by_label" do
     before do
-      @commander = Invoker::Commander.new()
+      @commander = Invoker::Commander.new
     end
 
     it "should find command by label and start it, if found" do
@@ -36,47 +36,41 @@ describe "Invoker::Commander" do
   end
 
   describe "#remove_command" do
+    let(:message) { MM::Remove.new(options) }
     describe "when a worker is found" do
       before do
-        @commander = Invoker::Commander.new()
+        @commander = Invoker::Commander.new
         @commander.workers.expects(:[]).returns(OpenStruct.new(:pid => "bogus"))
       end
 
       describe "if a signal is specified" do
+        let(:options) { { process_name: 'bogus', signal: 'HUP' } }
         it "should use that signal to kill the worker" do
           @commander.expects(:process_kill).with("bogus", "HUP").returns(true)
-          expect(@commander.remove_command("resque", "HUP")).to be_true
+          expect(@commander.remove_command(message)).to be_true
         end
       end
 
       describe "if no signal is specified" do
+        let(:options) { { process_name: 'bogus' } }
         it "should use INT signal" do
           @commander.expects(:process_kill).with("bogus", "INT").returns(true)
-          expect(@commander.remove_command("resque", nil)).to be_true
+          expect(@commander.remove_command(message)).to be_true
         end
       end
-
-      # describe "when a worker is not found" do
-      #   before do
-      #     @commander = Invoker::Commander.new()
-      #     @commander.workers.expects(:[]).returns(OpenStruct.new(:pid => "bogus"))
-      #   end
-
-      #   it "should return false" do
-
-      #   end
-      # end
     end
 
     describe "when no worker is found" do
+      let(:options) { { process_name: 'bogus', signal: 'HUP' } }
+
       before do
-        @commander = Invoker::Commander.new()
+        @commander = Invoker::Commander.new
         @commander.workers.expects(:[]).returns(nil)
       end
 
       it "should not kill anything" do
-        @commander.expects(:process_kill).never()
-        @commander.remove_command("resque", "HUP")
+        @commander.expects(:process_kill).never
+        @commander.remove_command(message)
       end
     end
 
@@ -96,7 +90,7 @@ describe "Invoker::Commander" do
     it "should populate workers and open_pipes" do
       @commander.expects(:start_event_loop)
       @commander.expects(:load_env).returns({})
-      @commander.start_manager()
+      @commander.start_manager
       expect(@commander.open_pipes).not_to be_empty
       expect(@commander.workers).not_to be_empty
 
@@ -113,7 +107,7 @@ describe "Invoker::Commander" do
 
   describe "#runnables" do
     before do
-      @commander = Invoker::Commander.new()
+      @commander = Invoker::Commander.new
     end
 
     it "should run runnables in reactor tick with one argument" do

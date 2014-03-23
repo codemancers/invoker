@@ -50,7 +50,7 @@ module Invoker
     desc "list", "List all running processes"
     def list
       unix_socket.send_command('list') do |response_object|
-        Invoker::ProcessPrinter.print_table(response_object)
+        Invoker::ProcessPrinter.new(response_object).tap { |printer| printer.print_table }
       end
     end
 

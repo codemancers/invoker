@@ -7,7 +7,7 @@ module Invoker
       end
 
       def send_data(message_object)
-        Yajl::Encoder.encode(message_object.as_json, client_socket)
+        client_socket.write(message_object.encoded_message)
       end
 
       def run_command(message_object)

@@ -11,11 +11,18 @@ module Invoker
         end
 
         def to_json
-          as_json.to_json
+          Yajl::Encoder.encode(as_json)
         end
 
         def message_attributes
           self.class.message_attributes
+        end
+
+        def encoded_message
+          json_data = Yajl::Encoder.encode(as_json)
+          json_size = json_data.length.to_s
+          length_str = json_size.rjust(Invoker::IPC::INITIAL_PACKET_SIZE, '0')
+          length_str + json_data
         end
 
         def eql?(other)
@@ -85,8 +92,6 @@ module Invoker
           options.each do |key, value|
             if self.respond_to?("#{key}=")
               send("#{key}=", value)
-            else
-              Invoker::Logger.puts("Ignoring message key #{key} for message #{self.class}")
             end
           end
         end

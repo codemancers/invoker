@@ -1,8 +1,11 @@
 module Invoker
   module IPC
+    INITIAL_PACKET_SIZE = 9
     def self.message_from_io(io)
+      json_size = io.read(INITIAL_PACKET_SIZE)
+      json_string = io.read(json_size.to_i)
       yajl_parser = Yajl::Parser.new
-      ruby_object_hash = yajl_parser.parse(io)
+      ruby_object_hash = yajl_parser.parse(json_string)
       command_name = camelize(ruby_object_hash['type'])
       command_klass = Invoker::IPC::Message.const_get(command_name)
       command_klass.new(ruby_object_hash)

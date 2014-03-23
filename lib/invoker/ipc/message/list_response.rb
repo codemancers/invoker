@@ -6,7 +6,7 @@ module Invoker
         message_attributes :processes
         def initialize(options)
           self.processes = []
-          process_array = options[:processes]
+          process_array = options[:processes] || options['processes']
           process_array.each do |process_hash|
             processes << Process.new(process_hash)
           end

@@ -100,6 +100,7 @@ module Invoker
     # @return [Boolean] if process existed and was removed else false
     def remove_command(remove_message)
       worker = workers[remove_message.process_name]
+      command_label = remove_message.process_name
       return false unless worker
       signal_to_use = remove_message.signal || 'INT'
 
