@@ -6,7 +6,7 @@ module Invoker
     def self.start(*args)
       cli_args = args.flatten
       # If it is not a valid task, it is probably file argument
-      if cli_args.length == 1 && !tasks.keys.include?(cli_args.first)
+      if default_start_command?(cli_args)
         args = [cli_args.unshift("start")]
       end
       super(*args)
@@ -41,7 +41,6 @@ module Invoker
         end
       end
     end
-    default_task :start
 
     desc "add process", "Add a program to Invoker server"
     def add(name)
@@ -74,6 +73,14 @@ module Invoker
     end
 
     private
+
+    def self.default_start_command?(args)
+      return false if args.length != 1
+      command_name = args.first
+      command_name &&
+        !command_name.match(/^-/) &&
+        !tasks.keys.include?(command_name)
+    end
 
     def unix_socket
       Invoker::IPC::UnixClient.new
