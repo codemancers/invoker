@@ -14,7 +14,7 @@ module Invoker
       end
 
       def self.send_command(command, message_arguments = {}, &block)
-        new(command, message_arguments, &block)
+        new.send_command(command, message_arguments, &block)
       end
 
       private
