@@ -11,7 +11,7 @@ module Invoker
         end
 
         def to_json
-          Yajl::Encoder.encode(as_json)
+          as_json.to_json
         end
 
         def message_attributes
@@ -19,7 +19,7 @@ module Invoker
         end
 
         def encoded_message
-          json_data = Yajl::Encoder.encode(as_json)
+          json_data = to_json
           json_size = json_data.length.to_s
           length_str = json_size.rjust(Invoker::IPC::INITIAL_PACKET_SIZE, '0')
           length_str + json_data
@@ -79,10 +79,6 @@ module Invoker
               @message_attributes += new_attributes
               attr_accessor *new_attributes
             end
-          end
-
-          def parser
-            Yajl::Parser.new
           end
         end
       end

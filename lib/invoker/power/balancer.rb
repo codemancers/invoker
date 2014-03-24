@@ -1,3 +1,6 @@
+require 'em-proxy'
+require 'http-parser'
+
 module Invoker
   module Power
     class BalancerConnection < EventMachine::ProxyServer::Connection

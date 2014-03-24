@@ -1,4 +1,5 @@
 require "logger"
+require 'rubydns'
 
 module Invoker
   module Power

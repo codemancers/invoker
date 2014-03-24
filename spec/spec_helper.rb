@@ -3,6 +3,7 @@ require 'coveralls'
 Coveralls.wear!
 
 require "invoker"
+require "invoker/power/power"
 MM = Invoker::IPC::Message
 
 RSpec.configure do |config|

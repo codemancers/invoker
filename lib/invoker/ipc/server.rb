@@ -7,7 +7,7 @@ module Invoker
       def initialize
         @open_clients = []
         Socket.unix_server_loop(SOCKET_PATH) do |sock, client_addrinfo|
-          Thread.new { process_client(sock) }
+          process_client(sock)
         end
       end
 

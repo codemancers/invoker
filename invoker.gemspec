@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.summary = %q{Something small for Process management}
-  s.add_dependency("thor", "~> 0.18")
+  s.add_dependency("thor", "~> 0.19")
   s.add_dependency("rainbow", "~> 2.0")
   s.add_dependency("iniparse", "~> 1.1")
   s.add_dependency("formatador", "~> 0.2")
@@ -36,7 +36,6 @@ Gem::Specification.new do |s|
   s.add_dependency("highline", "~> 1.6")
   s.add_dependency("http-parser-lite", "~> 0.6")
   s.add_dependency("dotenv", "~> 0.9")
-  s.add_dependency("yajl-ruby", "~> 1.2")
   s.add_development_dependency("rspec")
   s.add_development_dependency("mocha")
   s.add_development_dependency("rake")
