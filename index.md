@@ -3,7 +3,7 @@ layout: default
 title: Invoker - A Process Manager
 ---
 
-## 1. What is Invoker ?
+## What is Invoker?
 Invoker is a utility belt for managing processes in development environment.
 Use it for managing multiple processes with ease.
 
@@ -13,18 +13,19 @@ Use it for developing web applications on different local domains without
 <iframe width="640" height="480" src="http://www.youtube.com/embed/uu6NZrYvSQ8" frameborder="0" allowfullscreen></iframe>
 
 <div class="supported-runtimes">
-<div class="logos">
-<img src="images/python-grey.png">
-<img src="images/node-grey.png">
-<img src="images/ruby-grey.png">
-</div>
-<div class="in-double-line"></div>
-<div class="runtime-message">
-Works with <em>Python</em>, <em>Node</em> or any <em>Ruby</em> application.
-</div>
+  <div class="logos">
+    <img src="images/python-grey.png">
+    <img src="images/node-grey.png">
+    <img src="images/ruby-grey.png">
+  </div>
+  <div class="in-double-line"></div>
+  <div class="runtime-message">
+    Works with <em>Python</em>, <em>Node</em> or any <em>Ruby</em> application.
+  </div>
 </div>
 
-## <a name="usage">2. How to use it? </a>
+<a name="usage"></a>
+## How to use it?
 
 First we need to install invoker gem to get command line utility called invoker, we can do that via:
 
@@ -58,7 +59,8 @@ After that you can start process manager via:
 
 Above command will start all your processes in one terminal with their stdout/stderr merged and labelled.
 
-## <a name="tld"> 3. .dev TLD support for local apps </a>
+<a name="tld"></a>
+## .dev TLD support for local apps
 
 You can access http services managed by invoker via `command_label.dev` domain locally.
 
@@ -102,7 +104,8 @@ command = bundle exec rails s -p $PORT
 Now these services can be accessed via `http://terminal.dev` , `http://cms.dev`
 `http://typo.dev`. You can also access them via wildcard subdomains such as `*.*.dev`.
 
-## <a name="procfile"> 4. Procfile support </a>
+<a name="procfile"></a>
+## Procfile support
 
 Since version `1.0.3` Invoker has added support
 for `Procfile`. Now If you already have a `Procfile` you need not even create a `ini`
@@ -116,7 +119,8 @@ rails: cd $HOME/rails_app && bundle exec rails s -p $PORT
 cms: cd $HOME/cms && python manage.py runserver $PORT
 {% endhighlight %}
 
-## <a name="process"> 5. Process managment </a>
+<a name="process"></a>
+## Process managment
 
 Additionally Invoker allows you to manage individual processes. You can start/stop/restart
 different processes managed by invoker without affecting others.
@@ -144,7 +148,8 @@ different processes managed by invoker without affecting others.
 You can also enable OSX notifications for crashed processes by installing terminal-notifier gem. It is not a
 dependency, but can be useful if something crashed and you weren't paying attention.
 
-## <a name="pow"> 6. Migrating from Pow </a>
+<a name="pow"></a>
+## Migrating from Pow
 
 If you are migrating from Pow then first step before running `invoker setup` is to uninstall Pow:
 
@@ -161,7 +166,8 @@ After running `invoker setup` you will
 have to <em>switch off wi-fi and then switch it on </em> for
 resettng OSX network configuration.
 
-## <a name="versions"> 7. Using Invoker with rbenv or rvm </a>
+<a name="versions"></a>
+## Using Invoker with rbenv or rvm
 
 The way `rbenv` and `rvm` work sometimes creates problems when you are trying to use a process supervisor like invoker. There are couple of things to keep in mind,
 If you are running invoker with Ruby version x, but your application requires Ruby version Y:
@@ -188,7 +194,8 @@ Unless version of Ruby using which you are running invoker command and version o
 command = bash -lc "rvm 2.0.0-p0 do bundle exec rails s"
 {% endhighlight %}
 
-## <a name="faq">8. FAQ</a>
+<a name="faq"></a>
+## FAQ
 
 <em> 1. </em> Does Invoker work with pow?
 
