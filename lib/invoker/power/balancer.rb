@@ -124,11 +124,15 @@ module Invoker
         matching_string = extract_host_from_domain(host)
         return nil unless matching_string
         if selected_app = matching_string[1]
-          Invoker::IPC::UnixClient.send_command("dns_check", process_name: selected_app) do |dns_check_response|
-            dns_check_response
-          end
+          dns_check(selected_app)
         else
           nil
+        end
+      end
+
+      def dns_check(selected_app)
+        Invoker::IPC::UnixClient.send_command("dns_check", process_name: selected_app) do |dns_check_response|
+          dns_check_response
         end
       end
 

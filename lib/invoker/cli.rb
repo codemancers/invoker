@@ -48,6 +48,11 @@ module Invoker
       unix_socket.send_command('add', process_name: name)
     end
 
+    desc "add_http http_process port", "Add an external http process to Invoker DNS server"
+    def add_http(name, port)
+      unix_socket.send_command('add_http', process_name: name, port: port)
+    end
+
     desc "reload process", "Reload a process managed by Invoker"
     option :signal,
       banner: "Signal to send for killing the process, default is SIGINT",

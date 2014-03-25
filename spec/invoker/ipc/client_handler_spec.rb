@@ -31,4 +31,14 @@ describe Invoker::IPC::ClientHandler do
       client.read_and_execute
     end
   end
+
+  describe "add_http command" do
+    let(:message_object) { MM::AddHttp.new(process_name: 'foo', port: 9000)}
+    it "adds the process name and port to dns cache" do
+      invoker_dns_cache.expects(:add).with('foo', 9000)
+      client_socket.string = message_object.encoded_message
+
+     client.read_and_execute
+    end
+  end
 end

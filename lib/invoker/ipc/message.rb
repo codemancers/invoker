@@ -106,6 +106,11 @@ module Invoker
         message_attributes :process_name
       end
 
+      class AddHttp < Base
+        include Serialization
+        message_attributes :process_name, :port
+      end
+
       class Reload < Base
         include Serialization
         message_attributes :process_name, :signal
