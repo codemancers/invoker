@@ -17,10 +17,10 @@ module Invoker
       # mapping between command label and worker classes
       @workers = {}
 
-      @thread_group = ThreadGroup.new()
-      @worker_mutex = Mutex.new()
+      @thread_group = ThreadGroup.new
+      @worker_mutex = Mutex.new
 
-      @event_manager = Invoker::Event::Manager.new()
+      @event_manager = Invoker::Event::Manager.new
       @runnables = []
 
       @reactor = Invoker::Reactor.new
@@ -33,13 +33,13 @@ module Invoker
       if !Invoker::CONFIG.processes || Invoker::CONFIG.processes.empty?
         raise Invoker::Errors::InvalidConfig.new("No processes configured in config file")
       end
-      install_interrupt_handler()
-      unix_server_thread = Thread.new { Invoker::IPC::Server.new() }
+      install_interrupt_handler
+      unix_server_thread = Thread.new { Invoker::IPC::Server.new }
       thread_group.add(unix_server_thread)
-      run_power_server()
+      run_power_server
       Invoker::CONFIG.processes.each { |process_info| add_command(process_info) }
       at_exit { kill_workers }
-      start_event_loop()
+      start_event_loop
     end
 
     # Start given command and start a background thread to wait on the process
@@ -140,13 +140,13 @@ module Invoker
     def run_power_server
       return unless Invoker.can_run_balancer?(false)
 
-      powerup_id = Invoker::Power::Powerup.fork_and_start()
+      powerup_id = Invoker::Power::Powerup.fork_and_start
       wait_on_pid("powerup_manager", powerup_id)
-      at_exit {
+      at_exit do
         begin
           Process.kill("INT", powerup_id)
         rescue Errno::ESRCH; end
-      }
+      end
     end
 
     def load_env(directory = nil)
@@ -160,17 +160,18 @@ module Invoker
     end
 
     private
+
     def start_event_loop
       loop do
-        reactor.watch_on_pipe()
-        run_runnables()
-        run_scheduled_events()
+        reactor.watch_on_pipe
+        run_runnables
+        run_scheduled_events
       end
     end
 
     def run_scheduled_events
       event_manager.run_scheduled_events do |event|
-        event.block.call()
+        event.block.call
       end
     end
 
@@ -192,7 +193,7 @@ module Invoker
     end
 
     def select_color
-      selected_color = LABEL_COLORS.shift()
+      selected_color = LABEL_COLORS.shift
       LABEL_COLORS.push(selected_color)
       selected_color
     end
@@ -237,7 +238,7 @@ module Invoker
       end
     end
 
-    def wait_on_pid(command_label,pid)
+    def wait_on_pid(command_label, pid)
       raise Invoker::Errors::ToomanyOpenConnections if @thread_group.enclosed?
 
       thread = Thread.new do
@@ -271,19 +272,19 @@ module Invoker
 
     def install_interrupt_handler
       Signal.trap("INT") do
-        kill_workers()
+        kill_workers
         exit(0)
       end
     end
 
     def kill_workers
-      @workers.each {|key,worker|
+      @workers.each do |key, worker|
         begin
           Process.kill("INT", -Process.getpgid(worker.pid))
         rescue Errno::ESRCH
           puts "Error killing #{key}"
         end
-      }
+      end
       @workers = {}
     end
 
