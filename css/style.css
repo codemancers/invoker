@@ -71,7 +71,7 @@ header { border-top: 5px solid #666; padding: 1em 0; }
     float: left;
     width: 78%;
     border-left: 1px solid #9c9c9c;
-    padding-left: 20px;
+    padding: 0 0 10px 20px;
     margin-left: 190px;
 }
 
@@ -164,26 +164,16 @@ ul.code-points li{
     list-style: disc;
 }
 
-.content-container pre code {
-    border: none;
-    background-color: none;
+code {
+  background-color: #fff;
+  border-radius: 3px;
+  line-height: 1.3;
+  padding: 0 5px;
 }
 
-
-.content-container > code {
-  border: 1px solid #ddd;
-  background-color: #eef;
-  padding: 0 .3em;
-}
-
-
-/* terminal */
-.content-container pre.terminal {
-  border: 1px solid #000;
-  background-color: #333;
-  color: #FFF;
-}
-
-.content-container pre.terminal code {
-  background-color: #333;
+pre code {
+  background: none;
+  border-radius: 0;
+  line-height: 1.3;
+  padding: 0;
 }
