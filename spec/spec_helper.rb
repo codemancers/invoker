@@ -74,3 +74,13 @@ def invoker_commander
     Invoker::COMMANDER
   end
 end
+
+def invoker_dns_cache
+  if Invoker.const_defined?(:DNS_CACHE)
+    Invoker::DNS_CACHE
+  else
+    Invoker.const_set(:DNS_CACHE, mock())
+    Invoker::DNS_CACHE
+  end
+end
+

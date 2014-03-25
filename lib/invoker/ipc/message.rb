@@ -128,6 +128,16 @@ module Invoker
         include Serialization
         message_attributes :process_name, :signal
       end
+
+      class DnsCheck < Base
+        include Serialization
+        message_attributes :process_name
+      end
+
+      class DnsCheckResponse < Base
+        include Serialization
+        message_attributes :process_name, :port
+      end
     end
   end
 end

@@ -34,6 +34,7 @@ module Invoker
       port = options[:port] || 9000
       Invoker::Parsers::Config.new(file, port).tap do |config|
         Invoker.const_set(:CONFIG, config)
+        Invoker.const_set(:DNS_CACHE, Invoker::DNSCache.new(config))
         warn_about_terminal_notifier
         Invoker::Commander.new.tap do |commander|
           Invoker.const_set(:COMMANDER, commander)

@@ -71,9 +71,9 @@ module Invoker
 
       def headers_received(header)
         @session = UUID.generate()
-        config = select_backend_config(header['Host'])
-        if config
-          connection.server(session, host: '0.0.0.0', port: config.port)
+        dns_check_response = select_backend_config(header['Host'])
+        if dns_check_response && dns_check_response.port
+          connection.server(session, host: '0.0.0.0', port: dns_check_response.port)
           connection.relay_to_servers(@buffer.join)
           @buffer = []
         else
@@ -124,7 +124,9 @@ module Invoker
         matching_string = extract_host_from_domain(host)
         return nil unless matching_string
         if selected_app = matching_string[1]
-          Invoker::CONFIG.process(selected_app)
+          Invoker::IPC::UnixClient.send_command("dns_check", process_name: selected_app) do |dns_check_response|
+            dns_check_response
+          end
         else
           nil
         end
