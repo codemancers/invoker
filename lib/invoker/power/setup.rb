@@ -1,4 +1,5 @@
 require "highline/import"
+require "eventmachine"
 
 module Invoker
   module Power

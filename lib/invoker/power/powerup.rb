@@ -8,6 +8,7 @@ module Invoker
       end
 
       def run
+        require "invoker/power/power"
         EM.epoll
         EM.run {
           trap("TERM") { stop }

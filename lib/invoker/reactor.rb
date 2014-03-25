@@ -9,8 +9,12 @@ module Invoker
       @monitored_fds << fd
     end
 
-    def remove_from_monitoring(fd)
+    def remove_from_monitoring(fd, command_worker)
       @monitored_fds.delete(fd)
+      command_worker.unbind
+    rescue StandardError => error
+      Invoker::Logger.puts(error.message)
+      Invoker::Logger.puts(error.backtrace)
     end
 
     def watch_on_pipe
@@ -32,8 +36,7 @@ module Invoker
         data = read_data(ready_fd)
         command_worker.receive_data(data)
       rescue Invoker::Errors::ProcessTerminated
-        remove_from_monitoring(command_worker.pipe_end)
-        command_worker.unbind()
+        remove_from_monitoring(command_worker.pipe_end, command_worker)
       end
     end
 

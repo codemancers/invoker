@@ -2,22 +2,25 @@ $: << File.dirname(__FILE__) unless $:.include?(File.expand_path(File.dirname(__
 
 require "fileutils"
 require "formatador"
-require 'rubydns'
-require 'em-proxy'
-require 'http-parser'
+
 require "ostruct"
 require "uuid"
 require "highline"
+require "json"
+require "rainbow"
+require "rainbow/ext/string"
+
 require "invoker/version"
 require "invoker/logger"
-require "invoker/runner"
-require "invoker/command_listener/server"
-require "invoker/command_listener/client"
-require "invoker/power"
+require "invoker/cli"
+require "invoker/ipc"
+require "invoker/power/config"
+require "invoker/power/port_finder"
+require "invoker/power/setup"
+require "invoker/power/powerup"
 require "invoker/errors"
 require "invoker/parsers/procfile"
 require "invoker/parsers/config"
-require "invoker/parsers/option_parser"
 require "invoker/commander"
 require "invoker/command_worker"
 require "invoker/reactor"

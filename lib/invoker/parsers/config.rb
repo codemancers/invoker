@@ -28,6 +28,7 @@ module Invoker
       end
 
       private
+
       def load_config
         if is_ini?
           process_ini

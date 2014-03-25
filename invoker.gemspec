@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.summary = %q{Something small for Process management}
-  s.add_dependency("slop", "~> 3.4")
+  s.add_dependency("thor", "~> 0.19")
   s.add_dependency("rainbow", "~> 2.0")
   s.add_dependency("iniparse", "~> 1.1")
   s.add_dependency("formatador", "~> 0.2")
