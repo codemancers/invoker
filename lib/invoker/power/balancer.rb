@@ -105,13 +105,13 @@ module Invoker
       end
 
       def frontend_disconnect(backend, name)
-        http_parser.reset()
+        http_parser.reset
         unless @backend_data
           Invoker::Logger.puts("\nApplication not running. Returning error page.".color(:red))
           return_error_page(503)
         end
         @backend_data = false
-        connection.close_connection_after_writing() if backend == session
+        connection.close_connection_after_writing if backend == session
       end
 
       def extract_host_from_domain(host)
@@ -124,15 +124,15 @@ module Invoker
         matching_string = extract_host_from_domain(host)
         return nil unless matching_string
         if selected_app = matching_string[1]
-          dns_check(selected_app)
+          dns_check(process_name: selected_app)
         else
           nil
         end
       end
 
-      def dns_check(selected_app)
-        Invoker::IPC::UnixClient.send_command("dns_check", process_name: selected_app) do |dns_check_response|
-          dns_check_response
+      def dns_check(dns_args)
+        Invoker::IPC::UnixClient.send_command("dns_check", dns_args) do |dns_response|
+          dns_response
         end
       end
 
