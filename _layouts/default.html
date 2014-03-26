@@ -33,10 +33,10 @@
     <header>
       <h1 class="in-logo">
         <div class="container">
-          <a href="index.html" title="Invoker "><img src="images/logo.png" alt="Invoker"></a>
-          <a href="#" onclick="window.open('https://twitter.com/share?text=Introducing Invoker 1.0 - release with runtime agnostic .dev local domains support&amp;url=http://invoker.codemancers.com/&amp;via=codemancershq', '', 'width=600, height=400')" class="social-icon"><span class="icon-t"></span></a>
+          <a href="/" title="Invoker "><img src="images/logo.png" alt="Invoker"></a>
+          <a href="javascript:void(0)" onclick="window.open('https://twitter.com/share?text=Introducing Invoker 1.0 - release with runtime agnostic .dev local domains support&amp;url=http://invoker.codemancers.com/&amp;via=codemancershq', '', 'width=600, height=400')" class="social-icon"><span class="icon-t"></span></a>
 
-          <a href="#" onclick="window.open('https://plusone.google.com/_/+1/confirm?hl=en&amp;url=http://invoker.codemancers.com/', '', 'width=600, height=250')" class="social-icon"><span class="icon-g"></span></a>
+          <a href="javascript:void(0)" onclick="window.open('https://plusone.google.com/_/+1/confirm?hl=en&amp;url=http://invoker.codemancers.com/', '', 'width=600, height=250')" class="social-icon"><span class="icon-g"></span></a>
         </div>
       </h1>
     </header>
@@ -45,7 +45,7 @@
       <div class="in-double-line"></div>
       <div class="cf">
         <div class="left-side-bar">
-          <ul>
+          <ul id="js-nav-menu">
             <li>
               <a href="#home"> Home </a>
             </li>
@@ -101,5 +101,43 @@
         </div>
       </footer>
     </div>
+    <!-- JS -->
+    <script type="text/javascript" src="/js/jquery-1.10.2.js"></script>
+    <script>
+      $(document).ready(function() {
+        var stickyNavTop = $('#js-nav-menu').offset().top;
+
+        var stickyNav = function(){
+          var scrollTop = $(window).scrollTop();
+
+          if (scrollTop > stickyNavTop) {
+            $('#js-nav-menu').addClass('sticky');
+          } else {
+            $('#js-nav-menu').removeClass('sticky');
+          }
+        };
+
+        stickyNav();
+
+        $(window).scroll(function() {
+          stickyNav();
+        });
+      });
+
+      $(function() {
+        $('a[href*=#]:not([href=#])').click(function() {
+          if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
+            var target = $(this.hash);
+            target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+            if (target.length) {
+              $('html,body').animate({
+                scrollTop: target.offset().top
+              }, 1000);
+              return false;
+            }
+          }
+        });
+      });
+    </script>
   </body>
 </html>
