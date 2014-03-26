@@ -49,6 +49,13 @@ header { border-top: 5px solid #666; padding: 1em 0; }
 /* Main Content */
 .in-main-content, .in-footer-content { max-width: 960px; min-width: 768px; margin: 0 auto 1em auto; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box }
 
+.forkme-ribbon {
+    position: fixed;
+    border: 0;
+    right: 0;
+    top: 0;
+}
+
 .left-side-bar {
     float: left;
     width: 20%;
