@@ -24,6 +24,14 @@ module Invoker
 
     # Print the lines received over the network
     def receive_line(line)
+      tail_message = Invoker::IPC::Message::TailMessage.new(line)
+
+      Invoker::WORKER_LISTENER.each do |process_name, sockets|
+        sockets.each do |socket|
+          socket.send_data(tail_message)
+        end
+      end
+
       Invoker::Logger.puts "#{@command_label.color(color)} : #{line}"
     end
 
