@@ -1,6 +1,7 @@
 require "invoker/ipc/base_command"
 require 'invoker/ipc/message'
 require 'invoker/ipc/add_command'
+require 'invoker/ipc/add_http_command'
 require 'invoker/ipc/client_handler'
 require 'invoker/ipc/dns_check_command'
 require 'invoker/ipc/list_command'

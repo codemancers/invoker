@@ -146,4 +146,25 @@ web: bundle exec rails s -p $PORT
       end
     end
   end
+
+  describe "Copy of DNS information" do
+    it "should allow copy of DNS information" do
+      begin
+        File.open("/tmp/Procfile", "w") {|fl| 
+          fl.write <<-EOD
+web: bundle exec rails s -p $PORT
+          EOD
+        }
+        config = Invoker::Parsers::Config.new("/tmp/Procfile", 9000)
+        dns_cache = Invoker::DNSCache.new(config)
+
+        expect(dns_cache.dns_data).to_not be_empty
+        expect(dns_cache.dns_data['web']).to_not be_empty
+        expect(dns_cache.dns_data['web']['port']).to eql 9001
+      ensure
+        File.delete("/tmp/Procfile")
+      end
+    end
+  end
+
 end

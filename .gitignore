@@ -8,5 +8,6 @@ multi.ini
 tags
 .rvmrc
 vendor/
+_site
 .bundle
 coverage

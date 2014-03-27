@@ -106,6 +106,11 @@ module Invoker
         message_attributes :process_name
       end
 
+      class AddHttp < Base
+        include Serialization
+        message_attributes :process_name, :port
+      end
+
       class Reload < Base
         include Serialization
         message_attributes :process_name, :signal
@@ -127,6 +132,16 @@ module Invoker
       class Remove < Base
         include Serialization
         message_attributes :process_name, :signal
+      end
+
+      class DnsCheck < Base
+        include Serialization
+        message_attributes :process_name
+      end
+
+      class DnsCheckResponse < Base
+        include Serialization
+        message_attributes :process_name, :port
       end
     end
   end
