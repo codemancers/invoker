@@ -17,7 +17,7 @@ module Invoker
       Invoker::Power::Setup.install
     end
 
-    desc "version", "Print invoker version"
+    desc "version", "Print Invoker version"
     def version
       Invoker::Logger.puts Invoker::VERSION
     end
@@ -30,8 +30,13 @@ module Invoker
 
     desc "start CONFIG_FILE", "Start Invoker Server"
     option :port, type: :numeric, banner: "Port series to be used for starting rack servers"
+    option :daemon,
+      type: :boolean,
+      banner: "Daemonize the server into the background",
+      aliases: [:d]
     def start(file)
       port = options[:port] || 9000
+      Invoker.const_set(:DAEMON, options[:daemon])
       Invoker::Parsers::Config.new(file, port).tap do |config|
         Invoker.const_set(:CONFIG, config)
         Invoker.const_set(:DNS_CACHE, Invoker::DNSCache.new(config))

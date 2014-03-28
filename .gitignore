@@ -12,3 +12,4 @@ _site
 .bundle
 coverage
 invoker_profile/
+*.pid

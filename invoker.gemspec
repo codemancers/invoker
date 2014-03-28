@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
   s.add_dependency("uuid", "~> 2.3")
   s.add_dependency("http-parser-lite", "~> 0.6")
   s.add_dependency("dotenv", "~> 0.9")
+  s.add_dependency('daemons', '~> 1.1.9')
   s.add_development_dependency("rspec")
   s.add_development_dependency("mocha")
   s.add_development_dependency("rake")

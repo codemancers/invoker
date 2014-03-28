@@ -24,7 +24,7 @@ module Invoker
 
     # Print the lines received over the network
     def receive_line(line)
-      Invoker::Logger.puts "#{@command_label.color(color)} : #{line}"
+      # Invoker::Logger.puts "#{@command_label.color(color)} : #{line}"
     end
 
     def to_h
