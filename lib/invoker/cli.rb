@@ -103,3 +103,5 @@ module Invoker
     end
   end
 end
+
+require "invoker/cli/question"
