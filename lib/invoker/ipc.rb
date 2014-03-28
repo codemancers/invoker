@@ -7,7 +7,6 @@ require 'invoker/ipc/dns_check_command'
 require 'invoker/ipc/list_command'
 require 'invoker/ipc/remove_command'
 require 'invoker/ipc/server'
-require 'invoker/ipc/stop_command'
 require "invoker/ipc/reload_command"
 require 'invoker/ipc/tail_command'
 require 'invoker/ipc/unix_client'

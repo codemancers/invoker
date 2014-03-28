@@ -1,5 +1,6 @@
 require "socket"
 require "thor"
+require "daemons"
 
 module Invoker
   class CLI < Thor
@@ -81,6 +82,17 @@ module Invoker
     def remove(name)
       signal = options[:signal] || 'INT'
       unix_socket.send_command('remove', process_name: name, signal: signal)
+    end
+
+    desc "stop", "Stop Invoker daemon"
+    def stop
+      monitor = Daemons::Monitor.find(Invoker::DAEMON_APP_DIR, DAEMON_APP_NAME)
+      if monitor
+        monitor.stop
+        Invoker::Logger.puts "Stopped Invoker daemon".color(:green)
+      else
+        Invoker::Logger.puts "Invoker daemon not running".color(:red)
+      end
     end
 
     private

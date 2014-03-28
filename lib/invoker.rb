@@ -28,6 +28,9 @@ require "invoker/event/manager"
 require "invoker/process_printer"
 
 module Invoker
+  DAEMON_APP_NAME = "invoker"
+  DAEMON_APP_DIR = "/tmp"
+
   def self.darwin?
     ruby_platform.downcase.include?("darwin")
   end

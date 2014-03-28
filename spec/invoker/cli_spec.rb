@@ -17,4 +17,23 @@ describe Invoker::CLI do
       Invoker::CLI.start(["-v"])
     end
   end
+
+  describe "stop command" do
+    before do
+      Invoker.const_set(:DAEMON_APP_NAME, 'invoker')
+      Invoker.const_set(:DAEMON_APP_DIR, '/tmp')
+    end
+
+    after do
+      Invoker.send(:remove_const, :DAEMON_APP_NAME)
+      Invoker.send(:remove_const, :DAEMON_APP_DIR)
+    end
+
+    it "should stop invoker if it is running as a daemon" do
+      monitor = mock()
+      Daemons::Monitor.expects(:find).returns(monitor)
+      monitor.expects(:stop).once
+      Invoker::CLI.start(["stop"])
+    end
+  end
 end

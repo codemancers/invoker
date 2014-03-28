@@ -295,8 +295,13 @@ module Invoker
     end
 
     def daemonize_app
-      Invoker::Logger.puts "Daemonizing Invoker..."
-      Daemons.daemonize(app_name: 'invoker')
+      options = {
+        app_name: Invoker::DAEMON_APP_NAME,
+        dir_mode: :normal,
+        dir: Invoker::DAEMON_APP_DIR
+      }
+      Daemons.daemonize(options)
+      Invoker::Logger.puts "Invoker running as a daemon"
     end
   end
 end

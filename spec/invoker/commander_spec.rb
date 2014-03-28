@@ -77,31 +77,62 @@ describe "Invoker::Commander" do
   end
 
   describe "#add_command" do
-    before do
-      invoker_config.stubs(:processes).returns([OpenStruct.new(:label => "sleep", :cmd => "sleep 4", :dir => ENV['HOME'])])
-      @commander = Invoker::Commander.new()
-      Invoker.const_set(:COMMANDER, @commander)
+    describe "when not daemonized" do
+      before do
+        invoker_config.stubs(:processes).returns([OpenStruct.new(:label => "sleep", :cmd => "sleep 4", :dir => ENV['HOME'])])
+        @commander = Invoker::Commander.new()
+        Invoker.const_set(:COMMANDER, @commander)
+        Invoker.const_set(:DAEMON, false)
+      end
+
+      after do
+        Invoker.send(:remove_const,:COMMANDER)
+        Invoker.send(:remove_const,:DAEMON)
+      end
+
+      it "should populate workers and open_pipes" do
+        @commander.expects(:start_event_loop)
+        @commander.expects(:load_env).returns({})
+        @commander.start_manager
+        expect(@commander.open_pipes).not_to be_empty
+        expect(@commander.workers).not_to be_empty
+
+        worker = @commander.workers['sleep']
+
+        expect(worker).not_to be_nil
+        expect(worker.command_label).to eq('sleep')
+        expect(worker.color).to eq(:green)
+
+        pipe_end_worker = @commander.open_pipes[worker.pipe_end.fileno]
+        expect(pipe_end_worker).not_to be_nil
+      end
     end
 
-    after do
-      Invoker.send(:remove_const,:COMMANDER)
-    end
+    describe "when daemonized" do
+      before do
+        invoker_config.stubs(:processes).returns([
+          OpenStruct.new(label: "webapp", cmd: "rails server", dir: ENV['HOME'])
+        ])
+        @commander = Invoker::Commander.new()
+        Invoker.const_set(:COMMANDER, @commander)
+        Invoker.const_set(:DAEMON, true)
+        Invoker.const_set(:DAEMON_APP_NAME, 'invoker')
+        Invoker.const_set(:DAEMON_APP_DIR, '/tmp')
+      end
 
-    it "should populate workers and open_pipes" do
-      @commander.expects(:start_event_loop)
-      @commander.expects(:load_env).returns({})
-      @commander.start_manager
-      expect(@commander.open_pipes).not_to be_empty
-      expect(@commander.workers).not_to be_empty
+      after do
+        Invoker.send(:remove_const, :COMMANDER)
+        Invoker.send(:remove_const, :DAEMON)
+        Invoker.send(:remove_const, :DAEMON_APP_NAME)
+        Invoker.send(:remove_const, :DAEMON_APP_DIR)
+      end
 
-      worker = @commander.workers['sleep']
-
-      expect(worker).not_to be_nil
-      expect(worker.command_label).to eq('sleep')
-      expect(worker.color).to eq(:green)
-
-      pipe_end_worker = @commander.open_pipes[worker.pipe_end.fileno]
-      expect(pipe_end_worker).not_to be_nil
+      it "should daemonize the process" do
+        @commander.expects(:start_event_loop)
+        @commander.expects(:load_env).returns({})
+        Daemons.expects(:daemonize)
+        @commander.start_manager
+      end
     end
   end
 
