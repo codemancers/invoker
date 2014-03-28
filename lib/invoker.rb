@@ -5,7 +5,6 @@ require "formatador"
 
 require "ostruct"
 require "uuid"
-require "highline"
 require "json"
 require "rainbow"
 require "rainbow/ext/string"

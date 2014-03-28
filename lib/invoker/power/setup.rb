@@ -1,4 +1,3 @@
-require "highline/import"
 require "eventmachine"
 
 module Invoker
@@ -43,7 +42,7 @@ module Invoker
       end
 
       def uninstall_invoker
-        uninstall_invoker_flag = agree("Are you sure you want to uninstall firewall rules created by setup (y/n) : ")
+        uninstall_invoker_flag = Invoker::CLI::Question.agree("Are you sure you want to uninstall firewall rules created by setup (y/n) : ")
 
         if uninstall_invoker_flag
           remove_resolver_file
@@ -163,7 +162,7 @@ port #{dns_port}
         Invoker::Logger.puts "If you have already uninstalled Pow, proceed with installation"\
           " by pressing y/n."
 
-        replace_resolver_flag = agree("Replace Pow configuration (y/n) : ")
+        replace_resolver_flag = Invoker::CLI::Question.agree("Replace Pow configuration (y/n) : ")
 
         if replace_resolver_flag
           Invoker::Logger.puts "Invoker has overwritten one or more files created by Pow. "\
@@ -174,12 +173,13 @@ port #{dns_port}
       end
 
       private
+
       def open_resolver_for_write
         FileUtils.mkdir(RESOLVER_DIR) unless Dir.exists?(RESOLVER_DIR)
         fl = File.open(RESOLVER_FILE, "w")
         yield fl
       ensure
-        fl && fl.close()
+        fl && fl.close
       end
 
     end
