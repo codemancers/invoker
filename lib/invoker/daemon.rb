@@ -12,8 +12,15 @@ module Invoker
         dir_mode: DIR_MODE,
         dir: DIR
       }
+
+      # store current direcotry before it is changed during daemonization
+      pwd = Dir.pwd
+
+      Invoker::Logger.puts "Starting Invoker as a daemon".color(:green)
       Daemons.daemonize(options)
-      Invoker::Logger.puts "Invoker running as a daemon"
+
+      # return to the original direcotry before damonization started
+      Dir.chdir(pwd)
     end
 
     def self.stop

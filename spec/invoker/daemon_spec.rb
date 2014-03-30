@@ -3,7 +3,10 @@ require "spec_helper"
 describe Invoker::Daemon do
   describe '.start' do
     it "should start the daemon" do
+      pwd = mock()
+      Dir.expects(:pwd).returns(pwd)
       Daemons.expects(:daemonize)
+      Dir.expects(:chdir).with(pwd)
       Invoker::Daemon.start
     end
   end
