@@ -2,7 +2,6 @@ require "io/console"
 require 'pty'
 require "json"
 require "dotenv"
-require "daemons"
 
 module Invoker
   class Commander
@@ -34,7 +33,7 @@ module Invoker
       if !Invoker::CONFIG.processes || Invoker::CONFIG.processes.empty?
         raise Invoker::Errors::InvalidConfig.new("No processes configured in config file")
       end
-      daemonize_app if Invoker::DAEMON
+      daemonize_app if Invoker::DAEMONIZE
       install_interrupt_handler
       unix_server_thread = Thread.new { Invoker::IPC::Server.new }
       thread_group.add(unix_server_thread)
@@ -295,13 +294,7 @@ module Invoker
     end
 
     def daemonize_app
-      options = {
-        app_name: Invoker::DAEMON_APP_NAME,
-        dir_mode: :normal,
-        dir: Invoker::DAEMON_APP_DIR
-      }
-      Daemons.daemonize(options)
-      Invoker::Logger.puts "Invoker running as a daemon"
+      Invoker::Daemon.start
     end
   end
 end

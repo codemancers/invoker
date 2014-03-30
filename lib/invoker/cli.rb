@@ -1,6 +1,5 @@
 require "socket"
 require "thor"
-require "daemons"
 
 module Invoker
   class CLI < Thor
@@ -37,7 +36,7 @@ module Invoker
       aliases: [:d]
     def start(file)
       port = options[:port] || 9000
-      Invoker.const_set(:DAEMON, options[:daemon])
+      Invoker.const_set(:DAEMONIZE, options[:daemon])
       Invoker::Parsers::Config.new(file, port).tap do |config|
         Invoker.const_set(:CONFIG, config)
         Invoker.const_set(:DNS_CACHE, Invoker::DNSCache.new(config))
@@ -86,13 +85,7 @@ module Invoker
 
     desc "stop", "Stop Invoker daemon"
     def stop
-      monitor = Daemons::Monitor.find(Invoker::DAEMON_APP_DIR, DAEMON_APP_NAME)
-      if monitor
-        monitor.stop
-        Invoker::Logger.puts "Stopped Invoker daemon".color(:green)
-      else
-        Invoker::Logger.puts "Invoker daemon not running".color(:red)
-      end
+      Invoker::Daemon.stop
     end
 
     private

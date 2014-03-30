@@ -29,10 +29,8 @@ describe Invoker::CLI do
       Invoker.send(:remove_const, :DAEMON_APP_DIR)
     end
 
-    it "should stop invoker if it is running as a daemon" do
-      monitor = mock()
-      Daemons::Monitor.expects(:find).returns(monitor)
-      monitor.expects(:stop).once
+    it "should stop the daemon" do
+      Invoker::Daemon.expects(:stop).once
       Invoker::CLI.start(["stop"])
     end
   end

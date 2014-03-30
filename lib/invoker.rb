@@ -11,6 +11,7 @@ require "rainbow/ext/string"
 
 require "invoker/version"
 require "invoker/logger"
+require "invoker/daemon"
 require "invoker/cli"
 require "invoker/dns_cache"
 require "invoker/ipc"
@@ -28,9 +29,6 @@ require "invoker/event/manager"
 require "invoker/process_printer"
 
 module Invoker
-  DAEMON_APP_NAME = "invoker"
-  DAEMON_APP_DIR = "/tmp"
-
   def self.darwin?
     ruby_platform.downcase.include?("darwin")
   end

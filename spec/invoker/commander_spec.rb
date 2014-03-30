@@ -82,12 +82,12 @@ describe "Invoker::Commander" do
         invoker_config.stubs(:processes).returns([OpenStruct.new(:label => "sleep", :cmd => "sleep 4", :dir => ENV['HOME'])])
         @commander = Invoker::Commander.new()
         Invoker.const_set(:COMMANDER, @commander)
-        Invoker.const_set(:DAEMON, false)
+        Invoker.const_set(:DAEMONIZE, false)
       end
 
       after do
         Invoker.send(:remove_const,:COMMANDER)
-        Invoker.send(:remove_const,:DAEMON)
+        Invoker.send(:remove_const,:DAEMONIZE)
       end
 
       it "should populate workers and open_pipes" do
@@ -111,27 +111,34 @@ describe "Invoker::Commander" do
     describe "when daemonized" do
       before do
         invoker_config.stubs(:processes).returns([
-          OpenStruct.new(label: "webapp", cmd: "rails server", dir: ENV['HOME'])
+          OpenStruct.new(label: "sleep", cmd: "sleep 4", dir: ENV['HOME'])
         ])
         @commander = Invoker::Commander.new()
         Invoker.const_set(:COMMANDER, @commander)
-        Invoker.const_set(:DAEMON, true)
-        Invoker.const_set(:DAEMON_APP_NAME, 'invoker')
-        Invoker.const_set(:DAEMON_APP_DIR, '/tmp')
+        Invoker.const_set(:DAEMONIZE, true)
       end
 
       after do
         Invoker.send(:remove_const, :COMMANDER)
-        Invoker.send(:remove_const, :DAEMON)
-        Invoker.send(:remove_const, :DAEMON_APP_NAME)
-        Invoker.send(:remove_const, :DAEMON_APP_DIR)
+        Invoker.send(:remove_const, :DAEMONIZE)
       end
 
-      it "should daemonize the process" do
+      it "should daemonize the process and populate workers and open_pipes" do
         @commander.expects(:start_event_loop)
         @commander.expects(:load_env).returns({})
-        Daemons.expects(:daemonize)
+        Invoker::Daemon.expects(:start).once
         @commander.start_manager
+
+        expect(@commander.open_pipes).not_to be_empty
+        expect(@commander.workers).not_to be_empty
+
+        worker = @commander.workers['sleep']
+
+        expect(worker).not_to be_nil
+        expect(worker.command_label).to eq('sleep')
+
+        pipe_end_worker = @commander.open_pipes[worker.pipe_end.fileno]
+        expect(pipe_end_worker).not_to be_nil
       end
     end
   end
