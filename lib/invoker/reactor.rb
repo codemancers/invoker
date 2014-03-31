@@ -16,9 +16,14 @@ module Invoker
     end
 
     def monitor_for_fd_events
-      ready_read_fds,ready_write_fds,read_error_fds = select(options_for_select)
+      ready_read_fds, ready_write_fds, error_fds = select(*options_for_select)
+
       if ready_read_fds && !ready_read_fds.empty?
         handle_read_event(ready_read_fds)
+      end
+
+      if ready_write_fds && !ready_write_fds.empty?
+        handle_write_event(ready_write_fds)
       end
     end
 
@@ -39,8 +44,12 @@ module Invoker
 
     private
 
+    def handle_write_event(ready_write_fds)
+
+    end
+
     def remove_from_read_monitoring(fd, command_worker)
-      read_array_array.delete(fd)
+      read_array.delete(fd)
       command_worker.unbind
     rescue StandardError => error
       Invoker::Logger.puts(error.message)

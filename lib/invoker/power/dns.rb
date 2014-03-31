@@ -11,6 +11,11 @@ module Invoker
         ]
       end
 
+      def initialize
+        @logger = ::Logger.new($stderr)
+        @logger.level = ::Logger::FATAL
+      end
+
       def process(name, resource_class, transaction)
         if name_matches?(name) && resource_class_matches?(resource_class)
           transaction.respond!("127.0.0.1")
