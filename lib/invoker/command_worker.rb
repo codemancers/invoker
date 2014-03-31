@@ -28,7 +28,7 @@ module Invoker
     end
 
     def to_h
-      {:command_label => command_label, :pid => pid.to_s}
+      { command_label:  command_label, pid:  pid.to_s }
     end
   end
 end

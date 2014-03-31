@@ -53,7 +53,7 @@ module Invoker
 
       s.close()
 
-      worker = Invoker::CommandWorker.new(process_info.label, m, pid, select_color())
+      worker = CommandWorker.new(process_info.label, m, pid, select_color)
 
       add_worker(worker)
       wait_on_pid(process_info.label,pid)
@@ -163,7 +163,7 @@ module Invoker
 
     def start_event_loop
       loop do
-        reactor.watch_on_pipe
+        reactor.monitor_for_fd_events
         run_runnables
         run_scheduled_events
       end
@@ -214,7 +214,7 @@ module Invoker
     def add_worker(worker)
       @open_pipes[worker.pipe_end.fileno] = worker
       @workers[worker.command_label] = worker
-      @reactor.add_to_monitor(worker.pipe_end)
+      @reactor.watch_for_read(worker.pipe_end)
     end
 
     def run_command(process_info, write_pipe)
