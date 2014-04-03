@@ -6,8 +6,8 @@ module Invoker
     class DNS < RubyDNS::Server
       def self.server_ports
         [
-          [:udp, '127.0.0.1', Invoker::CONFIG.dns_port],
-          [:tcp, '127.0.0.1', Invoker::CONFIG.dns_port]
+          [:udp, '127.0.0.1', Invoker.config.dns_port],
+          [:tcp, '127.0.0.1', Invoker.config.dns_port]
         ]
       end
 

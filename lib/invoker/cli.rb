@@ -32,15 +32,9 @@ module Invoker
     option :port, type: :numeric, banner: "Port series to be used for starting rack servers"
     def start(file)
       port = options[:port] || 9000
-      Invoker::Parsers::Config.new(file, port).tap do |config|
-        Invoker.const_set(:CONFIG, config)
-        Invoker.const_set(:DNS_CACHE, Invoker::DNSCache.new(config))
-        warn_about_terminal_notifier
-        Invoker::Commander.new.tap do |commander|
-          Invoker.const_set(:COMMANDER, commander)
-          commander.start_manager
-        end
-      end
+      Invoker.load_invoker_config(file, port)
+      warn_about_terminal_notifier
+      Invoker.commander.start_manager
     end
 
     desc "add process", "Add a program to Invoker server"

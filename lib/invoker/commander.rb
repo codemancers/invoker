@@ -30,14 +30,14 @@ module Invoker
     # Start the invoker process supervisor. This method starts a unix server
     # in separate thread that listens for incoming commands.
     def start_manager
-      if !Invoker::CONFIG.processes || Invoker::CONFIG.processes.empty?
+      if !Invoker.config.processes || Invoker.config.processes.empty?
         raise Invoker::Errors::InvalidConfig.new("No processes configured in config file")
       end
       install_interrupt_handler
       unix_server_thread = Thread.new { Invoker::IPC::Server.new }
       thread_group.add(unix_server_thread)
       run_power_server
-      Invoker::CONFIG.processes.each { |process_info| add_command(process_info) }
+      Invoker.config.processes.each { |process_info| add_command(process_info) }
       at_exit { kill_workers }
       start_event_loop
     end
@@ -53,7 +53,7 @@ module Invoker
 
       s.close()
 
-      worker = CommandWorker.new(process_info.label, m, pid, select_color)
+      worker = CommandWorker.new(process_info.label, m, pid, select_color, reactor)
 
       add_worker(worker)
       wait_on_pid(process_info.label,pid)
@@ -73,7 +73,7 @@ module Invoker
         return false
       end
 
-      process_info = Invoker::CONFIG.process(command_label)
+      process_info = Invoker.config.process(command_label)
       if process_info
         add_command(process_info)
       end

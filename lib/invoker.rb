@@ -36,6 +36,28 @@ module Invoker
     RUBY_PLATFORM
   end
 
+  def self.load_invoker_config(file, port)
+    @invoker_config = Invoker::Parsers::Config.new(file, port)
+    @dns_cache = Invoker::DNSCache.new(@invoker_config)
+    @tail_watchers = Invoker::CLI::TailWatcher.new
+  end
+
+  def self.config
+    @invoker_config
+  end
+
+  def self.tail_watchers
+    @tail_watchers
+  end
+
+  def self.commander
+    @invoker_commander ||= Invoker::Commander.new
+  end
+
+  def self.dns_cache
+    @dns_cache
+  end
+
   def self.can_run_balancer?(throw_warning = true)
     return false unless darwin?
     return true if File.exists?(Invoker::Power::Config::CONFIG_LOCATION)

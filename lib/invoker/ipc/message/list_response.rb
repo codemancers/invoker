@@ -14,7 +14,7 @@ module Invoker
 
         def self.from_workers(workers)
           process_array = []
-          Invoker::CONFIG.processes.each do |process|
+          Invoker.config.processes.each do |process|
             worker_attrs = {
               :shell_command => process.cmd, :process_name => process.label,
               :dir => process.dir
