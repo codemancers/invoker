@@ -47,6 +47,12 @@ module Invoker
       unix_socket.send_command('add_http', process_name: name, port: port)
     end
 
+    desc "tail process_name", "Tail a particular process"
+    def tail(name)
+      tailer = Invoker::CLI::Tail.new(name)
+      tailer.run
+    end
+
     desc "reload process", "Reload a process managed by Invoker"
     option :signal,
       banner: "Signal to send for killing the process, default is SIGINT",
@@ -100,3 +106,4 @@ end
 
 require "invoker/cli/question"
 require "invoker/cli/tail_watcher"
+require "invoker/cli/tail"

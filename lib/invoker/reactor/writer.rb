@@ -19,7 +19,6 @@ module Invoker
         remove_from_write_monitoring(socket)
         raise Invoker::Errors::ClientDisconnected
       end
-
       schedule_for_monitoring(socket, unwritten_data) unless unwritten_data.empty?
     end
 
@@ -40,7 +39,7 @@ module Invoker
     def send_and_rescue(socket, data)
       send_data(socket, data)
     rescue Invoker::Errors::ClientDisconnected
-      socket.close
+      Invoker.close_socket(socket)
     end
 
     def low_level_write(socket, data)
@@ -50,12 +49,13 @@ module Invoker
         written_length = socket.write_nonblock(data)
         return "" if written_length == data_length
         data_string[written_length..-1]
-      rescue Errno::EAGAIN
+      rescue IO::WaitWritable, Errno::EINTR, Errno::EAGAIN
         data_string
       end
     end
 
     def schedule_for_monitoring(socket, data)
+      Invoker.puts "Scheduling data for delayed write #{socket}".color(:red)
       @pending_writes[socket.fileno] = { data: data, socket: socket }
     end
 

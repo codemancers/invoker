@@ -1,4 +1,5 @@
 module Invoker
+  # This class defines sockets which are open for watching log files
   class CLI::TailWatcher
     attr_accessor :tail_watchers
 

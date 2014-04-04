@@ -46,6 +46,14 @@ module Invoker
       @tail_watchers = Invoker::CLI::TailWatcher.new
       @commander = Invoker::Commander.new
     end
+
+    def close_socket(socket)
+      begin
+        socket.close
+      rescue StandardError => error
+        Invoker::Logger.puts "Error removing socket #{error}"
+      end
+    end
   end
 
   def self.can_run_balancer?(throw_warning = true)

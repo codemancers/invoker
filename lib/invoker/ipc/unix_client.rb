@@ -13,6 +13,14 @@ module Invoker
         end
       end
 
+      def send_and_wait(command, message = {})
+        socket = Socket.unix(Invoker::IPC::Server::SOCKET_PATH)
+        message_object = get_message_object(command, message)
+        send_json_message(socket, message_object)
+        socket.flush
+        socket
+      end
+
       def self.send_command(command, message_arguments = {}, &block)
         new.send_command(command, message_arguments, &block)
       end

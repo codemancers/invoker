@@ -27,11 +27,12 @@ module Invoker
     # Print the lines received over the network
     def receive_line(line)
       tail_watchers = Invoker.tail_watchers[@command_label]
-      colored_line = "#{@command_label.color(color)} : #{line}"
       if tail_watchers && !tail_watchers.empty?
-        tail_watchers.each { |tail_socket| send_data(tail_socket, colored_line) }
+        tail_response = Invoker::IPC::Message::TailResponse.new(tail_line: line)
+        json_response = tail_response.encoded_message
+        tail_watchers.each { |tail_socket| send_data(tail_socket, json_response) }
       else
-        Invoker::Logger.puts colored_line
+        Invoker::Logger.puts "#{@command_label.color(color)} : #{line}"
       end
     end
 
@@ -42,6 +43,10 @@ module Invoker
     def send_data(socket, data)
       # Unlike regular write ensures that data is written in a nonblocking fashion
       reactor.send_data(socket, data)
+    rescue Invoker::Errors::ClientDisconnected
+      Invoker::Logger.puts "Removing #{@command_label} watcher #{socket} from list"
+      Invoker.tail_watchers.remove(@command_label, socket)
+      Invoker.close_socket(socket)
     end
   end
 end

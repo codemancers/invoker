@@ -11,7 +11,7 @@ module Invoker
         end
 
         def to_json
-          as_json.to_json
+          JSON.generate(as_json)
         end
 
         def message_attributes
@@ -102,6 +102,11 @@ module Invoker
       end
 
       class Add < Base
+        include Serialization
+        message_attributes :process_name
+      end
+
+      class Tail < Base
         include Serialization
         message_attributes :process_name
       end
