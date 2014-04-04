@@ -50,7 +50,7 @@ module Invoker
 
   def self.can_run_balancer?(throw_warning = true)
     return false unless darwin?
-    return true if File.exists?(Invoker::Power::Config::CONFIG_LOCATION)
+    return true if File.exist?(Invoker::Power::Config::CONFIG_LOCATION)
 
     if throw_warning
       Invoker::Logger.puts("Invoker has detected setup has not been run. Domain feature will not work without running setup command.".color(:red))
