@@ -5,6 +5,7 @@ module Invoker
         Invoker.commander.on_next_tick(message_object) do |reload_message|
           reload_command(reload_message)
         end
+        true
       end
     end
   end

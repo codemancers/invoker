@@ -148,3 +148,4 @@ module Invoker
 end
 
 require "invoker/ipc/message/list_response"
+require "invoker/ipc/message/tail_response"

@@ -9,6 +9,7 @@ module Invoker
           port: process_detail ? process_detail['port'] : nil
         )
         send_data(dns_check_response)
+        true
       end
     end
   end

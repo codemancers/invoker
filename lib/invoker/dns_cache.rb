@@ -7,9 +7,7 @@ module Invoker
       @dns_mutex = Mutex.new
       Invoker.config.processes.each do |process|
         if process.port
-          dns_data[process.label] = {
-            'port' => process.port
-          }
+          dns_data[process.label] = { 'port' => process.port }
         end
       end
     end
