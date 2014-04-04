@@ -28,34 +28,24 @@ require "invoker/event/manager"
 require "invoker/process_printer"
 
 module Invoker
-  def self.darwin?
-    ruby_platform.downcase.include?("darwin")
-  end
+  class << self
+    attr_accessor :config, :tail_watchers, :commander
+    attr_accessor :dns_cache
 
-  def self.ruby_platform
-    RUBY_PLATFORM
-  end
+    def darwin?
+      ruby_platform.downcase.include?("darwin")
+    end
 
-  def self.load_invoker_config(file, port)
-    @invoker_config = Invoker::Parsers::Config.new(file, port)
-    @dns_cache = Invoker::DNSCache.new(@invoker_config)
-    @tail_watchers = Invoker::CLI::TailWatcher.new
-  end
+    def ruby_platform
+      RUBY_PLATFORM
+    end
 
-  def self.config
-    @invoker_config
-  end
-
-  def self.tail_watchers
-    @tail_watchers
-  end
-
-  def self.commander
-    @invoker_commander ||= Invoker::Commander.new
-  end
-
-  def self.dns_cache
-    @dns_cache
+    def load_invoker_config(file, port)
+      @config = Invoker::Parsers::Config.new(file, port)
+      @dns_cache = Invoker::DNSCache.new(@invoker_config)
+      @tail_watchers = Invoker::CLI::TailWatcher.new
+      @commander = Invoker::Commander.new
+    end
   end
 
   def self.can_run_balancer?(throw_warning = true)

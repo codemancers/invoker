@@ -58,29 +58,13 @@ end
 ENV["INVOKER_TESTS"] = "true"
 
 def invoker_config
-  if Invoker.const_defined?(:CONFIG)
-    Invoker::CONFIG
-  else
-    Invoker.const_set(:CONFIG, mock())
-    Invoker::CONFIG
-  end
+  Invoker.config ||= mock
 end
 
 def invoker_commander
-  if Invoker.const_defined?(:COMMANDER)
-    Invoker::COMMANDER
-  else
-    Invoker.const_set(:COMMANDER, mock())
-    Invoker::COMMANDER
-  end
+  Invoker.commander ||= mock
 end
 
 def invoker_dns_cache
-  if Invoker.const_defined?(:DNS_CACHE)
-    Invoker::DNS_CACHE
-  else
-    Invoker.const_set(:DNS_CACHE, mock())
-    Invoker::DNS_CACHE
-  end
+  Invoker.dns_cache ||= mock
 end
-

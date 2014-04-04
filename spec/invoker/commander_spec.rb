@@ -79,12 +79,12 @@ describe "Invoker::Commander" do
   describe "#add_command" do
     before do
       invoker_config.stubs(:processes).returns([OpenStruct.new(:label => "sleep", :cmd => "sleep 4", :dir => ENV['HOME'])])
-      @commander = Invoker::Commander.new()
-      Invoker.const_set(:COMMANDER, @commander)
+      @commander = Invoker::Commander.new
+      Invoker.commander = @commander
     end
 
     after do
-      Invoker.send(:remove_const,:COMMANDER)
+      Invoker.commander = nil
     end
 
     it "should populate workers and open_pipes" do
