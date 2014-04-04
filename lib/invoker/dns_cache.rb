@@ -5,7 +5,7 @@ module Invoker
     def initialize(config)
       self.dns_data = {}
       @dns_mutex = Mutex.new
-      config.processes.each do |process|
+      Invoker.config.processes.each do |process|
         if process.port
           dns_data[process.label] = {
             'port' => process.port

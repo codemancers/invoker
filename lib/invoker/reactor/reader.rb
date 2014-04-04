@@ -11,7 +11,7 @@ module Invoker
     end
 
     def handle_read_event(read_ready_fds)
-      ready_fds = ready_read_fds.flatten.compact
+      ready_fds = read_ready_fds.flatten.compact
       ready_fds.each { |ready_fd| process_read(ready_fd) }
     end
 

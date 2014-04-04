@@ -99,3 +99,4 @@ module Invoker
 end
 
 require "invoker/cli/question"
+require "invoker/cli/tail_watcher"

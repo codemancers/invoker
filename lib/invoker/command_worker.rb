@@ -26,7 +26,7 @@ module Invoker
 
     # Print the lines received over the network
     def receive_line(line)
-      tail_watchers = Invoker.tail_watcher[@command_label]
+      tail_watchers = Invoker.tail_watchers[@command_label]
       colored_line = "#{@command_label.color(color)} : #{line}"
       if tail_watchers && !tail_watchers.empty?
         tail_watchers.each { |tail_socket| send_data(tail_socket, colored_line) }

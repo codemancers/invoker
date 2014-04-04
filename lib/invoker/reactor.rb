@@ -32,7 +32,7 @@ module Invoker
     private
 
     def options_for_select
-      [reader.read_array, write.write_array, [], 0.05]
+      [reader.read_array, writer.write_array, [], 0.05]
     end
   end
 end
