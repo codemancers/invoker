@@ -46,7 +46,6 @@ module Invoker
     rescue Invoker::Errors::ClientDisconnected
       Invoker::Logger.puts "Removing #{@command_label} watcher #{socket} from list"
       Invoker.tail_watchers.remove(@command_label, socket)
-      Invoker.close_socket(socket)
     end
   end
 end

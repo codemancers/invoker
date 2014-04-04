@@ -12,7 +12,9 @@ module Invoker
     end
 
     def send_data(socket, data)
-      writer.send_data(socket, data)
+      socket.write(data)
+    rescue
+      raise Invoker::Errors::ClientDisconnected
     end
 
     def monitor_for_fd_events

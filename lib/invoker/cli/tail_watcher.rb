@@ -20,8 +20,13 @@ module Invoker
       @tail_mutex.synchronize do
         client_list = tail_watchers[name]
         client_list.delete(socket)
-        tail_watchers.delete(name) if client_list.empty?
+        purge(name, socket) if client_list.empty?
       end
+    end
+
+    def purge(name, socket)
+      tail_watchers.delete(name)
+      Invoker.close_socket(socket)
     end
   end
 end

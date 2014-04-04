@@ -47,9 +47,9 @@ module Invoker
       unix_socket.send_command('add_http', process_name: name, port: port)
     end
 
-    desc "tail process_name", "Tail a particular process"
-    def tail(name)
-      tailer = Invoker::CLI::Tail.new(name)
+    desc "tail process1 process2", "Tail a particular process"
+    def tail(*names)
+      tailer = Invoker::CLI::Tail.new(names)
       tailer.run
     end
 
