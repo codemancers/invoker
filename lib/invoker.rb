@@ -69,6 +69,27 @@ module Invoker
       end
       false
     end
+
+    def setup_config_location
+      config_location = File.join(Dir.home, '.invoker')
+      return config_location if Dir.exist?(config_location)
+
+      if File.exist?(config_location)
+        old_config = File.read(config_location)
+        FileUtils.rm_f(config_location)
+      end
+
+      FileUtils.mkdir(config_location)
+
+      if old_config
+        new_config = File.join(config_location, 'config')
+        File.open(new_config, 'w') do |file|
+          file.write(old_config)
+        end
+      end
+
+      config_location
+    end
   end
 
 end

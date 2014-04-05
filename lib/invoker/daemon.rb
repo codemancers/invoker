@@ -24,11 +24,15 @@ module Invoker
     end
 
     def pid_file
-      "/tmp/#{process_name}.pid"
+      File.join(Dir.home, ".invoker", "#{process_name}.pid")
     end
 
     def pid
       File.read(pid_file).strip.to_i
+    end
+
+    def log_file
+      File.join(Dir.home, ".invoker", "#{process_name}.log")
     end
 
     def daemonize
@@ -40,7 +44,8 @@ module Invoker
         File.open(pid_file, "w") do |file|
           file.write(Process.pid.to_s)
         end
-        redirect_io
+        Invoker::Logger.puts "Invoker daemon log is available at #{log_file}"
+        redirect_io(log_file)
         $0 = process_name
       end
     end

@@ -16,7 +16,7 @@ RSpec.configure do |config|
     @original_verbosity = $VERBOSE
     $VERBOSE = nil
     @old_config = Invoker::Power::Config::CONFIG_LOCATION
-    Invoker::Power::Config.const_set(:CONFIG_LOCATION, "/tmp/.invoker")
+    Invoker::Power::Config.const_set(:CONFIG_LOCATION, "/tmp/.invoker/config")
 
     File.exists?(Invoker::Power::Config::CONFIG_LOCATION) &&
       File.delete(Invoker::Power::Config::CONFIG_LOCATION)

@@ -4,6 +4,7 @@ require "thor"
 module Invoker
   class CLI < Thor
     def self.start(*args)
+      Invoker.setup_config_location
       cli_args = args.flatten
       # If it is not a valid task, it is probably file argument
       if default_start_command?(cli_args)
