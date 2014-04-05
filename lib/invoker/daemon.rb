@@ -89,41 +89,33 @@ module Invoker
     end
 
     def redirect_io(logfile_name = nil)
-      close_stdin
+      redirect_file_to_target($stdin)
       redirect_stdout(logfile_name)
       redirect_stderr
     end
 
-    def close_stdin
-      begin
-        $stdin.reopen "/dev/null"
-      rescue; end
-    end
-
     def redirect_stderr
-      begin
-        $stderr.reopen $stdout
-      rescue; end
+      redirect_file_to_target($stderr, $stdout)
       $stderr.sync = true
     end
 
     def redirect_stdout(logfile_name)
-      redirect_stdout_to_null = lambda do
-        begin
-          $stdout.reopen("/dev/null")
-        rescue; end
-      end
-
       if logfile_name
         begin
           $stdout.reopen logfile_name, "a"
           $stdout.sync = true
         rescue StandardError
-          redirect_stdout_to_null.call
+          redirect_file_to_target($stdout)
         end
       else
-        redirect_stdout_to_null
+        redirect_file_to_target($stdout)
       end
+    end
+
+    def redirect_file_to_target(file, target = "/dev/null")
+      begin
+        file.reopen(target)
+      rescue; end
     end
   end
 end
