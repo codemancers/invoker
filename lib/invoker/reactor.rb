@@ -11,6 +11,8 @@ module Invoker
       reader.watch_for_read(fd)
     end
 
+    # Writes data to client socket and raises error if errors
+    # while writing
     def send_data(socket, data)
       socket.write(data)
     rescue

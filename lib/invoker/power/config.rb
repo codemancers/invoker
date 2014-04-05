@@ -9,7 +9,7 @@ module Invoker
       CONFIG_LOCATION = File.join(Dir.home, ".invoker", "config")
 
       def self.has_config?
-        File.exists?(CONFIG_LOCATION)
+        File.exist?(CONFIG_LOCATION)
       end
 
       def self.create(options = {})
@@ -21,7 +21,7 @@ module Invoker
       end
 
       def self.delete
-        if File.exists?(CONFIG_LOCATION)
+        if File.exist?(CONFIG_LOCATION)
           File.delete(CONFIG_LOCATION)
         end
       end

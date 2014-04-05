@@ -91,5 +91,4 @@ module Invoker
       config_location
     end
   end
-
 end

@@ -92,7 +92,6 @@ module Invoker
     private
 
     def self.default_start_command?(args)
-      return false if args.length != 1
       command_name = args.first
       command_name &&
         !command_name.match(/^-/) &&

@@ -14,7 +14,11 @@ module Invoker
       end
 
       def send_and_wait(command, message = {})
-        socket = Socket.unix(Invoker::IPC::Server::SOCKET_PATH)
+        begin
+          socket = Socket.unix(Invoker::IPC::Server::SOCKET_PATH)
+        rescue
+          abort("Invoker does not seem to be running")
+        end
         message_object = get_message_object(command, message)
         send_json_message(socket, message_object)
         socket.flush
@@ -35,6 +39,8 @@ module Invoker
         Socket.unix(Invoker::IPC::Server::SOCKET_PATH) do |socket|
           yield socket
         end
+      rescue
+        abort("Invoker does not seem to be running")
       end
 
       def send_json_message(socket, message_object)

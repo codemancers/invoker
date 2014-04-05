@@ -12,8 +12,10 @@ module Invoker
       @tail_mutex.synchronize { tail_watchers[process_name] }
     end
 
-    def add(name, socket)
-      @tail_mutex.synchronize { tail_watchers[name] << socket }
+    def add(names, socket)
+      @tail_mutex.synchronize do
+        names.each { |name| tail_watchers[name] << socket }
+      end
     end
 
     def remove(name, socket)

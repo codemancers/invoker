@@ -108,7 +108,7 @@ module Invoker
 
       class Tail < Base
         include Serialization
-        message_attributes :process_name
+        message_attributes :process_names
       end
 
       class AddHttp < Base
