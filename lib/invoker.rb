@@ -65,6 +65,14 @@ module Invoker
     false
   end
 
+  def self.daemonize=(daemonize)
+    @daemonize = daemonize
+  end
+
+  def self.daemonize?
+    @daemonize
+  end
+
   def self.daemon
     @daemon ||= Invoker::Daemon.new
   end

@@ -107,17 +107,15 @@ describe "Invoker::Commander" do
 
     describe "when daemonized" do
       before do
-        invoker_config.stubs(:processes).returns([
-          OpenStruct.new(label: "sleep", cmd: "sleep 4", dir: ENV['HOME'])
-        ])
-        @commander = Invoker::Commander.new()
-        Invoker.const_set(:COMMANDER, @commander)
-        Invoker.const_set(:DAEMONIZE, true)
+        invoker_config.stubs(:processes).returns([OpenStruct.new(:label => "sleep", :cmd => "sleep 4", :dir => ENV['HOME'])])
+        @commander = Invoker::Commander.new
+        Invoker.commander = @commander
+        Invoker.daemonize = true
       end
 
       after do
-        Invoker.send(:remove_const, :COMMANDER)
-        Invoker.send(:remove_const, :DAEMONIZE)
+        Invoker.commander = nil
+        Invoker.daemonize = false
       end
 
       it "should daemonize the process and populate workers and open_pipes" do

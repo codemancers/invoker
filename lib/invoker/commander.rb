@@ -33,7 +33,7 @@ module Invoker
       if !Invoker.config.processes || Invoker.config.processes.empty?
         raise Invoker::Errors::InvalidConfig.new("No processes configured in config file")
       end
-      daemonize_app if Invoker::DAEMONIZE
+      daemonize_app if Invoker.daemonize?
       install_interrupt_handler
       unix_server_thread = Thread.new { Invoker::IPC::Server.new }
       thread_group.add(unix_server_thread)

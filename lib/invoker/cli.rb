@@ -36,6 +36,7 @@ module Invoker
       aliases: [:d]
     def start(file)
       port = options[:port] || 9000
+      Invoker.daemonize = options[:daemon]
       Invoker.load_invoker_config(file, port)
       warn_about_terminal_notifier
       Invoker.commander.start_manager
