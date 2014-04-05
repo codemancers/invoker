@@ -1,5 +1,5 @@
 AllCops:
-  RunRailsCops: true
+  RunRailsCops: false
   Excludes:
     - db/**
 
