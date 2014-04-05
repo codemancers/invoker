@@ -46,4 +46,8 @@ module Invoker
     end
     false
   end
+
+  def self.daemon
+    @daemon ||= Invoker::Daemon.new
+  end
 end

@@ -85,7 +85,7 @@ module Invoker
 
     desc "stop", "Stop Invoker daemon"
     def stop
-      Invoker::Daemon.stop
+      Invoker.daemon.stop
     end
 
     private

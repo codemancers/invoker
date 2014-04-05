@@ -1,22 +1,33 @@
 require "spec_helper"
 
 describe Invoker::Daemon do
-  describe '.start' do
-    it "should start the daemon" do
-      pwd = mock()
-      Dir.expects(:pwd).returns(pwd)
-      Daemons.expects(:daemonize)
-      Dir.expects(:chdir).with(pwd)
-      Invoker::Daemon.start
+  let(:daemon) { Invoker::Daemon.new}
+
+  describe "#start" do
+    context "when daemon is aleady running" do
+      it "exits without any error" do
+        daemon.expects(:running?).returns(true)
+        begin
+          daemon.start
+        rescue SystemExit => e
+          expect(e.status).to be(0)
+        end
+      end
+    end
+
+    context "when daemon is not running" do
+      it "starts the daemon" do
+        daemon.expects(:dead?).returns(false)
+        daemon.expects(:daemonize)
+        daemon.start
+      end
     end
   end
 
-  describe '.stop' do
-    it "should stop the daemon if it is running" do
-      monitor = mock()
-      Daemons::Monitor.expects(:find).returns(monitor)
-      monitor.expects(:stop).once
-      Invoker::Daemon.stop
+  describe "#stop" do
+    it "stops the daemon" do
+      daemon.expects(:kill_process)
+      daemon.stop
     end
   end
 end

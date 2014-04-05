@@ -294,7 +294,7 @@ module Invoker
     end
 
     def daemonize_app
-      Invoker::Daemon.start
+      Invoker.daemon.start
     end
   end
 end

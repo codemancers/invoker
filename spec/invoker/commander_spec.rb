@@ -101,7 +101,6 @@ describe "Invoker::Commander" do
 
         expect(worker).not_to be_nil
         expect(worker.command_label).to eq('sleep')
-        expect(worker.color).to eq(:green)
 
         pipe_end_worker = @commander.open_pipes[worker.pipe_end.fileno]
         expect(pipe_end_worker).not_to be_nil
@@ -126,7 +125,7 @@ describe "Invoker::Commander" do
       it "should daemonize the process and populate workers and open_pipes" do
         @commander.expects(:start_event_loop)
         @commander.expects(:load_env).returns({})
-        Invoker::Daemon.expects(:start).once
+        Invoker.daemon.expects(:start).once
         @commander.start_manager
 
         expect(@commander.open_pipes).not_to be_empty

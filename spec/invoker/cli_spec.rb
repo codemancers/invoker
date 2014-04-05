@@ -19,18 +19,8 @@ describe Invoker::CLI do
   end
 
   describe "stop command" do
-    before do
-      Invoker.const_set(:DAEMON_APP_NAME, 'invoker')
-      Invoker.const_set(:DAEMON_APP_DIR, '/tmp')
-    end
-
-    after do
-      Invoker.send(:remove_const, :DAEMON_APP_NAME)
-      Invoker.send(:remove_const, :DAEMON_APP_DIR)
-    end
-
     it "should stop the daemon" do
-      Invoker::Daemon.expects(:stop).once
+      Invoker.daemon.expects(:stop).once
       Invoker::CLI.start(["stop"])
     end
   end
