@@ -48,11 +48,9 @@ module Invoker
     end
 
     def close_socket(socket)
-      begin
-        socket.close
-      rescue StandardError => error
-        Invoker::Logger.puts "Error removing socket #{error}"
-      end
+      socket.close
+    rescue StandardError => error
+      Invoker::Logger.puts "Error removing socket #{error}"
     end
   end
 

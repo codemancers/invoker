@@ -85,7 +85,11 @@ module Invoker
       command_name = args.first
       command_name &&
         !command_name.match(/^-/) &&
-        !tasks.keys.include?(command_name)
+        !valid_tasks.include?(command_name)
+    end
+
+    def self.valid_tasks
+      tasks.keys + ["help"]
     end
 
     def unix_socket
