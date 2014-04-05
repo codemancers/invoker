@@ -48,7 +48,7 @@ module Invoker
       DEV_MATCH_REGEX = /([\w-]+)\.dev(\:\d+)?$/
 
       def self.run(options = {})
-        EventMachine.start_server('0.0.0.0', Invoker::CONFIG.http_port,
+        EventMachine.start_server('0.0.0.0', Invoker.config.http_port,
                                   BalancerConnection, options) do |connection|
           balancer = Balancer.new(connection)
           balancer.install_callbacks

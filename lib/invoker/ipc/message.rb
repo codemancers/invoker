@@ -11,7 +11,7 @@ module Invoker
         end
 
         def to_json
-          as_json.to_json
+          JSON.generate(as_json)
         end
 
         def message_attributes
@@ -106,6 +106,11 @@ module Invoker
         message_attributes :process_name
       end
 
+      class Tail < Base
+        include Serialization
+        message_attributes :process_name
+      end
+
       class AddHttp < Base
         include Serialization
         message_attributes :process_name, :port
@@ -148,3 +153,4 @@ module Invoker
 end
 
 require "invoker/ipc/message/list_response"
+require "invoker/ipc/message/tail_response"

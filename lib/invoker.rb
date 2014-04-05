@@ -29,17 +29,35 @@ require "invoker/event/manager"
 require "invoker/process_printer"
 
 module Invoker
-  def self.darwin?
-    ruby_platform.downcase.include?("darwin")
-  end
+  class << self
+    attr_accessor :config, :tail_watchers, :commander
+    attr_accessor :dns_cache
 
-  def self.ruby_platform
-    RUBY_PLATFORM
+    def darwin?
+      ruby_platform.downcase.include?("darwin")
+    end
+
+    def ruby_platform
+      RUBY_PLATFORM
+    end
+
+    def load_invoker_config(file, port)
+      @config = Invoker::Parsers::Config.new(file, port)
+      @dns_cache = Invoker::DNSCache.new(@invoker_config)
+      @tail_watchers = Invoker::CLI::TailWatcher.new
+      @commander = Invoker::Commander.new
+    end
+
+    def close_socket(socket)
+      socket.close
+    rescue StandardError => error
+      Invoker::Logger.puts "Error removing socket #{error}"
+    end
   end
 
   def self.can_run_balancer?(throw_warning = true)
     return false unless darwin?
-    return true if File.exists?(Invoker::Power::Config::CONFIG_LOCATION)
+    return true if File.exist?(Invoker::Power::Config::CONFIG_LOCATION)
 
     if throw_warning
       Invoker::Logger.puts("Invoker has detected setup has not been run. Domain feature will not work without running setup command.".color(:red))
