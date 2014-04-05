@@ -55,7 +55,7 @@ module Invoker
     end
 
     def schedule_for_monitoring(socket, data)
-      Invoker.puts "Scheduling data for delayed write #{socket}".color(:red)
+      Invoker::Logger.puts "Scheduling data for delayed write #{socket}".color(:red)
       @pending_writes[socket.fileno] = { data: data, socket: socket }
     end
 
