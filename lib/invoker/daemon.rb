@@ -12,7 +12,7 @@ module Invoker
       if running?
         Invoker::Logger.puts "Invoker daemon is already running"
         exit(0)
-      elsif(dead?)
+      elsif dead?
         File.delete(pid_file) if File.exists?(pid_file)
       end
       Invoker::Logger.puts "Running Invoker daemon"
@@ -48,33 +48,23 @@ module Invoker
     def kill_process
       pgid =  Process.getpgid(pid)
       Process.kill('-TERM', pgid)
-      File.delete(pid_file) if File.exists?(pid_file)
+      File.delete(pid_file) if File.exist?(pid_file)
       Invoker::Logger.puts "Stopped Invoker daemon"
     end
 
     def process_running?
-      begin
-        Process.kill(0, self.pid)
-        true
-      rescue Errno::ESRCH
-        false
-      end
+      Process.kill(0, pid)
+      true
+    rescue Errno::ESRCH
+      false
     end
 
     def status
-      @status ||= begin
-                    if pidfile_exists? and process_running?
-                      0
-                    elsif pidfile_exists? # but not process_running
-                      1
-                    else
-                      3
-                    end
-                  end
+      @status ||= check_process_status
     end
 
     def pidfile_exists?
-      File.exists?(pid_file)
+      File.exist?(pid_file)
     end
 
     def running?
@@ -88,34 +78,52 @@ module Invoker
 
     private
 
+    def check_process_status
+      if pidfile_exists? && process_running?
+        0
+      elsif pidfile_exists? # but not process_running
+        1
+      else
+        3
+      end
+    end
+
     def redirect_io(logfile_name = nil)
+      close_stdin
+      redirect_stdout(logfile_name)
+      redirect_stderr
+    end
+
+    def close_stdin
       begin
-        ; STDIN.reopen "/dev/null";
-      rescue ::Exception;
+        $stdin.reopen "/dev/null"
+      rescue; end
+    end
+
+    def redirect_stderr
+      begin
+        $stderr.reopen $stdout
+      rescue; end
+      $stderr.sync = true
+    end
+
+    def redirect_stdout(logfile_name)
+      redirect_stdout_to_null = lambda do
+        begin
+          $stdout.reopen("/dev/null")
+        rescue; end
       end
 
       if logfile_name
         begin
-          STDOUT.reopen logfile_name, "a"
-          STDOUT.sync = true
-        rescue ::Exception
-          begin
-            ; STDOUT.reopen "/dev/null";
-          rescue ::Exception;
-          end
+          $stdout.reopen logfile_name, "a"
+          $stdout.sync = true
+        rescue StandardError
+          redirect_stdout_to_null.call
         end
       else
-        begin
-          ; STDOUT.reopen "/dev/null";
-        rescue ::Exception;
-        end
+        redirect_stdout_to_null
       end
-
-      begin
-        ; STDERR.reopen STDOUT;
-      rescue ::Exception;
-      end
-      STDERR.sync = true
     end
   end
 end
