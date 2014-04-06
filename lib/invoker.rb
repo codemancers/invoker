@@ -82,13 +82,7 @@ module Invoker
 
       FileUtils.mkdir(config_location)
 
-      if old_config
-        new_config = File.join(config_location, 'config')
-        File.open(new_config, 'w') do |file|
-          file.write(old_config)
-        end
-      end
-
+      migrate_old_config(old_config, config_location) if old_config
       config_location
     end
 
@@ -112,6 +106,13 @@ module Invoker
       command_path = `which terminal-notifier`
       if command_path && !command_path.empty?
         system("terminal-notifier -message '#{message}' -title Invoker")
+      end
+    end
+
+    def migrate_old_config(old_config, config_location)
+      new_config = File.join(config_location, 'config')
+      File.open(new_config, 'w') do |file|
+        file.write(old_config)
       end
     end
   end
