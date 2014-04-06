@@ -5,7 +5,7 @@ describe Invoker::IPC::DnsCheckCommand do
   let(:client) { Invoker::IPC::ClientHandler.new(client_socket) }
 
   describe "dns check for valid process" do
-    let(:message_object) { MM::DnsCheck.new(process_name: 'foo') }
+    let(:message_object) { MM::DnsCheck.new(process_name: 'lolbro') }
     it "should response with dns check response" do
       invoker_dns_cache.expects(:[]).returns('port' => 9000)
       client_socket.string = message_object.encoded_message
