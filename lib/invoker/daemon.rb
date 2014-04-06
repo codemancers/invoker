@@ -36,8 +36,8 @@ module Invoker
     end
 
     def daemonize
-      if fork                     # Parent exits, child continues.
-        sleep(5)
+      if fork
+        sleep(2)
         exit(0)
       else
         Process.setsid

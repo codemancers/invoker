@@ -18,6 +18,7 @@ describe Invoker::Daemon do
     context "when daemon is not running" do
       it "starts the daemon" do
         daemon.expects(:dead?).returns(false)
+        daemon.expects(:running?).returns(false)
         daemon.expects(:daemonize)
         daemon.start
       end

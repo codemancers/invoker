@@ -17,7 +17,7 @@ module Invoker
         begin
           socket = Socket.unix(Invoker::IPC::Server::SOCKET_PATH)
         rescue
-          abort("Invoker does not seem to be running")
+          abort("Invoker does not seem to be running".color(:red))
         end
         message_object = get_message_object(command, message)
         send_json_message(socket, message_object)
@@ -40,7 +40,7 @@ module Invoker
           yield socket
         end
       rescue
-        abort("Invoker does not seem to be running")
+        abort("Invoker does not seem to be running".color(:red))
       end
 
       def send_json_message(socket, message_object)
