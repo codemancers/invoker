@@ -1,10 +1,8 @@
 module Invoker
   class CommandWorker
     attr_accessor :command_label, :pipe_end, :pid, :color
-    attr_accessor :reactor
 
-    def initialize(command_label, pipe_end, pid, color, reactor)
-      @reactor = reactor
+    def initialize(command_label, pipe_end, pid, color)
       @command_label = command_label
       @pipe_end = pipe_end
       @pid = pid
@@ -42,8 +40,8 @@ module Invoker
     end
 
     def send_data(socket, data)
-      reactor.send_data(socket, data)
-    rescue Invoker::Errors::ClientDisconnected
+      socket.write(data)
+    rescue
       Invoker::Logger.puts "Removing #{@command_label} watcher #{socket} from list"
       Invoker.tail_watchers.remove(@command_label, socket)
     end

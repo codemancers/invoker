@@ -23,6 +23,7 @@ require "invoker/errors"
 require "invoker/parsers/procfile"
 require "invoker/parsers/config"
 require "invoker/commander"
+require "invoker/process_manager"
 require "invoker/command_worker"
 require "invoker/reactor"
 require "invoker/event/manager"
@@ -89,6 +90,29 @@ module Invoker
       end
 
       config_location
+    end
+
+    def run_without_bundler
+      if defined?(Bundler)
+        Bundler.with_clean_env do
+          yield
+        end
+      else
+        yield
+      end
+    end
+
+    def notify_user(message)
+      run_without_bundler { check_and_notify_with_terminal_notifier(message) }
+    end
+
+    def check_and_notify_with_terminal_notifier(message)
+      return unless Invoker.darwin?
+
+      command_path = `which terminal-notifier`
+      if command_path && !command_path.empty?
+        system("terminal-notifier -message '#{message}' -title Invoker")
+      end
     end
   end
 end
