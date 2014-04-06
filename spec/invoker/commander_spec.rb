@@ -18,7 +18,9 @@ describe "Invoker::Commander" do
   describe "#start_process" do
     describe "when not daemonized" do
       before do
-        invoker_config.stubs(:processes).returns([OpenStruct.new(:label => "sleep", :cmd => "sleep 4", :dir => ENV['HOME'])])
+        invoker_config.stubs(:processes).returns(
+          [OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'])]
+        )
         @commander = Invoker::Commander.new
         Invoker.commander = @commander
       end
@@ -30,14 +32,17 @@ describe "Invoker::Commander" do
       it "should populate workers and open_pipes" do
         @commander.expects(:start_event_loop)
         @commander.process_manager.expects(:load_env).returns({})
+        @commander.process_manager.expects(:spawn).returns(100)
+        @commander.process_manager.expects(:wait_on_pid)
+        @commander.expects(:at_exit)
         @commander.start_manager
         expect(@commander.process_manager.open_pipes).not_to be_empty
         expect(@commander.process_manager.workers).not_to be_empty
 
-        worker = @commander.process_manager.workers['sleep']
+        worker = @commander.process_manager.workers['foobar']
 
         expect(worker).not_to be_nil
-        expect(worker.command_label).to eq('sleep')
+        expect(worker.command_label).to eq('foobar')
 
         pipe_end_worker = @commander.process_manager.open_pipes[worker.pipe_end.fileno]
         expect(pipe_end_worker).not_to be_nil
@@ -46,7 +51,9 @@ describe "Invoker::Commander" do
 
     describe "when daemonized" do
       before do
-        invoker_config.stubs(:processes).returns([OpenStruct.new(:label => "sleep", :cmd => "sleep 4", :dir => ENV['HOME'])])
+        invoker_config.stubs(:processes).returns(
+          [OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'])]
+        )
         @commander = Invoker::Commander.new
         Invoker.commander = @commander
         Invoker.daemonize = true
@@ -61,15 +68,18 @@ describe "Invoker::Commander" do
         @commander.expects(:start_event_loop)
         @commander.process_manager.expects(:load_env).returns({})
         Invoker.daemon.expects(:start).once
+        @commander.process_manager.expects(:spawn).returns(100)
+        @commander.process_manager.expects(:wait_on_pid)
+        @commander.expects(:at_exit)
         @commander.start_manager
 
         expect(@commander.process_manager.open_pipes).not_to be_empty
         expect(@commander.process_manager.workers).not_to be_empty
 
-        worker = @commander.process_manager.workers['sleep']
+        worker = @commander.process_manager.workers['foobar']
 
         expect(worker).not_to be_nil
-        expect(worker.command_label).to eq('sleep')
+        expect(worker.command_label).to eq('foobar')
 
         pipe_end_worker = @commander.process_manager.open_pipes[worker.pipe_end.fileno]
         expect(pipe_end_worker).not_to be_nil
