@@ -153,6 +153,15 @@ module Invoker
         include Serialization
         message_attributes :process_name, :port
       end
+
+      class Ping < Base
+        include Serialization
+      end
+
+      class Pong < Base
+        include Serialization
+        message_attributes :status
+      end
     end
   end
 end

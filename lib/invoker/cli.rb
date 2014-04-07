@@ -40,6 +40,8 @@ module Invoker
       Invoker.daemonize = options[:daemon]
       Invoker.load_invoker_config(file, port)
       warn_about_terminal_notifier
+      pinger = Invoker::CLI::Pinger.new(unix_socket)
+      abort("Invoker is already running".color(:red)) if pinger.invoker_running?
       Invoker.commander.start_manager
     end
 
@@ -121,3 +123,4 @@ end
 require "invoker/cli/question"
 require "invoker/cli/tail_watcher"
 require "invoker/cli/tail"
+require "invoker/cli/pinger"

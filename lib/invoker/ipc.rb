@@ -10,6 +10,7 @@ require 'invoker/ipc/server'
 require "invoker/ipc/reload_command"
 require 'invoker/ipc/tail_command'
 require 'invoker/ipc/unix_client'
+require "invoker/ipc/ping_command"
 
 module Invoker
   module IPC
