@@ -11,7 +11,7 @@ module Invoker
         end
 
         def to_json
-          as_json.to_json
+          JSON.generate(as_json)
         end
 
         def message_attributes
@@ -39,7 +39,7 @@ module Invoker
             elsif value.is_a?(Hash)
               mem[obj] = serialize_hash(value)
             else
-              mem[obj] = value.respond_to?(:as_json) ? value.as_json : value
+              mem[obj] = value.respond_to?(:as_json) ? value.as_json : encode_as_utf(value)
             end
             mem
           end
@@ -53,9 +53,14 @@ module Invoker
           end
         end
 
+        def encode_as_utf(value)
+          return value unless value.is_a?(String)
+          value.encode("utf-8", invalid: :replace, undef: :replace, replace: '_')
+        end
+
         def serialize_array(attribute_array)
           attribute_array.map do |x|
-            x.respond_to?(:as_json) ? x.as_json : x
+            x.respond_to?(:as_json) ? x.as_json : encode_as_utf(x)
           end
         end
 
@@ -64,7 +69,7 @@ module Invoker
             if temp_value.respond_to?(:as_json)
               temp_mem[temp_key] = temp_value.as_json
             else
-              temp_mem[temp_key] = temp_value
+              temp_mem[temp_key] = encode_as_utf(temp_value)
             end
           end
         end
@@ -106,6 +111,11 @@ module Invoker
         message_attributes :process_name
       end
 
+      class Tail < Base
+        include Serialization
+        message_attributes :process_names
+      end
+
       class AddHttp < Base
         include Serialization
         message_attributes :process_name, :port
@@ -143,8 +153,18 @@ module Invoker
         include Serialization
         message_attributes :process_name, :port
       end
+
+      class Ping < Base
+        include Serialization
+      end
+
+      class Pong < Base
+        include Serialization
+        message_attributes :status
+      end
     end
   end
 end
 
 require "invoker/ipc/message/list_response"
+require "invoker/ipc/message/tail_response"

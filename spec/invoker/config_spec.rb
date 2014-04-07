@@ -155,8 +155,8 @@ web: bundle exec rails s -p $PORT
 web: bundle exec rails s -p $PORT
           EOD
         }
-        config = Invoker::Parsers::Config.new("/tmp/Procfile", 9000)
-        dns_cache = Invoker::DNSCache.new(config)
+        Invoker.load_invoker_config("/tmp/Procfile", 9000)
+        dns_cache = Invoker::DNSCache.new(Invoker.config)
 
         expect(dns_cache.dns_data).to_not be_empty
         expect(dns_cache.dns_data['web']).to_not be_empty

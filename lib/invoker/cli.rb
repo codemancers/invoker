@@ -4,6 +4,7 @@ require "thor"
 module Invoker
   class CLI < Thor
     def self.start(*args)
+      Invoker.setup_config_location
       cli_args = args.flatten
       # If it is not a valid task, it is probably file argument
       if default_start_command?(cli_args)
@@ -17,7 +18,7 @@ module Invoker
       Invoker::Power::Setup.install
     end
 
-    desc "version", "Print invoker version"
+    desc "version", "Print Invoker version"
     def version
       Invoker::Logger.puts Invoker::VERSION
     end
@@ -30,17 +31,18 @@ module Invoker
 
     desc "start CONFIG_FILE", "Start Invoker Server"
     option :port, type: :numeric, banner: "Port series to be used for starting rack servers"
+    option :daemon,
+      type: :boolean,
+      banner: "Daemonize the server into the background",
+      aliases: [:d]
     def start(file)
       port = options[:port] || 9000
-      Invoker::Parsers::Config.new(file, port).tap do |config|
-        Invoker.const_set(:CONFIG, config)
-        Invoker.const_set(:DNS_CACHE, Invoker::DNSCache.new(config))
-        warn_about_terminal_notifier
-        Invoker::Commander.new.tap do |commander|
-          Invoker.const_set(:COMMANDER, commander)
-          commander.start_manager
-        end
-      end
+      Invoker.daemonize = options[:daemon]
+      Invoker.load_invoker_config(file, port)
+      warn_about_terminal_notifier
+      pinger = Invoker::CLI::Pinger.new(unix_socket)
+      abort("Invoker is already running".color(:red)) if pinger.invoker_running?
+      Invoker.commander.start_manager
     end
 
     desc "add process", "Add a program to Invoker server"
@@ -51,6 +53,12 @@ module Invoker
     desc "add_http process_name port", "Add an external http process to Invoker DNS server"
     def add_http(name, port)
       unix_socket.send_command('add_http', process_name: name, port: port)
+    end
+
+    desc "tail process1 process2", "Tail a particular process"
+    def tail(*names)
+      tailer = Invoker::CLI::Tail.new(names)
+      tailer.run
     end
 
     desc "reload process", "Reload a process managed by Invoker"
@@ -78,14 +86,22 @@ module Invoker
       unix_socket.send_command('remove', process_name: name, signal: signal)
     end
 
+    desc "stop", "Stop Invoker daemon"
+    def stop
+      Invoker.daemon.stop
+    end
+
     private
 
     def self.default_start_command?(args)
-      return false if args.length != 1
       command_name = args.first
       command_name &&
         !command_name.match(/^-/) &&
-        !tasks.keys.include?(command_name)
+        !valid_tasks.include?(command_name)
+    end
+
+    def self.valid_tasks
+      tasks.keys + ["help"]
     end
 
     def unix_socket
@@ -105,3 +121,6 @@ module Invoker
 end
 
 require "invoker/cli/question"
+require "invoker/cli/tail_watcher"
+require "invoker/cli/tail"
+require "invoker/cli/pinger"

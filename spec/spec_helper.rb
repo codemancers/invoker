@@ -1,6 +1,9 @@
 require "pry"
-require 'coveralls'
-Coveralls.wear!
+require "simplecov"
+SimpleCov.start do
+  add_filter "/spec/"
+end
+
 
 require "invoker"
 require "invoker/power/power"
@@ -16,7 +19,8 @@ RSpec.configure do |config|
     @original_verbosity = $VERBOSE
     $VERBOSE = nil
     @old_config = Invoker::Power::Config::CONFIG_LOCATION
-    Invoker::Power::Config.const_set(:CONFIG_LOCATION, "/tmp/.invoker")
+    Invoker::Power::Config.const_set(:CONFIG_LOCATION, "/tmp/.invoker/config")
+    FileUtils.mkdir("/tmp/.invoker") unless Dir.exist?("/tmp/.invoker")
 
     File.exists?(Invoker::Power::Config::CONFIG_LOCATION) &&
       File.delete(Invoker::Power::Config::CONFIG_LOCATION)
@@ -58,29 +62,13 @@ end
 ENV["INVOKER_TESTS"] = "true"
 
 def invoker_config
-  if Invoker.const_defined?(:CONFIG)
-    Invoker::CONFIG
-  else
-    Invoker.const_set(:CONFIG, mock())
-    Invoker::CONFIG
-  end
+  Invoker.config ||= mock
 end
 
 def invoker_commander
-  if Invoker.const_defined?(:COMMANDER)
-    Invoker::COMMANDER
-  else
-    Invoker.const_set(:COMMANDER, mock())
-    Invoker::COMMANDER
-  end
+  Invoker.commander ||= mock
 end
 
 def invoker_dns_cache
-  if Invoker.const_defined?(:DNS_CACHE)
-    Invoker::DNS_CACHE
-  else
-    Invoker.const_set(:DNS_CACHE, mock())
-    Invoker::DNS_CACHE
-  end
+  Invoker.dns_cache ||= mock
 end
-

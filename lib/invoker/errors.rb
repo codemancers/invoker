@@ -12,5 +12,6 @@ module Invoker
     class NoValidPortFound < StandardError; end
     class InvalidConfig < StandardError; end
     class InvalidFile < StandardError; end
+    class ClientDisconnected < StandardError; end
   end
 end
