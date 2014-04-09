@@ -27,9 +27,10 @@ module Invoker
       tail_watchers = Invoker.tail_watchers[@command_label]
       color_line = "#{@command_label.color(color)} : #{line}"
       if tail_watchers && !tail_watchers.empty?
-        tail_response = Invoker::IPC::Message::TailResponse.new(tail_line: color_line)
-        json_response = tail_response.encoded_message
-        tail_watchers.each { |tail_socket| send_data(tail_socket, json_response) }
+        json_encoded_tail_response = tail_response(line)
+        if json_encoded_tail_response
+          tail_watchers.each { |tail_socket| send_data(tail_socket, json_response) }
+        end
       else
         Invoker::Logger.puts color_line
       end
@@ -44,6 +45,16 @@ module Invoker
     rescue
       Invoker::Logger.puts "Removing #{@command_label} watcher #{socket} from list"
       Invoker.tail_watchers.remove(@command_label, socket)
+    end
+
+    private
+
+    # Encode current line as json and send the response.
+    def tail_response(line)
+      tail_response = Invoker::IPC::Message::TailResponse.new(tail_line: line)
+      tail_response.encoded_message
+    rescue
+      nil
     end
   end
 end
