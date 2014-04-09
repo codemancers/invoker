@@ -56,7 +56,7 @@ module Invoker
           file_content = File.read(file_name)
           self.body = file_content
         else
-          raise Invoker::Errors:InvalidFile, "Invalid file as body"
+          raise Invoker::Errors::InvalidFile, "Invalid file as body"
         end
       end
 
