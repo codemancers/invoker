@@ -62,6 +62,7 @@ module Invoker
       end
 
       def create_config_file
+        Invoker.setup_config_location
         Invoker::Power::Config.create(
           dns_port: port_finder.dns_port,
           http_port: port_finder.http_port
