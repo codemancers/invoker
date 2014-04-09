@@ -4,7 +4,6 @@ require "thor"
 module Invoker
   class CLI < Thor
     def self.start(*args)
-      Invoker.setup_config_location
       cli_args = args.flatten
       # If it is not a valid task, it is probably file argument
       if default_start_command?(cli_args)
@@ -36,6 +35,7 @@ module Invoker
       banner: "Daemonize the server into the background",
       aliases: [:d]
     def start(file)
+      Invoker.setup_config_location
       port = options[:port] || 9000
       Invoker.daemonize = options[:daemon]
       Invoker.load_invoker_config(file, port)
