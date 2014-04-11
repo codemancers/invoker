@@ -57,7 +57,12 @@ After that you can start process manager via:
 ~> invoker start invoker.ini
 {% endhighlight %}
 
-Above command will start all your processes in one terminal with their stdout/stderr merged and labelled.
+Above command will start all your processes in one terminal with their stdout/stderr merged and labelled. You
+can also start `Invoker` by daeomonizing it, via:
+
+{% highlight bash %}
+~> invoker start invoker.ini -d
+{% endhighlight %}
 
 <a name="tld"></a>
 ## .dev TLD support for local apps
@@ -104,6 +109,18 @@ command = bundle exec rails s -p $PORT
 Now these services can be accessed via `http://terminal.dev` , `http://cms.dev`
 `http://typo.dev`. You can also access them via wildcard subdomains such as `*.*.dev`.
 
+You can also access any external http process via `.dev` DNS by running
+following command:
+
+{% highlight bash %}
+~> invoker add_http wordpress 8080
+{% endhighlight %}
+
+Above command will make wordpress available on `wordpress.dev` even if
+wordpress was original not started by Invoker. You can access any randomly
+started process via Invoker like this.
+
+
 <a name="procfile"></a>
 ## Procfile support
 
@@ -143,6 +160,12 @@ different processes managed by invoker without affecting others.
 
 # Restart process given by command label using specific signal for killing
 ~> invoker reload dj -s 9
+
+# tail logs of specified process. This is specially useful if you started
+# invoker daemonized or you want to watch logs of just one process discarding
+# others.
+~> invoker tail dj
+
 {% endhighlight %}
 
 You can also enable OSX notifications for crashed processes by installing terminal-notifier gem. It is not a
