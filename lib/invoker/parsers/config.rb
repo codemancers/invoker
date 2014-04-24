@@ -7,7 +7,7 @@ module Invoker
       attr_accessor :processes, :power_config
 
       def initialize(filename, port)
-        @filename = filename
+        @filename = filename || auto_discover_config_file
         @port = port
         @processes = load_config
         if Invoker.can_run_balancer?
@@ -109,6 +109,10 @@ module Invoker
         else
           command
         end
+      end
+
+      def auto_discover_config_file
+        Dir.glob("{Procfile,invoker.ini,project.ini,*.ini}").first
       end
 
       def is_ini?
