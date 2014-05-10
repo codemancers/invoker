@@ -4,7 +4,7 @@ require 'http-parser'
 module Invoker
   module Power
     class BalancerConnection < EventMachine::ProxyServer::Connection
-      attr_accessor :host, :ip, :port
+      attr_accessor :host, :ip, :port, :ssl
       def set_host(host, selected_backend)
         self.host = host
         self.ip = selected_backend[:host]
@@ -64,7 +64,7 @@ module Invoker
 
       def install_callbacks
         http_parser.on_headers_complete { |header| headers_received(header) }
-        connection.on_data {|data| upstream_data(data) }
+        connection.on_data { |data| upstream_data(data) }
         connection.on_response { |backend, data| backend_data(backend, data) }
         connection.on_finish { |backend, name| frontend_disconnect(backend, name) }
       end

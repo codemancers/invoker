@@ -3,8 +3,7 @@ config/
 *.gem
 Gemfile.lock
 pkg/
-local.ini
-multi.ini
+*.ini
 tags
 .rvmrc
 vendor/

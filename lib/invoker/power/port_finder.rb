@@ -24,6 +24,7 @@ module Invoker
       end
 
       private
+
       def check_if_port_is_open(port)
         socket_flag = true
         sockets = nil
