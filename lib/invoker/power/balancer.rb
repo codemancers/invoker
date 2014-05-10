@@ -107,7 +107,7 @@ module Invoker
       def frontend_disconnect(backend, name)
         http_parser.reset
         unless @backend_data
-          Invoker::Logger.puts("\nApplication not running. Returning error page.".color(:red))
+          Invoker::Logger.puts("\nApplication #{name} not running. Returning error page.".color(:red))
           return_error_page(503)
         end
         @backend_data = false
