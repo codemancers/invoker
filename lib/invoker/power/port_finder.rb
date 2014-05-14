@@ -2,7 +2,7 @@ module Invoker
   module Power
     class PortFinder
       STARTING_PORT = 23400
-      attr_accessor :dns_port, :http_port, :starting_port
+      attr_accessor :dns_port, :http_port, :starting_port, :https_port
       def initialize
         @starting_port = STARTING_PORT
         @ports = []
@@ -12,7 +12,7 @@ module Invoker
 
       def find_ports
         STARTING_PORT.upto(STARTING_PORT + 100) do |port|
-          break if @ports.size > 2
+          break if @ports.size > 3
           if check_if_port_is_open(port)
             @ports << port
           else
@@ -21,6 +21,7 @@ module Invoker
         end
         @dns_port = @ports[0]
         @http_port = @ports[1]
+        @https_port = @ports[2]
       end
 
       private
@@ -43,8 +44,6 @@ module Invoker
       rescue
         nil
       end
-
-
     end
   end
 end

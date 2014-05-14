@@ -3,12 +3,18 @@ require 'http-parser'
 
 module Invoker
   module Power
-    class BalancerConnection < EventMachine::ProxyServer::Connection
-      attr_accessor :host, :ip, :port, :ssl
+    class HttpProxy < EventMachine::ProxyServer::Connection
+      attr_accessor :host, :ip, :port
       def set_host(host, selected_backend)
         self.host = host
         self.ip = selected_backend[:host]
         self.port = selected_backend[:port]
+      end
+    end
+
+    class HttpsProxy < HttpProxy
+      def post_init
+        start_tls
       end
     end
 
@@ -48,8 +54,13 @@ module Invoker
       DEV_MATCH_REGEX = /([\w-]+)\.dev(\:\d+)?$/
 
       def self.run(options = {})
-        EventMachine.start_server('0.0.0.0', Invoker.config.http_port,
-                                  BalancerConnection, options) do |connection|
+        start_http_proxy(Invoker.config.http_port, HttpProxy)
+        start_http_proxy(Invoker.config.https_port, HttpsProxy)
+      end
+
+      def self.start_http_proxy(proxy_class, port)
+        EventMachine.start_server('0.0.0.0', port,
+                                  proxy_class, options) do |connection|
           balancer = Balancer.new(connection)
           balancer.install_callbacks
         end

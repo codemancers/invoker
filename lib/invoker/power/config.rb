@@ -43,6 +43,10 @@ module Invoker
         @config[:http_port] = http_port
       end
 
+      def https_port=(https_port)
+        @config[:https_port] = https_port
+      end
+
       def ipfw_rule_number=(ipfw_rule_number)
         @config[:ipfw_rule_number] = ipfw_rule_number
       end
@@ -50,6 +54,10 @@ module Invoker
       def dns_port; @config[:dns_port]; end
       def http_port; @config[:http_port]; end
       def ipfw_rule_number; @config[:ipfw_rule_number]; end
+
+      def https_port
+        @config[:https_port]
+      end
 
       def save
         File.open(CONFIG_LOCATION, "w") do |fl|
