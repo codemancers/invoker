@@ -51,27 +51,39 @@ module Invoker
     end
 
     class Balancer
-      attr_accessor :connection, :http_parser, :session
+      attr_accessor :connection, :http_parser, :session, :protocol
       DEV_MATCH_REGEX = /([\w-]+)\.dev(\:\d+)?$/
 
       def self.run(options = {})
-        start_http_proxy(InvokerHttpProxy, Invoker.config.http_port, options)
-        start_http_proxy(InvokerHttpsProxy, Invoker.config.https_port, options)
+        start_http_proxy(InvokerHttpProxy, 'http', options)
+        start_http_proxy(InvokerHttpsProxy, 'https', options)
       end
 
-      def self.start_http_proxy(proxy_class, port, options)
+      def self.start_http_proxy(proxy_class, protocol, options)
+        port = protocol == 'http' ? Invoker.config.http_port : Invoker.config.https_port
         EventMachine.start_server('0.0.0.0', port,
                                   proxy_class, options) do |connection|
-          balancer = Balancer.new(connection)
+          balancer = Balancer.new(connection, protocol)
           balancer.install_callbacks
         end
       end
 
-      def initialize(connection)
+      def initialize(connection, protocol)
         @connection = connection
+        @protocol = protocol
         @http_parser = BalancerParser.new()
         @session = nil
         @buffer = []
+        # approach taken from tunnels gem
+        @forwarded_proto_header_inserted = false
+      end
+
+      def insert_forwarded_proto_header(data)
+        if !@x_forwarded_proto_header_inserted && data =~ /\r\n\r\n/
+          data.gsub(/\r\n\r\n/, "\r\nX_FORWARDED_PROTO: #{protocol}\r\n\r\n")
+        else
+          data
+        end
       end
 
       def install_callbacks
@@ -113,7 +125,7 @@ module Invoker
 
       def backend_data(backend, data)
         @backend_data = true
-        data
+        insert_forwarded_proto_header(data)
       end
 
       def frontend_disconnect(backend, name)
