@@ -9,11 +9,11 @@ module Invoker
         if setup_resolver_file
           find_open_ports
           install_resolver(port_finder.dns_port)
-          install_firewall(port_finder.http_port)
-          flush_dns_rules()
+          install_firewall(port_finder.http_port, port_finder.https_port)
+          flush_dns_rules
           # Before writing the config file, drop down to a normal user
-          drop_to_normal_user()
-          create_config_file()
+          drop_to_normal_user
+          create_config_file
         else
           Invoker::Logger.puts("Invoker is not configured to serve from subdomains".color(:red))
         end
@@ -40,7 +40,8 @@ module Invoker
         Invoker.setup_config_location
         Invoker::Power::Config.create(
           dns_port: port_finder.dns_port,
-          http_port: port_finder.http_port
+          http_port: port_finder.http_port,
+          https_port: port_finder.https_port
         )
       end
 
@@ -62,9 +63,9 @@ module Invoker
         raise
       end
 
-      def install_firewall(balancer_port)
+      def install_firewall(http_port, https_port)
         File.open(FIREWALL_PLIST_FILE, "w") { |fl|
-          fl.write(plist_string(balancer_port))
+          fl.write(plist_string(http_port, https_port))
         }
         unload_firewall_rule
         load_firewall_rule
@@ -80,7 +81,7 @@ module Invoker
       end
 
       # Ripped from POW code
-      def plist_string(balancer_port)
+      def plist_string(http_port, https_port)
         plist =<<-EOD
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -92,7 +93,7 @@ module Invoker
 <array>
 <string>sh</string>
 <string>-c</string>
-<string>#{firewall_command(balancer_port)}</string>
+<string>#{firewall_command(http_port, https_port)}</string>
 </array>
 <key>RunAtLoad</key>
 <true/>
@@ -113,8 +114,9 @@ port #{dns_port}
       end
 
       # Ripped from Pow code
-      def firewall_command(balancer_port)
-        "ipfw add fwd 127.0.0.1,#{balancer_port} tcp from any to me dst-port 80 in"\
+      def firewall_command(http_port, https_port)
+        "ipfw add fwd 127.0.0.1,#{http_port} tcp from any to me dst-port 80 in"\
+          "&amp;&amp; ipfw add fwd 127.0.0.1,#{https_port} tcp from any to me dst-port 443 in"\
           "&amp;&amp; sysctl -w net.inet.ip.forwarding=1"
       end
 

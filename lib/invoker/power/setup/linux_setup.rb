@@ -9,8 +9,26 @@ module Invoker
           find_open_ports
           install_required_software
           install_resolver
-          install_port_forwarder()
+          install_port_forwarder
           restart_services
+          drop_to_normal_user
+          create_config_file
+        else
+          Invoker::Logger.puts("Invoker is not configured to serve from subdomains".color(:red))
+        end
+        self
+      end
+
+      def uninstall_invoker
+        uninstall_invoker_flag =
+          Invoker::CLI::Question.agree("Are you sure you want to uninstall firewall rules created by setup (y/n) : ")
+
+        if uninstall_invoker_flag
+          remove_resolver_file
+          unload_firewall_rule(true)
+          flush_dns_rules
+          Invoker::Power::Config.delete
+          Invoker::Logger.puts("Firewall rules were removed")
         end
       end
 
@@ -34,7 +52,7 @@ module Invoker
       def install_port_forwarder
         File.open(RINETD_FILE, "a") do |fl|
           fl << "\n"
-          fl << rinetd_setup
+          fl << rinetd_setup(port_finder.http_port, port_finder.https_port)
         end
       end
 
@@ -46,10 +64,10 @@ address=/dev/127.0.0.1
         tld_string
       end
 
-      def rinetd_setup
+      def rinetd_setup(http_port, https_port)
         rinetd_string =<<-EOD
-0.0.0.0 80 0.0.0.0 23400
-0.0.0.0 443 0.0.0.0 23401
+0.0.0.0 80 0.0.0.0 #{http_port}
+0.0.0.0 443 0.0.0.0 #{https_port}
         EOD
         rinetd_string
       end
