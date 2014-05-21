@@ -3,26 +3,7 @@ module Invoker
     class OsxSetup < Setup
       RESOLVER_FILE = "/etc/resolver/dev"
       RESOLVER_DIR = "/etc/resolver"
-
       FIREWALL_PLIST_FILE = "/Library/LaunchDaemons/com.codemancers.invoker.firewall.plist"
-      def self.install
-        installer = new
-        if Invoker.darwin?
-          if installer.check_if_setup_can_run?
-            installer.setup_invoker
-          else
-            Invoker::Logger.puts("The setup has been already run.".color(:red))
-          end
-        else
-          Invoker::Logger.puts("Domain feature is currently not supported on systems other than OSX".color(:red))
-        end
-        installer
-      end
-
-      def self.uninstall
-        installer = new
-        installer.uninstall_invoker
-      end
 
       def setup_invoker
         if setup_resolver_file
@@ -51,10 +32,6 @@ module Invoker
         end
       end
 
-      def drop_to_normal_user
-        EventMachine.set_effective_user(ENV["SUDO_USER"])
-      end
-
       def flush_dns_rules
         system("dscacheutil -flushcache")
       end
@@ -65,14 +42,6 @@ module Invoker
           dns_port: port_finder.dns_port,
           http_port: port_finder.http_port
         )
-      end
-
-      def find_open_ports
-        port_finder.find_ports()
-      end
-
-      def port_finder
-        @port_finder ||= Invoker::Power::PortFinder.new()
       end
 
       def install_resolver(dns_port)
@@ -91,10 +60,6 @@ module Invoker
       rescue Errno::EACCES
         Invoker::Logger.puts("Running uninstall requires root access, please rerun it with sudo".color(:red))
         raise
-      end
-
-      def check_if_setup_can_run?
-        !File.exists?(Invoker::Power::Config::CONFIG_LOCATION)
       end
 
       def install_firewall(balancer_port)
