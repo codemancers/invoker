@@ -19,17 +19,18 @@ module Invoker
         self
       end
 
-      def uninstall_invoker
-        uninstall_invoker_flag =
-          Invoker::CLI::Question.agree("Are you sure you want to uninstall firewall rules created by setup (y/n) : ")
+      def create_config_file
+        Invoker.setup_config_location
+        Invoker::Power::Config.create(
+          dns_port: port_finder.dns_port,
+          http_port: port_finder.http_port,
+          https_port: port_finder.https_port
+        )
+      end
 
-        if uninstall_invoker_flag
-          remove_resolver_file
-          unload_firewall_rule(true)
-          flush_dns_rules
-          Invoker::Power::Config.delete
-          Invoker::Logger.puts("Firewall rules were removed")
-        end
+      def uninstall_invoker
+        Invoker::Logger.puts("Uninstall is not yet supported on Linux."\
+          " You can remove invoker changes by uninstalling dnsmasq and rinetd")
       end
 
       private
