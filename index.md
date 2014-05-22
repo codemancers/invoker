@@ -10,7 +10,7 @@ Use it for managing multiple processes with ease.
 Use it for developing web applications on different local domains without
 `/etc/hosts` hacks.
 
-<iframe width="640" height="480" src="http://www.youtube.com/embed/uu6NZrYvSQ8" frameborder="0" allowfullscreen></iframe>
+<iframe width="640" height="480" src="http://www.youtube.com/embed/uu6NZrYvSQ8" class="demo-video" frameborder="0" allowfullscreen></iframe>
 
 <div class="supported-runtimes">
   <div class="logos">
@@ -65,11 +65,9 @@ can also start `Invoker` by daeomonizing it, via:
 {% endhighlight %}
 
 <a name="tld"></a>
-## .dev TLD support for local apps
+## .dev TLD support for OSX and Linux.
 
 You can access http services managed by invoker via `command_label.dev` domain locally.
-
-This feature currently works only on <em> Mac OSX </em>.
 
 To make it work though, you need to run following command, just once from anywhere:
 
@@ -77,9 +75,7 @@ To make it work though, you need to run following command, just once from anywhe
 ~> sudo invoker setup # read below if you are migrating from Pow
 {% endhighlight %}
 
-Above command installs a local `.dev` DNS resolver
-and a port forwarding rule that forwards all incoming requests on `127.0.0.1:80`
-to Invoker HTTP proxy.
+This feature has been well tested to work on both `OSX` and `Linux` (Mainly Ubuntu and derivatives for now).
 
 If you decide to remove Invoker, you can remove things installed by Invoker using command
 
@@ -120,13 +116,20 @@ Above command will make wordpress available on `wordpress.dev` even if
 wordpress was original not started by Invoker. You can access any randomly
 started process via Invoker like this.
 
+<a name="https_support"> </a>
+## Https support
+
+Invoker uses a self-signed certificate to make all your web applications available via
+`https` as well. You absolutely don't have to do anything. Access your webapps on `https://app.dev`
+and enjoy!
+
 
 <a name="procfile"></a>
 ## Procfile support
 
-Since version `1.0.3` Invoker has added support
-for `Procfile`. Now If you already have a `Procfile` you need not even create a `ini`
-file for using Invoker.
+Invoker is 100% compatbile with `Procfile` format used by Heroku. If you
+have been using a `Procfile` to bootstrap your development stack, you can
+keep using it with `Invoker.`
 
 The only thing to remember is, your `Procfile`
 must have `$PORT` in command - for `.dev` domain feature to work
@@ -218,24 +221,6 @@ command = bash -lc "rvm 2.0.0-p0 do bundle exec rails s"
 {% endhighlight %}
 
 <a name="faq"></a>
-## FAQ
-
-<em> 1. </em> Does Invoker work with pow?
-
-If you have already installed pow, Invoker will
-have a conflict with it.
-You will be prompted to overwrite pow setup with Invoker. You should
-uninstall pow before running Invoker setup.
-
-If DNS does not work after running invoker setup. Try turning wi-fi on and off.
-
-<em> 2. </em> How do I undo Invoker setup?
-
-Short answer - you can just run `invoker uninstall` or manually you have to first remove
-DNS resolver file in `/etc/resolver/dev` and then firewall rule that port forwards incoming requests on port `80` to another port.
-
-
-You can remove Invoker setup by removing `/etc/resolver/dev` and by running `sudo launchctl unload -w com.codemancers.invoker.firewall.plist`. Finally remove this file `/Library/LaunchDaemons/com.codemancers.invoker.firewall.plist`.
 
 ## Credits
 
