@@ -10,7 +10,7 @@ Use it for managing multiple processes with ease.
 Use it for developing web applications on different local domains without
 `/etc/hosts` hacks.
 
-<iframe width="640" height="480" src="http://www.youtube.com/embed/uu6NZrYvSQ8" frameborder="0" allowfullscreen></iframe>
+<iframe width="640" height="480" src="http://www.youtube.com/embed/uu6NZrYvSQ8" class="demo-video" frameborder="0" allowfullscreen></iframe>
 
 <div class="supported-runtimes">
   <div class="logos">
@@ -69,17 +69,11 @@ can also start `Invoker` by daeomonizing it, via:
 
 You can access http services managed by invoker via `command_label.dev` domain locally.
 
-This feature currently works only on <em> Mac OSX </em>.
-
 To make it work though, you need to run following command, just once from anywhere:
 
 {% highlight bash %}
 ~> sudo invoker setup # read below if you are migrating from Pow
 {% endhighlight %}
-
-Above command installs a local `.dev` DNS resolver
-and a port forwarding rule that forwards all incoming requests on `127.0.0.1:80`
-to Invoker HTTP proxy.
 
 If you decide to remove Invoker, you can remove things installed by Invoker using command
 
