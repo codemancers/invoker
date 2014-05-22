@@ -1,6 +1,6 @@
 module Invoker
   module Power
-    class LinuxSetup
+    class LinuxSetup < Setup
       RESOLVER_FILE = "/etc/dnsmasq.d/dev-tld"
       RINETD_FILE = "/etc/rinetd.conf"
 
@@ -22,7 +22,6 @@ module Invoker
       def create_config_file
         Invoker.setup_config_location
         Invoker::Power::Config.create(
-          dns_port: port_finder.dns_port,
           http_port: port_finder.http_port,
           https_port: port_finder.https_port
         )
