@@ -65,7 +65,7 @@ can also start `Invoker` by daeomonizing it, via:
 {% endhighlight %}
 
 <a name="tld"></a>
-## .dev TLD support for local apps
+## .dev TLD support for OSX and Linux.
 
 You can access http services managed by invoker via `command_label.dev` domain locally.
 
@@ -74,6 +74,8 @@ To make it work though, you need to run following command, just once from anywhe
 {% highlight bash %}
 ~> sudo invoker setup # read below if you are migrating from Pow
 {% endhighlight %}
+
+This feature has been well tested to work on both `OSX` and `Linux` (Mainly Ubuntu and derivatives for now).
 
 If you decide to remove Invoker, you can remove things installed by Invoker using command
 
@@ -118,16 +120,16 @@ started process via Invoker like this.
 ## Https support
 
 Invoker uses a self-signed certificate to make all your web applications available via
-`https` as well. You absolutely don't have to do anything. Access your webapps on `https://rails.dev`
+`https` as well. You absolutely don't have to do anything. Access your webapps on `https://app.dev`
 and enjoy!
 
 
 <a name="procfile"></a>
 ## Procfile support
 
-Since version `1.0.3` Invoker has added support
-for `Procfile`. Now If you already have a `Procfile` you need not even create a `ini`
-file for using Invoker.
+Invoker is 100% compatbile with `Procfile` format used by Heroku. If you
+have been using a `Procfile` to bootstrap your development stack, you can
+keep using it with `Invoker.`
 
 The only thing to remember is, your `Procfile`
 must have `$PORT` in command - for `.dev` domain feature to work
