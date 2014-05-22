@@ -78,9 +78,13 @@ module Invoker
         @forwarded_proto_header_inserted = false
       end
 
+      # insert X_FORWARDED_PROTO_ so as rails can identify the request as coming from
+      # https
       def insert_forwarded_proto_header(data)
         if !@x_forwarded_proto_header_inserted && data =~ /\r\n\r\n/
-          data.gsub(/\r\n\r\n/, "\r\nX_FORWARDED_PROTO: #{protocol}\r\n\r\n")
+          with_forwarded_data = data.gsub(/\r\n\r\n/, "\r\nX_FORWARDED_PROTO: #{protocol}\r\n\r\n")
+          @x_forwarded_proto_header_inserted = true
+          with_forwarded_data
         else
           data
         end
@@ -98,7 +102,7 @@ module Invoker
         dns_check_response = select_backend_config(header['Host'])
         if dns_check_response && dns_check_response.port
           connection.server(session, host: '0.0.0.0', port: dns_check_response.port)
-          connection.relay_to_servers(@buffer.join)
+          connection.relay_to_servers(insert_forwarded_proto_header(@buffer.join))
           @buffer = []
         else
           return_error_page(404)
@@ -112,7 +116,7 @@ module Invoker
           append_for_http_parsing(data)
           nil
         else
-          data
+          insert_forwarded_proto_header(data)
         end
       end
 
@@ -125,7 +129,7 @@ module Invoker
 
       def backend_data(backend, data)
         @backend_data = true
-        insert_forwarded_proto_header(data)
+        data
       end
 
       def frontend_disconnect(backend, name)
