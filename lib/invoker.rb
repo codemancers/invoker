@@ -64,7 +64,6 @@ module Invoker
     end
 
     def can_run_balancer?(throw_warning = true)
-      return false unless darwin?
       return true if File.exist?(Invoker::Power::Config::CONFIG_LOCATION)
 
       if throw_warning
