@@ -9,6 +9,14 @@ module MockSetupFile
     restore_osx_resolver_setup
   end
 
+  def safe_remove_file(file_location)
+    File.exist?(file_location) &&
+      File.delete(file_location)
+  end
+
+  def safe_make_directory(directory)
+    FileUtils.mkdir(directory) unless Dir.exist?(directory)
+  end
   private
 
   def setup_invoker_config
@@ -37,14 +45,5 @@ module MockSetupFile
 
     safe_make_directory(Invoker::Power::OsxSetup::RESOLVER_DIR)
     safe_remove_file(Invoker::Power::OsxSetup::RESOLVER_FILE)
-  end
-
-  def safe_remove_file(file_location)
-    File.exist?(file_location) &&
-      File.delete(file_location)
-  end
-
-  def safe_make_directory(directory)
-    FileUtils.mkdir(directory) unless Dir.exist?(directory)
   end
 end

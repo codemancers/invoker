@@ -30,10 +30,10 @@ describe Invoker::Power::OsxSetup do
 
   describe "when pow like setup exists" do
     before {
-      File.open(Invoker::Power::Setup::RESOLVER_FILE, "w") {|fl|
+      File.open(Invoker::Power::OsxSetup::RESOLVER_FILE, "w") {|fl|
         fl.write("hello")
       }
-      @setup = Invoker::Power::Setup.new
+      @setup = Invoker::Power::OsxSetup.new
     }
 
     describe "when user selects to overwrite it" do
@@ -63,7 +63,7 @@ describe Invoker::Power::OsxSetup do
 
   describe "uninstalling firewall rules" do
     it "should uninstall firewall rules and remove all files created by setup" do
-      setup = Invoker::Power::Setup.new
+      setup = Invoker::Power::OsxSetup.new
 
       Invoker::CLI::Question.expects(:agree).returns(true)
       setup.expects(:remove_resolver_file).once
@@ -78,8 +78,8 @@ describe Invoker::Power::OsxSetup do
   describe "setup on fresh osx install" do
     context "when resolver directory does not exist" do
       before do
-        @setup = Invoker::Power::Setup.new()
-        FileUtils.rm_rf(Invoker::Power::Setup::RESOLVER_DIR)
+        @setup = Invoker::Power::OsxSetup.new
+        FileUtils.rm_rf(Invoker::Power::OsxSetup::RESOLVER_DIR)
       end
 
       it "should create the directory and install" do
@@ -89,7 +89,7 @@ describe Invoker::Power::OsxSetup do
         @setup.expects(:install_firewall).once()
 
         @setup.setup_invoker
-        expect(Dir.exist?(Invoker::Power::Setup::RESOLVER_DIR)).to be_true
+        expect(Dir.exist?(Invoker::Power::OsxSetup::RESOLVER_DIR)).to be_true
       end
     end
   end

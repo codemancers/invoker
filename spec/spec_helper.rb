@@ -7,7 +7,8 @@ end
 
 require "invoker"
 require "invoker/power/power"
-require "spec/support/mock_setup_file"
+$: << File.join(File.dirname(__FILE__), "support")
+require "mock_setup_file"
 MM = Invoker::IPC::Message
 
 RSpec.configure do |config|
@@ -15,6 +16,7 @@ RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
   config.filter_run :focus
   config.mock_framework = :mocha
+  config.include MockSetupFile
 
   config.around do |example|
     original_verbosity = $VERBOSE
