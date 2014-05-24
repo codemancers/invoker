@@ -12,3 +12,4 @@ _site
 coverage
 invoker_profile/
 *.pid
+.ruby-version
