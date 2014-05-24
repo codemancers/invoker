@@ -108,20 +108,12 @@ command = ls
       @file = Tempfile.new(["config", ".ini"])
     end
 
-    it "does not load config if platform is not darwin" do
-      Invoker.expects(:darwin?).returns(false)
-      Invoker::Power::Config.expects(:load_config).never
-      Invoker::Parsers::Config.new(@file.path, 9000)
-    end
-
     it "does not load config if platform is darwin but there is no power config file" do
-      Invoker.expects(:darwin?).returns(true)
       Invoker::Power::Config.expects(:load_config).never
       Invoker::Parsers::Config.new(@file.path, 9000)
     end
 
     it "loads config if platform is darwin and power config file exists" do
-      Invoker.expects(:darwin?).returns(true)
       File.open(Invoker::Power::Config::CONFIG_LOCATION, "w") { |fl| fl.puts "sample" }
       Invoker::Power::Config.expects(:load_config).once
       Invoker::Parsers::Config.new(@file.path, 9000)

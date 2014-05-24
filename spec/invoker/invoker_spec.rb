@@ -14,26 +14,18 @@ describe "Invoker" do
   end
 
   describe "#can_run_balancer?" do
-    it "should return false if setup command was not run on osx" do
-      expect(Invoker.can_run_balancer?).to be_false
-    end
-
-    it "should return false if platform is not osx" do
-      Invoker.expects(:ruby_platform).returns("i686-linux")
+    it "should return false if setup command was not run" do
       expect(Invoker.can_run_balancer?).to be_false
     end
 
     it "should return true if setup was run properly" do
-      Invoker.expects(:ruby_platform).returns("x86_64-darwin12.4.0")
       File.open(Invoker::Power::Config::CONFIG_LOCATION, "w") {|fl|
         fl.write("hello")
       }
-
       expect(Invoker.can_run_balancer?).to be_true
     end
 
     it "should not print warning if setup is not run when flag is false" do
-      Invoker.expects(:ruby_platform).returns("x86_64-darwin12.4.0")
       Invoker::Logger.expects(:puts).never()
       Invoker.can_run_balancer?(false)
     end

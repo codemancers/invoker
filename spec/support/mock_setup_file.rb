@@ -17,6 +17,7 @@ module MockSetupFile
   def safe_make_directory(directory)
     FileUtils.mkdir(directory) unless Dir.exist?(directory)
   end
+
   private
 
   def setup_invoker_config
