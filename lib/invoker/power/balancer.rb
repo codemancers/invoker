@@ -74,17 +74,13 @@ module Invoker
         @http_parser = BalancerParser.new()
         @session = nil
         @buffer = []
-        # approach taken from tunnels gem
-        @forwarded_proto_header_inserted = false
       end
 
       # insert X_FORWARDED_PROTO_ so as rails can identify the request as coming from
       # https
       def insert_forwarded_proto_header(data)
-        if !@x_forwarded_proto_header_inserted && data =~ /\r\n\r\n/
-          with_forwarded_data = data.gsub(/\r\n\r\n/, "\r\nX_FORWARDED_PROTO: #{protocol}\r\n\r\n")
-          @x_forwarded_proto_header_inserted = true
-          with_forwarded_data
+        if data =~ /\r\n\r\n/ && data !~ /X_FORWARDED_PROTO/i && protocol == 'https'
+          data.gsub(/\r\n\r\n/, "\r\nX_FORWARDED_PROTO: #{protocol}\r\n\r\n")
         else
           data
         end
