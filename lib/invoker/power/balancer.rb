@@ -1,5 +1,6 @@
 require 'em-proxy'
 require 'http-parser'
+require "invoker/power/http_parser"
 
 module Invoker
   module Power
@@ -16,37 +17,6 @@ module Invoker
       def post_init
         super
         start_tls
-      end
-    end
-
-    class BalancerParser
-      attr_accessor :host, :parser
-      def initialize
-        @parser = HTTP::Parser.new()
-        @header = {}
-        @parser.on_headers_complete { headers_received() }
-        @parser.on_header_field { |field_name|
-          @last_key = field_name
-        }
-        @parser.on_header_value { |value| header_value_received(value) }
-      end
-
-      def headers_received
-        @header_completion_callback.call(@header)
-      end
-
-      def header_value_received(value)
-        @header[@last_key] = value
-      end
-
-      def on_headers_complete(&block)
-        @header_completion_callback = block
-      end
-
-      def reset; @parser.reset(); end
-
-      def <<(data)
-        @parser << data
       end
     end
 
@@ -71,49 +41,42 @@ module Invoker
       def initialize(connection, protocol)
         @connection = connection
         @protocol = protocol
-        @http_parser = BalancerParser.new()
+        @http_parser = HttpParser.new(protocol)
         @session = nil
         @buffer = []
       end
 
-      # insert X_FORWARDED_PROTO_ so as rails can identify the request as coming from
-      # https
-      def insert_forwarded_proto_header(data)
-        if data =~ /\r\n\r\n/ && data !~ /X_FORWARDED_PROTO/i && protocol == 'https'
-          data.gsub(/\r\n\r\n/, "\r\nX_FORWARDED_PROTO: #{protocol}\r\n\r\n")
-        else
-          data
-        end
-      end
-
       def install_callbacks
-        http_parser.on_headers_complete { |header| headers_received(header) }
+        http_parser.on_headers_complete { |headers| headers_received(headers) }
+        http_parser.on_message_complete { |full_message| complete_message_received(full_message) }
         connection.on_data { |data| upstream_data(data) }
         connection.on_response { |backend, data| backend_data(backend, data) }
         connection.on_finish { |backend, name| frontend_disconnect(backend, name) }
       end
 
-      def headers_received(header)
+      def complete_message_received(full_message)
+        connection.relay_to_servers(full_message)
+        http_parser.reset
+      end
+
+      def headers_received(headers)
+        if @session
+          return
+        end
         @session = UUID.generate()
-        dns_check_response = select_backend_config(header['Host'])
+        dns_check_response = select_backend_config(headers['Host'])
         if dns_check_response && dns_check_response.port
           connection.server(session, host: '0.0.0.0', port: dns_check_response.port)
-          connection.relay_to_servers(insert_forwarded_proto_header(@buffer.join))
-          @buffer = []
         else
           return_error_page(404)
+          http_parser.reset
           connection.close_connection_after_writing
         end
       end
 
       def upstream_data(data)
-        unless session
-          @buffer << data
-          append_for_http_parsing(data)
-          nil
-        else
-          insert_forwarded_proto_header(data)
-        end
+        append_for_http_parsing(data)
+        nil
       end
 
       def append_for_http_parsing(data)
@@ -131,7 +94,6 @@ module Invoker
       def frontend_disconnect(backend, name)
         http_parser.reset
         unless @backend_data
-          Invoker::Logger.puts("\nApplication #{name} not running. Returning error page.".color(:red))
           return_error_page(503)
         end
         @backend_data = false
