@@ -2,20 +2,15 @@ module Invoker
   module Power
     class HttpParser
       attr_accessor :host, :parser, :protocol
-      attr_accessor :raw_header_data
 
       def initialize(protocol)
         @protocol = protocol
         @parser = HTTP::Parser.new
         @header = {}
-        @raw_header_data = StringIO.new
-        @headers_parsed = false
-        @body = nil
-
+        initialize_message_content
         parser.on_headers_complete { complete_headers_received }
         parser.on_header_field { |field_name| @last_key = field_name }
         parser.on_header_value { |field_value| header_value_received(field_value) }
-        parser.on_body { |body| @body = body }
 
         parser.on_message_complete { complete_message_received }
       end
@@ -36,44 +31,34 @@ module Invoker
 
       def reset
         @header = {}
-        @raw_header_data = StringIO.new
-        @headers_parsed = false
-        @body = nil
+        initialize_message_content
         parser.reset
       end
 
       def << data
-        @raw_header_data.write(data) unless headers_parsed?
+        @full_message.write(data)
         parser << data
       end
 
       private
 
       def complete_message_received
-        header_string = @raw_header_data.string.dup
-        puts header_string.inspect
-        if header_string =~ /\r\n\r\n/m && header_string !~ /X_FORWARDED_PROTO/i
-          header_string.gsub!(/\r\n\r\n/, "\r\nX_FORWARDED_PROTO: #{protocol}\r\n\r\n")
+        full_message_string = @full_message.string.dup
+        if full_message_string =~ /\r\n\r\n/
+          full_message_string.sub!(/\r\n\r\n/, "\r\nX_FORWARDED_PROTO: #{protocol}\r\n\r\n")
         end
-
-        if @body
-          full_message = header_string + @body
-        else
-          full_message = header_string
-        end
-
         if @on_message_complete_callback
-          @on_message_complete_callback.call(full_message)
+          @on_message_complete_callback.call(full_message_string)
         end
       end
 
-      def headers_parsed?
-        @headers_parsed
+      def initialize_message_content
+        @full_message = StringIO.new
+        @full_message.set_encoding('ASCII-8BIT')
       end
 
       # gets invoker when complete header is received
       def complete_headers_received
-        @headers_parsed = true
         if @on_headers_complete_callback
           @on_headers_complete_callback.call(@header)
         end

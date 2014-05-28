@@ -15,7 +15,6 @@ describe Invoker::Power::HttpParser do
       parser << "hello"
 
       expect(@header['Content-Type']).to eql "text/plain;charset=utf-8"
-      expect(parser.raw_header_data.string).to eql "HTTP/1.1 200 OK\r\nContent-Type: text/plain;charset=utf-8\r\nContent-Length: 5\r\nConnection: close\r\n\r\n"
     end
 
     it "should return complete message with x_forwarded added" do
