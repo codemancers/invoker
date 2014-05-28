@@ -6,13 +6,15 @@ module Invoker
         RINETD_FILE = "/etc/rinetd.conf"
 
         def self.distro_installer
-          case Facter[:lsbdistid].value
+          case Facter[:operatingsystem].value
           when "Ubuntu"
             require "invoker/power/setup/distro/ubuntu"
             Ubuntu.new
           when "Fedora"
             require "invoker/power/setup/distro/redhat"
             Redhat.new
+          else
+            raise "Your selected distro is not supported by Invoker"
           end
         end
 
