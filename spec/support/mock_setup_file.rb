@@ -51,18 +51,16 @@ module MockSetupFile
   end
 
   def setup_linux_resolver_path
-    @old_linux_resolver = Invoker::Power::LinuxSetup::RESOLVER_FILE
-    @old_rinetd_config = Invoker::Power::LinuxSetup::RINETD_FILE
-    Invoker::Power::LinuxSetup.const_set(:RESOLVER_FILE, "/tmp/dev-tld")
-    Invoker::Power::LinuxSetup.const_set(:RINETD_FILE, "/tmp/rinetd.conf")
-    safe_remove_file(Invoker::Power::LinuxSetup::RESOLVER_FILE)
-    safe_remove_file(Invoker::Power::LinuxSetup::RINETD_FILE)
+    @old_linux_resolver = Invoker::Power::Distro::Base::RESOLVER_FILE
+    @old_rinetd_config = Invoker::Power::Distro::Base::RINETD_FILE
+    Invoker::Power::Distro::Base.const_set(:RESOLVER_FILE, "/tmp/dev-tld")
+    Invoker::Power::Distro::Base.const_set(:RINETD_FILE, "/tmp/rinetd.conf")
   end
 
   def restore_linux_resolver_path
-    safe_remove_file(Invoker::Power::LinuxSetup::RESOLVER_FILE)
-    safe_remove_file(Invoker::Power::LinuxSetup::RINETD_FILE)
-    Invoker::Power::LinuxSetup.const_set(:RESOLVER_FILE, @old_linux_resolver)
-    Invoker::Power::LinuxSetup.const_set(:RINETD_FILE, @old_rinetd_config)
+    safe_remove_file(Invoker::Power::Distro::Base::RESOLVER_FILE)
+    safe_remove_file(Invoker::Power::Distro::Base::RINETD_FILE)
+    Invoker::Power::Distro::Base.const_set(:RESOLVER_FILE, @old_linux_resolver)
+    Invoker::Power::Distro::Base.const_set(:RINETD_FILE, @old_rinetd_config)
   end
 end

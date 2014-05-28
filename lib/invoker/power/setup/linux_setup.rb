@@ -1,3 +1,6 @@
+require "invoker/power/setup/distro/base"
+require "facter"
+
 module Invoker
   module Power
     class LinuxSetup < Setup
@@ -5,7 +8,7 @@ module Invoker
 
       def setup_invoker
         if get_user_confirmation?
-          initialize_distroy_installer
+          initialize_distro_installer
           find_open_ports
           distro_installer.install_required_software
           install_resolver
@@ -34,7 +37,7 @@ module Invoker
 
       private
 
-      def initialize_distroy_installer
+      def initialize_distro_installer
         @distro_installer =  Invoker::Power::Distro::Base.distro_installer
       end
 

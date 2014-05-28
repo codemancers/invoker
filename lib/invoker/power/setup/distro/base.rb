@@ -30,8 +30,8 @@ module Invoker
         end
 
         def restart_services
-          system("service restart rinetd")
-          system("service restart dnsmasq")
+          system("service rinetd restart")
+          system("service dnsmasq restart")
         end
       end
     end
