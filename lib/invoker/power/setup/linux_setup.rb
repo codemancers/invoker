@@ -1,16 +1,16 @@
 module Invoker
   module Power
     class LinuxSetup < Setup
-      RESOLVER_FILE = "/etc/dnsmasq.d/dev-tld"
-      RINETD_FILE = "/etc/rinetd.conf"
+      attr_accessor :distro_installer
 
       def setup_invoker
         if get_user_confirmation?
+          initialize_distroy_installer
           find_open_ports
-          install_required_software
+          distro_installer.install_required_software
           install_resolver
           install_port_forwarder
-          restart_services
+          distro_installer.restart_services
           drop_to_normal_user
           create_config_file
         else
@@ -34,23 +34,18 @@ module Invoker
 
       private
 
-      def restart_services
-        system("/etc/init.d/rinetd restart")
-        system("/etc/init.d/dnsmasq restart")
-      end
-
-      def install_required_software
-        system("apt-get --assume-yes install dnsmasq rinetd")
+      def initialize_distroy_installer
+        @distro_installer =  Invoker::Power::Distro::Base.distro_installer
       end
 
       def install_resolver
-        File.open(RESOLVER_FILE, "w") do |fl|
+        File.open(distro_installer.resolver_file, "w") do |fl|
           fl.write(tld_setup)
         end
       end
 
       def install_port_forwarder
-        File.open(RINETD_FILE, "a") do |fl|
+        File.open(distro_installer.rinetd_file, "a") do |fl|
           fl << "\n"
           fl << rinetd_setup(port_finder.http_port, port_finder.https_port)
         end
