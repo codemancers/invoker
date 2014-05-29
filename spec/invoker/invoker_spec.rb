@@ -19,7 +19,7 @@ describe "Invoker" do
     end
 
     it "should return true if setup was run properly" do
-      File.open(Invoker::Power::Config::CONFIG_LOCATION, "w") {|fl|
+      File.open(Invoker::Power::Config.config_file, "w") {|fl|
         fl.write("hello")
       }
       expect(Invoker.can_run_balancer?).to be_true
@@ -59,6 +59,12 @@ describe "Invoker" do
         expect(File.exist?(new_config_file)).to be_true
         expect(File.read(new_config_file)).to match('invoker config')
       end
+    end
+  end
+
+  describe "#home" do
+    it "should return home directory using etc module" do
+      expect(Invoker.home).to eql ENV['HOME']
     end
   end
 end

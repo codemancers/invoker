@@ -8,6 +8,7 @@ require "uuid"
 require "json"
 require "rainbow"
 require "rainbow/ext/string"
+require "etc"
 
 require "invoker/version"
 require "invoker/logger"
@@ -64,7 +65,7 @@ module Invoker
     end
 
     def can_run_balancer?(throw_warning = true)
-      return true if File.exist?(Invoker::Power::Config::CONFIG_LOCATION)
+      return true if File.exist?(Invoker::Power::Config.config_file)
 
       if throw_warning
         Invoker::Logger.puts("Invoker has detected setup has not been run. Domain feature will not work without running setup command.".color(:red))
@@ -73,18 +74,18 @@ module Invoker
     end
 
     def setup_config_location
-      config_location = File.join(Dir.home, '.invoker')
-      return config_location if Dir.exist?(config_location)
+      config_dir = Invoker::Power::Config.config_dir
+      return config_dir if Dir.exist?(config_dir)
 
-      if File.exist?(config_location)
-        old_config = File.read(config_location)
-        FileUtils.rm_f(config_location)
+      if File.exist?(config_dir)
+        old_config = File.read(config_dir)
+        FileUtils.rm_f(config_dir)
       end
 
-      FileUtils.mkdir(config_location)
+      FileUtils.mkdir(config_dir)
 
-      migrate_old_config(old_config, config_location) if old_config
-      config_location
+      migrate_old_config(old_config, config_dir) if old_config
+      config_dir
     end
 
     def run_without_bundler
@@ -114,6 +115,19 @@ module Invoker
       new_config = File.join(config_location, 'config')
       File.open(new_config, 'w') do |file|
         file.write(old_config)
+      end
+    end
+
+    # On some platforms `Dir.home` or `ENV['HOME']` does not return home directory of user.
+    # this is especially true, after effective and real user id of process
+    # has been changed.
+    #
+    # @return [String] home directory of the user
+    def home
+      if File.writable?(Dir.home)
+        Dir.home
+      else
+        Etc.getpwuid(Process.uid).dir
       end
     end
   end

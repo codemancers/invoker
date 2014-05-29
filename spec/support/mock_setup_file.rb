@@ -23,16 +23,14 @@ module MockSetupFile
   private
 
   def setup_invoker_config
-    @old_config = Invoker::Power::Config::CONFIG_LOCATION
-    Invoker::Power::Config.const_set(:CONFIG_LOCATION, "/tmp/.invoker/config")
+    Invoker::Power::Config.stubs(:config_file).returns("/tmp/.invoker/config")
+    Invoker::Power::Config.stubs(:config_dir).returns("/tmp/.invoker")
     safe_make_directory("/tmp/.invoker")
-    safe_remove_file(Invoker::Power::Config::CONFIG_LOCATION)
+    safe_remove_file(Invoker::Power::Config.config_file)
   end
 
   def restore_invoker_config
-    safe_remove_file(Invoker::Power::Config::CONFIG_LOCATION)
-    Invoker::Power::Config.const_set(:CONFIG_LOCATION, @old_config)
-    $VERBOSE = @original_verbosity
+    safe_remove_file(Invoker::Power::Config.config_file)
   end
 
   def restore_osx_resolver_setup

@@ -20,7 +20,7 @@ describe Invoker::Power::OsxSetup do
 
   describe "when a setup file exists" do
     it "should throw error about existing file" do
-      File.open(Invoker::Power::Config::CONFIG_LOCATION, "w") {|fl|
+      File.open(Invoker::Power::Config.config_file, "w") {|fl|
         fl.write("foo test")
       }
       Invoker::Power::Setup.any_instance.expects(:setup_invoker).never

@@ -44,7 +44,7 @@ module Invoker
       end
 
       def check_if_setup_can_run?
-        !File.exists?(Invoker::Power::Config::CONFIG_LOCATION)
+        !File.exists?(Invoker::Power::Config.config_file)
       end
     end
   end

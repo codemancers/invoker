@@ -114,7 +114,7 @@ command = ls
     end
 
     it "loads config if platform is darwin and power config file exists" do
-      File.open(Invoker::Power::Config::CONFIG_LOCATION, "w") { |fl| fl.puts "sample" }
+      File.open(Invoker::Power::Config.config_file, "w") { |fl| fl.puts "sample" }
       Invoker::Power::Config.expects(:load_config).once
       Invoker::Parsers::Config.new(@file.path, 9000)
     end
