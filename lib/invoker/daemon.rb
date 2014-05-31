@@ -24,7 +24,7 @@ module Invoker
     end
 
     def pid_file
-      File.join(Dir.home, ".invoker", "#{process_name}.pid")
+      File.join(Invoker.home, ".invoker", "#{process_name}.pid")
     end
 
     def pid
@@ -32,7 +32,7 @@ module Invoker
     end
 
     def log_file
-      File.join(Dir.home, ".invoker", "#{process_name}.log")
+      File.join(Invoker.home, ".invoker", "#{process_name}.log")
     end
 
     def daemonize

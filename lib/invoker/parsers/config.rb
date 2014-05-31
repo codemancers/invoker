@@ -23,6 +23,10 @@ module Invoker
         power_config && power_config.dns_port
       end
 
+      def https_port
+        power_config && power_config.https_port
+      end
+
       def process(label)
         processes.detect { |pconfig| pconfig.label == label }
       end

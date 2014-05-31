@@ -19,6 +19,7 @@ module Invoker
 
     def process_read(ready_fd)
       command_worker = Invoker.commander.get_worker_from_fd(ready_fd)
+      return unless command_worker
       begin
         data = read_data(ready_fd)
         command_worker.receive_data(data)

@@ -13,7 +13,9 @@ module Invoker
         EM.run {
           trap("TERM") { stop }
           trap("INT") { stop }
-          DNS.new.run(listen: DNS.server_ports)
+          if Invoker.darwin?
+            DNS.new.run(listen: DNS.server_ports)
+          end
           Balancer.run
         }
       end
