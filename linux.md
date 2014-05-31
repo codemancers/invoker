@@ -6,9 +6,9 @@ title: Using Invoker on Linux
 ## Using on Linux
 
 All the features of Invoker has been tested to work with various versions of `Ubuntu` (which includes -
-`kubuntu`, `xubuntu` etc). Contributions for making it work on other distros are more than welcome.
+`kubuntu`, `xubuntu` etc) and `Fedora` Linux. Contributions for making it work on other distros are more than welcome.
 
-On Ubuntu - `Invoker` uses `dnsmasq` and `rinetd` for DNS and port forwarding respectively. Same as setup
+On Linux - `Invoker` uses `dnsmasq` and `rinetd` for DNS and port forwarding respectively. Same as setup
 on OSX, you can start Invoker setup by running command:
 
 {% highlight bash %}
@@ -20,7 +20,7 @@ as painless as possible.
 
 ## Troubleshooting
 
-On `Ubuntu` machines - `sudo` does not preserve path and hence I recommend adding following alias:
+On `Linux` machines - `sudo` does not preserve path and hence I recommend adding following alias:
 
 {% highlight bash %}
 alias sudo='sudo env PATH=$PATH'

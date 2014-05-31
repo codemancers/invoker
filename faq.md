@@ -21,7 +21,7 @@ a. On OSX - you have to first remove DNS resolver file in `/etc/resolver/dev` an
 
 You can remove Invoker setup by removing `/etc/resolver/dev` and by running `sudo launchctl unload -w com.codemancers.invoker.firewall.plist`. Finally remove this file `/Library/LaunchDaemons/com.codemancers.invoker.firewall.plist`.
 
-b. On `Ubuntu` - you can first uninstall `dnsmasq` and `rinetd` packages and after that you can remove following files:
+b. On `Linux` - you can first uninstall `dnsmasq` and `rinetd` packages and after that you can remove following files:
 <ul style="margin-left:50px;">
   <li> `/etc/dnsmasq.d/dev-tld` </li>
   <li> `/etc/rinetd.conf` </li>

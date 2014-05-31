@@ -9,3 +9,6 @@ tags
 .rvmrc
 vendor/
 _site
+coverage/
+*.ini
+.ruby-version
