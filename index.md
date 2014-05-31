@@ -143,7 +143,8 @@ cms: cd $HOME/cms && python manage.py runserver $PORT
 ## Process managment
 
 Additionally Invoker allows you to manage individual processes. You can start/stop/restart
-different processes managed by invoker without affecting others.
+different processes managed by invoker without affecting others. Following commands work
+for processes started by `Procfile` as well.
 
 {% highlight bash %}
 # Will try to stop running delayed job by sending SIGINT to the process
