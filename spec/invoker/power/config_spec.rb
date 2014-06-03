@@ -6,7 +6,7 @@ describe "Invoker Power configuration" do
       config = Invoker::Power::Config.create(
         dns_port: 1200, http_port: 1201, ipfw_rule_number: 010
       )
-      expect(File.exist?(Invoker::Power::Config.config_file)).to be_true
+      expect(File.exist?(Invoker::Power::Config.config_file)).to be_truthy
 
       config = Invoker::Power::Config.load_config()
       expect(config.dns_port).to eq(1200)

@@ -89,7 +89,7 @@ describe Invoker::Power::OsxSetup do
         @setup.expects(:install_firewall).once()
 
         @setup.setup_invoker
-        expect(Dir.exist?(Invoker::Power::OsxSetup::RESOLVER_DIR)).to be_true
+        expect(Dir.exist?(Invoker::Power::OsxSetup::RESOLVER_DIR)).to be_truthy
       end
     end
   end

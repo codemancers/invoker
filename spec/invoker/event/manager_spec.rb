@@ -61,7 +61,7 @@ describe Invoker::Event::Manager do
       @event_manager.run_scheduled_events do |event|
         events_ran = true
       end
-      expect(events_ran).to be_false
+      expect(events_ran).to eql false
     end
   end
 end

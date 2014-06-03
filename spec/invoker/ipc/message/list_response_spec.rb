@@ -14,7 +14,7 @@ describe MM::ListResponse do
     it "should prepare proper json" do
       json_hash = message.as_json
       expect(json_hash[:type]).to eql "list_response"
-      expect(json_hash[:processes]).to have(2).elements
+      expect(json_hash[:processes].length).to eql 2
       expect(json_hash[:processes][0]).to be_a(Hash)
       expect(json_hash[:processes][1]).to be_a(Hash)
     end
