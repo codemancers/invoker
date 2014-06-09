@@ -221,6 +221,13 @@ Unless version of Ruby using which you are running invoker command and version o
 command = bash -lc "rvm 2.0.0-p0 do bundle exec rails s"
 {% endhighlight %}
 
+<a name="zsh"></a>
+
+## ZSH completion
+
+Invoker comes with a <em>ZSH</em> completion script
+`contrib/completion/invoker-completion.zsh`. Drop this somewhere in your
+`$fpath` (`~/.zsh` for example) and rename the file to `_invoker`.
 <a name="faq"></a>
 
 ## Credits
