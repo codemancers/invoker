@@ -9,21 +9,7 @@ Use it for managing multiple processes with ease.
 
 Use it for developing web applications on different local domains without
 `/etc/hosts` hacks.
-
-<iframe width="640" height="480" src="http://www.youtube.com/embed/uu6NZrYvSQ8" class="demo-video" frameborder="0" allowfullscreen></iframe>
-
-<div class="supported-runtimes">
-  <div class="logos">
-    <img src="images/python-grey.png">
-    <img src="images/node-grey.png">
-    <img src="images/ruby-grey.png">
-  </div>
-  <div class="in-double-line"></div>
-  <div class="runtime-message">
-    Works with <em>Python</em>, <em>Node</em> or any <em>Ruby</em> application.
-  </div>
-</div>
-
+<img src="images/Invoker-Infographics.svg">
 <a name="usage"></a>
 ## How to use it?
 
