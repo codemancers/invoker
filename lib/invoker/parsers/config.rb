@@ -112,7 +112,7 @@ module Invoker
       end
 
       def auto_discover_config_file
-        Dir.glob("{Procfile,invoker.ini,project.ini,*.ini}").first
+        Dir.glob("{invoker.ini,project.ini,*.ini,Procfile}").first
       end
 
       def is_ini?
