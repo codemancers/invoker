@@ -179,34 +179,6 @@ After running `invoker setup` you will
 have to <em>switch off wi-fi and then switch it on </em> for
 resettng OSX network configuration.
 
-<a name="versions"></a>
-## Using Invoker with rbenv or rvm
-
-The way `rbenv` and `rvm` work sometimes creates problems when you are trying to use a process supervisor like invoker. There are couple of things to keep in mind,
-If you are running invoker with Ruby version x, but your application requires Ruby version Y:
-
-When using rbenv and zsh, remember that `.zshrc`
-is not read for commands run via `zsh -c`. So first
-add:
-
-{% highlight bash %}
-~> cat > ~/.zshenv
-eval "$(rbenv init -)"
-{% endhighlight %}
-
-and then run it using:
-
-{% highlight bash %}
-command = RBENV_VERSION=2.0.0-p0 zsh -c "bundle exec rails s"
-{% endhighlight %}
-
-Unless version of Ruby using which you are running invoker command and version of Ruby you are using in the application is same, you almost always will want to use
-`zsh -c` or `bash -c`. RVM in particular requires a login shell and hence sometimes you may have to use `bash -lc`. For example:
-
-{% highlight bash %}
-command = bash -lc "rvm 2.0.0-p0 do bundle exec rails s"
-{% endhighlight %}
-
 <a name="zsh"></a>
 
 ## ZSH completion
