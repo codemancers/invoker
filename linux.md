@@ -26,4 +26,5 @@ On `Linux` machines - `sudo` does not preserve path and hence I recommend adding
 alias sudo='sudo env PATH=$PATH'
 {% endhighlight %}
 
-before running `sudo invoker setup`. If you are using `rvm`, you should use `rvmsudo`.
+before running `sudo invoker setup`. If you are using `rvm`, you should use `rvmsudo`. See
+<a href="/ruby_managers.html"> Using with rvm, rbenv or chruby </a> section for more information.

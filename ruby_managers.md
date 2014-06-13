@@ -49,4 +49,17 @@ When using Invoker with chruby, for running setup try:
 ~> sudo -E chruby-exec ruby-2.1.2 -- invoker setup
 {% endhighlight %}
 
-Above command though may not work on `Linux`
+Above command though may not work on `Linux` and you may have to run it with:
+
+{% highlight bash %}
+~> sudo -E chruby-exec ruby-2.1.2 -- ~/.gem/ruby/bin/invoker setup
+{% endhighlight %}
+
+Where `ruby-2.1.2` is version of Ruby and `~/.gem/ruby/bin` is PATH where gem binaries are installed by
+chruby. For usual usage you should try with:
+
+{% highlight bash %}
+[thenextsnapchat]
+directory = /Users/jarinudom/projects/thenextsnapchat
+command = chruby-exec $(cat .ruby-version) -- bundle exec rails s -p $PORT
+{% endhighlight %}
