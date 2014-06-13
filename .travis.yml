@@ -1,4 +1,7 @@
 language: ruby
+branches:
+  except:
+    - gh-pages
 rvm:
   - 1.9.3
   - 2.0.0
