@@ -11,7 +11,7 @@ First we need to install `invoker` gem to get command line utility called `invok
 
     gem install invoker
 
-Currently it only works with Ruby 1.9.3 and 2.0.
+Currently it only works with Ruby 1.9.3, 2.0 and 2.1.
 
 ## Manual ##
 
