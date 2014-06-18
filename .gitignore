@@ -3,8 +3,7 @@ config/
 *.gem
 Gemfile.lock
 pkg/
-local.ini
-multi.ini
+*.ini
 tags
 .rvmrc
 vendor/
@@ -13,3 +12,4 @@ _site
 coverage
 invoker_profile/
 *.pid
+.ruby-version

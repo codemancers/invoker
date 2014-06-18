@@ -8,7 +8,7 @@ describe Invoker::CLI::Pinger do
   context "If Invoker is running" do
     it "should return true" do
       unix_client.expects(:send_and_receive).returns(pong)
-      expect(pinger.invoker_running?).to be_true
+      expect(pinger.invoker_running?).to be_truthy
     end
   end
 
@@ -16,7 +16,7 @@ describe Invoker::CLI::Pinger do
     it "should return false" do
       unix_client.expects(:send_and_receive).returns(nil)
       unix_client.expects(:abort).never
-      expect(pinger.invoker_running?).to be_false
+      expect(pinger.invoker_running?).to be_falsey
     end
   end
 end

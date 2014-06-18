@@ -13,7 +13,7 @@ describe Invoker::ProcessManager do
 
     it "should not start already running process" do
       process_manager.workers.expects(:[]).returns(OpenStruct.new(:pid => "bogus"))
-      expect(process_manager.start_process_by_name("resque")).to be_false
+      expect(process_manager.start_process_by_name("resque")).to be_falsey
     end
   end
 
@@ -28,7 +28,7 @@ describe Invoker::ProcessManager do
         let(:options) { { process_name: 'bogus', signal: 'HUP' } }
         it "should use that signal to kill the worker" do
           process_manager.expects(:process_kill).with("bogus", "HUP").returns(true)
-          expect(process_manager.stop_process(message)).to be_true
+          expect(process_manager.stop_process(message)).to be_truthy
         end
       end
 
@@ -36,7 +36,7 @@ describe Invoker::ProcessManager do
         let(:options) { { process_name: 'bogus' } }
         it "should use INT signal" do
           process_manager.expects(:process_kill).with("bogus", "INT").returns(true)
-          expect(process_manager.stop_process(message)).to be_true
+          expect(process_manager.stop_process(message)).to be_truthy
         end
       end
     end

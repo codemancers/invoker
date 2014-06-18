@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Invoker::Power::Balancer do
   context "matching domain part of incoming request" do
     before do
-      @balancer = Invoker::Power::Balancer.new(mock("connection"))
+      @balancer = Invoker::Power::Balancer.new(mock("connection"), "http")
     end
 
     it "should do foo.dev match" do
