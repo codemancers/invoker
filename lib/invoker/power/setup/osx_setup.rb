@@ -115,9 +115,11 @@ port #{dns_port}
 
       # Ripped from Pow code
       def firewall_command(http_port, https_port)
-        "ipfw add fwd 127.0.0.1,#{http_port} tcp from any to me dst-port 80 in"\
-          "&amp;&amp; ipfw add fwd 127.0.0.1,#{https_port} tcp from any to me dst-port 443 in"\
-          "&amp;&amp; sysctl -w net.inet.ip.forwarding=1"
+        rules = [
+          "rdr pass on lo0 inet proto tcp from any to any port 80 -> 127.0.0.1 port #{http_port}",
+          "rdr pass on lo0 inet proto tcp from any to any port 443 -> 127.0.0.1 port #{https_port}"
+        ].join("\n")
+        "echo \"#{rules}\" | pfctl -a 'com.apple/250.ApplicationFirewall' -f - -E"
       end
 
       def setup_resolver_file
