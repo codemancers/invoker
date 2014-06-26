@@ -23,6 +23,7 @@ module Invoker
     class Balancer
       attr_accessor :connection, :http_parser, :session, :protocol
       DEV_MATCH_REGEX = /([\w-]+)\.dev(\:\d+)?$/
+      XIP_IO_MATCH_REGEX = /([\w-]+)\.\d+\.\d+\.\d+\.\d+\.xip\.io(\:\d+)?$/
 
       def self.run(options = {})
         start_http_proxy(InvokerHttpProxy, 'http', options)
@@ -101,7 +102,7 @@ module Invoker
       end
 
       def extract_host_from_domain(host)
-        host.match(DEV_MATCH_REGEX)
+        host.match(DEV_MATCH_REGEX) || host.match(XIP_IO_MATCH_REGEX)
       end
 
       private
