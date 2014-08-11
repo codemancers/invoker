@@ -5,7 +5,6 @@ describe Invoker::Power::OsxSetup do
     it "should create a config file with port etc" do
       setup = Invoker::Power::OsxSetup.new
       setup.expects(:install_resolver).returns(true)
-      setup.expects(:flush_dns_rules).returns(true)
       setup.expects(:drop_to_normal_user).returns(true)
       setup.expects(:install_firewall).once
 
@@ -41,7 +40,6 @@ describe Invoker::Power::OsxSetup do
         @setup.expects(:setup_resolver_file).returns(true)
         @setup.expects(:drop_to_normal_user).returns(true)
         @setup.expects(:install_resolver).returns(true)
-        @setup.expects(:flush_dns_rules).returns(true)
         @setup.expects(:install_firewall).once()
 
         @setup.setup_invoker
@@ -53,7 +51,6 @@ describe Invoker::Power::OsxSetup do
         @setup.expects(:setup_resolver_file).returns(false)
 
         @setup.expects(:install_resolver).never
-        @setup.expects(:flush_dns_rules).never
         @setup.expects(:install_firewall).never
 
         @setup.setup_invoker
@@ -68,7 +65,6 @@ describe Invoker::Power::OsxSetup do
       Invoker::CLI::Question.expects(:agree).returns(true)
       setup.expects(:remove_resolver_file).once
       setup.expects(:unload_firewall_rule).with(true).once
-      setup.expects(:flush_dns_rules).once
       Invoker::Power::Config.expects(:delete).once
 
       setup.uninstall_invoker
@@ -85,7 +81,6 @@ describe Invoker::Power::OsxSetup do
       it "should create the directory and install" do
         @setup.expects(:setup_resolver_file).returns(true)
         @setup.expects(:drop_to_normal_user).returns(true)
-        @setup.expects(:flush_dns_rules).returns(true)
         @setup.expects(:install_firewall).once()
 
         @setup.setup_invoker
