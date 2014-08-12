@@ -24,6 +24,37 @@ command = ruby try_sleep.rb
     end
   end
 
+  describe "with relative directory path" do
+    it "should expand path in commands" do
+      begin
+        file = Tempfile.new(["config", ".ini"])
+
+        config_data =<<-EOD
+[pwd_home]
+directory = ~
+command = pwd
+
+[pwd_parent]
+directory = ../
+command = pwd
+      EOD
+        file.write(config_data)
+        file.close
+
+        config = Invoker::Parsers::Config.new(file.path, 9000)
+        command1 = config.processes.first
+
+        expect(command1.dir).to match(File.expand_path('~'))
+
+        command2 = config.processes[1]
+
+        expect(command2.dir).to match(File.expand_path('..'))
+      ensure
+        file.unlink()
+      end
+    end
+  end
+
   describe "for ports" do
     it "should replace port in commands" do
       begin
