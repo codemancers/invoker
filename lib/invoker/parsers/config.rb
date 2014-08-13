@@ -84,7 +84,7 @@ module Invoker
         OpenStruct.new(
           port: port,
           label: section["label"] || section.key,
-          dir: section["directory"],
+          dir: expand_directory(section["directory"]),
           cmd: replace_port_in_command(section["command"], port)
         )
       end
@@ -92,7 +92,7 @@ module Invoker
       def make_option(section)
         OpenStruct.new(
           label: section["label"] || section.key,
-          dir: section["directory"],
+          dir: expand_directory(section["directory"]),
           cmd: section["command"]
         )
       end
@@ -102,9 +102,13 @@ module Invoker
       end
 
       def check_directory(app_dir)
-        if app_dir && !app_dir.empty? && !File.directory?(app_dir)
+        if app_dir && !app_dir.empty? && !File.directory?(expand_directory(app_dir))
           raise Invoker::Errors::InvalidConfig.new("Invalid directory #{app_dir}")
         end
+      end
+
+      def expand_directory(app_dir)
+        File.expand_path(app_dir) if app_dir
       end
 
       def replace_port_in_command(command, port)
