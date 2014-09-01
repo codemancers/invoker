@@ -22,7 +22,7 @@ module Invoker
 
     class Balancer
       attr_accessor :connection, :http_parser, :session, :protocol
-      DEV_MATCH_REGEX = /([\w-]+)\.dev(\:\d+)?$/
+      DEV_MATCH_REGEX = /([\w.-]+)\.dev(\:\d+)?$/
       XIP_IO_MATCH_REGEX = /([\w-]+)\.\d+\.\d+\.\d+\.\d+\.xip\.io(\:\d+)?$/
 
       def self.run(options = {})
