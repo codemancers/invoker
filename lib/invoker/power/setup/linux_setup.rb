@@ -38,6 +38,12 @@ module Invoker
       private
 
       def initialize_distro_installer
+        # Create a new facter check for systemctl (in systemd)
+        Facter.add(:systemctl) do
+          setcode do
+            Facter::Util::Resolution.exec("[ -e /usr/bin/systemctl ] && echo 'true' || echo 'false'")
+          end
+        end
         @distro_installer =  Invoker::Power::Distro::Base.distro_installer
       end
 
