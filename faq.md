@@ -19,7 +19,8 @@ Short answer - you can just run `sudo invoker uninstall` or manually depending o
 
 a. On OSX - you have to first remove DNS resolver file in `/etc/resolver/dev` and then firewall rule that port forwards incoming requests on port `80` and `443` to another port.
 
-You can remove Invoker setup by removing `/etc/resolver/dev` and by running `sudo launchctl unload -w com.codemancers.invoker.firewall.plist`. Finally remove this file `/Library/LaunchDaemons/com.codemancers.invoker.firewall.plist`.
+You can remove Invoker setup by removing `/etc/resolver/dev` and by running `sudo launchctl unload -w com.codemancers.invoker.firewall.plist`. Finally remove this file `/Library/LaunchDaemons/com.codemancers.invoker.firewall.plist`. Don't forget to restart your machine after 
+removing firewall files.
 
 b. On `Linux` - you can first uninstall `dnsmasq` and `rinetd` packages and after that you can remove following files:
 <ul style="margin-left:50px;">
