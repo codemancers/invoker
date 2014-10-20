@@ -19,6 +19,7 @@ module Invoker
         end
       end
 
+      # http://jimeh.me/blog/2010/02/22/built-in-sudo-for-ruby-command-line-tools/
       def sudome
         if ENV["USER"] != "root"
           exec("sudo #{ENV['_']} #{ARGV.join(' ')}")
