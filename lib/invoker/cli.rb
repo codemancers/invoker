@@ -40,6 +40,7 @@ module Invoker
       Invoker.daemonize = options[:daemon]
       Invoker.load_invoker_config(file, port)
       warn_about_terminal_notifier
+      warn_about_old_configuration
       pinger = Invoker::CLI::Pinger.new(unix_socket)
       abort("Invoker is already running".color(:red)) if pinger.invoker_running?
       Invoker.commander.start_manager
@@ -115,6 +116,12 @@ module Invoker
           Invoker::Logger.puts "You can enable OSX notification for processes "\
             "by installing terminal-notifier gem".color(:red)
         end
+      end
+    end
+
+    def warn_about_old_configuration
+      Invoker::Power::PfMigrate.new.tap do |pf_migrator|
+        pf_migrator.migrate
       end
     end
   end
