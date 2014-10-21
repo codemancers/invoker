@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
   s.add_dependency("em-proxy", "~> 0.1")
   s.add_dependency("rubydns", "~> 0.7")
   s.add_dependency("uuid", "~> 2.3")
-  s.add_dependency("facter", "~> 2.0")
+  s.add_dependency("facter", "~> 2.2")
   s.add_dependency("http-parser-lite", "~> 0.6")
   s.add_dependency("dotenv", "~> 0.9")
   s.add_development_dependency("rspec", "~> 3.0")

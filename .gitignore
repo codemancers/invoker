@@ -12,3 +12,5 @@ coverage
 invoker_profile/
 *.pid
 .ruby-version
+Gemfile.lock
+.overcommit.yml
