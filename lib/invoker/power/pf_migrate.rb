@@ -18,7 +18,7 @@ module Invoker
           osx_setup.install_firewall(Invoker.config.http_port, Invoker.config.https_port)
           drop_to_normal_user
           Invoker::Logger.puts "Invoker has updated its configuration for yosemite."\
-            " Please restart OSX to complete the configuration process."
+            " Please restart OSX to complete the configuration process.".color(:red)
           exit(-1)
         end
       end
@@ -28,7 +28,7 @@ module Invoker
           Invoker::Logger.puts "Invoker has detected you are running OSX 10.10 "\
             " but your invoker configuration does not support it."
           Invoker::Logger.puts "Invoker can update its configuration automaticaly"\
-            " but it will require a system reboot."
+            " but it will require a system reboot.".color(:red)
           Invoker::CLI::Question.agree("Update Invoker configuration (y/n) :")
         else
           true
@@ -51,7 +51,16 @@ module Invoker
       end
 
       def osx_version
-        Facter.to_hash["macosx_productversion"]
+        old_err = $stderr
+        $stderr.reopen("/dev/null", "a")
+        t_osx_version = Facter.to_hash["macosx_productversion"]
+        $stderr.reopen(old_err)
+        if t_osx_version.nil? || t_osx_version.empty?
+          Invoker::Logger.puts "Invoker could not determine your OSX version "\
+            " some features may not work correctly"
+          return "0"
+        end
+        t_osx_version
       end
 
       def check_firewall_file?
