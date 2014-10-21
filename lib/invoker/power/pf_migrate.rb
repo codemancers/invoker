@@ -4,9 +4,8 @@ module Invoker
     class PfMigrate
       def firewall_config_requires_migration?
         return false if !Invoker.darwin?
-        require 'facter'
         # lets not migrate on osx < 10.10
-        return false if osx_version < "10.10"
+        return false if osx_version < Invoker::Version.new("14.0.0")
         # also verify if firewall config is old
         check_firewall_file?
       end
@@ -51,16 +50,8 @@ module Invoker
       end
 
       def osx_version
-        old_err = $stderr
-        $stderr.reopen("/dev/null", "a")
-        t_osx_version = Facter.to_hash["macosx_productversion"]
-        $stderr.reopen(old_err)
-        if t_osx_version.nil? || t_osx_version.empty?
-          Invoker::Logger.puts "Invoker could not determine your OSX version "\
-            " some features may not work correctly"
-          return "0"
-        end
-        t_osx_version
+        osx_kernel_version = `uname -r`.strip
+        Invoker::Version.new(osx_kernel_version)
       end
 
       def check_firewall_file?

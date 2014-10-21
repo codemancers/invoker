@@ -25,7 +25,7 @@ describe Invoker::Power::PfMigrate do
 
       context "for osx < yosemite" do
         it "should return false" do
-          pf_migrator.expects(:osx_version).returns("10.9")
+          pf_migrator.expects(:osx_version).returns(Invoker::Version.new("13.4.0"))
           expect(pf_migrator.firewall_config_requires_migration?).to eq(false)
         end
       end
@@ -35,7 +35,7 @@ describe Invoker::Power::PfMigrate do
           write_to_firewall_file("ipfw firewall rule")
         end
         it "should return true" do
-          pf_migrator.expects(:osx_version).returns("10.10")
+          pf_migrator.expects(:osx_version).returns(Invoker::Version.new("14.0.0"))
           expect(pf_migrator.firewall_config_requires_migration?).to eql(true)
         end
       end
@@ -45,7 +45,7 @@ describe Invoker::Power::PfMigrate do
           write_to_firewall_file("rdr pass on")
         end
         it "should return false" do
-          pf_migrator.expects(:osx_version).returns("10.10")
+          pf_migrator.expects(:osx_version).returns(Invoker::Version.new("14.0.0"))
           expect(pf_migrator.firewall_config_requires_migration?).to eql(false)
         end
       end
