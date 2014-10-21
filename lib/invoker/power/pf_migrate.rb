@@ -24,18 +24,26 @@ module Invoker
       end
 
       def ask_user_for_migration
-        Invoker::Logger.puts "Invoker has detected you are running OSX 10.10 "\
-          " but your invoker configuration does not support it."
-        Invoker::Logger.puts "Invoker can update its configuration automaticaly"\
-          " but it will require a system reboot."
-        Invoker::CLI::Question.agree("Update Invoker configuration (y/n) :")
+        if not_already_root?
+          Invoker::Logger.puts "Invoker has detected you are running OSX 10.10 "\
+            " but your invoker configuration does not support it."
+          Invoker::Logger.puts "Invoker can update its configuration automaticaly"\
+            " but it will require a system reboot."
+          Invoker::CLI::Question.agree("Update Invoker configuration (y/n) :")
+        else
+          true
+        end
       end
 
       # http://jimeh.me/blog/2010/02/22/built-in-sudo-for-ruby-command-line-tools/
       def sudome
-        if ENV["USER"] != "root"
-          exec("sudo #{ENV['_']} #{ARGV.join(' ')}")
+        if not_already_root?
+          exec("sudo #{$0} #{ARGV.join(' ')}")
         end
+      end
+
+      def not_already_root?
+        ENV["USER"] != "root"
       end
 
       def drop_to_normal_user
@@ -43,7 +51,7 @@ module Invoker
       end
 
       def osx_version
-        @osx_version ||= Facter.to_hash["macosx_productversion"]
+        Facter.to_hash["macosx_productversion"]
       end
 
       def check_firewall_file?
