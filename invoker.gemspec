@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   s.add_dependency("formatador", "~> 0.2")
   s.add_dependency("eventmachine", "~> 1.0")
   s.add_dependency("em-proxy", "~> 0.1")
-  s.add_dependency("rubydns", "~> 0.7")
+  s.add_dependency("rubydns", "~> 0.8.5")
   s.add_dependency("uuid", "~> 2.3")
   s.add_dependency("facter", "~> 2.2")
   s.add_dependency("http-parser-lite", "~> 0.6")
