@@ -43,5 +43,5 @@ module Invoker
       Version.new(next_splits.join('.'))
     end
   end
-  VERSION = "1.3.0"
+  VERSION = "1.3.1"
 end
