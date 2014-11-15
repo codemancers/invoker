@@ -19,7 +19,7 @@ First we need to install invoker gem to get command line utility called invoker,
 ~> gem install invoker
 {% endhighlight %}
 
-Currently it only works with Ruby 1.9.3 and 2.0.
+Currently it only works with Ruby >= 1.9.3.
 
 You need to start by creating a `ini` file which will define processes you want to manage using invoker. An example `ini` file is included in the repo.
 
@@ -61,7 +61,7 @@ To make it work though, you need to run following command, just once from anywhe
 ~> sudo invoker setup # read below if you are migrating from Pow
 {% endhighlight %}
 
-This feature has been well tested to work on both `OSX` and `Linux` (Mainly Ubuntu its derivatives and Fedora for now).
+This feature has been well tested to work on both `OSX` and `Linux`.
 
 If you decide to remove Invoker, you can remove things installed by Invoker using command
 

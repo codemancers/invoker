@@ -6,7 +6,7 @@ title: Using Invoker on Linux
 ## Using on Linux
 
 All the features of Invoker has been tested to work with various versions of `Ubuntu` (which includes -
-`kubuntu`, `xubuntu` etc) and `Fedora` Linux. Contributions for making it work on other distros are more than welcome.
+`kubuntu`, `xubuntu` etc), `ArchLinux` and `Fedora` Linux. Contributions for making it work on other distros are more than welcome.
 
 On Linux - `Invoker` uses `dnsmasq` and `rinetd` for DNS and port forwarding respectively. Same as setup
 on OSX, you can start Invoker setup by running command:
