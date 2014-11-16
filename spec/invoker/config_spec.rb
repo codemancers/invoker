@@ -190,4 +190,37 @@ web: bundle exec rails s -p $PORT
     end
   end
 
+  describe "#autostartable_processes" do
+    it "returns a list of processes that can be autostarted" do
+      begin
+        file = Tempfile.new(["config", ".ini"])
+        config_data =<<-EOD
+[postgres]
+command = postgres -D /usr/local/var/postgres
+
+[redis]
+command = redis-server /usr/local/etc/redis.conf
+autostart = false
+
+[memcached]
+command = /usr/local/opt/memcached/bin/memcached
+autostart = true
+
+[panda-api]
+command = bundle exec rails s
+autostart = false
+
+[panda-auth]
+command = bundle exec rails s -p $PORT
+      EOD
+        file.write(config_data)
+        file.close
+
+        config = Invoker::Parsers::Config.new(file.path, 9000)
+        expect(config.autostartable_processes.map { |process_info| process_info[:label] }).to eq(['postgres', 'memcached', 'panda-auth'])
+      ensure
+        file.unlink()
+      end
+    end
+  end
 end

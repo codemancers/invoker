@@ -27,6 +27,10 @@ module Invoker
         power_config && power_config.https_port
       end
 
+      def autostartable_processes
+        processes.select { |pconfig| pconfig.autostart }
+      end
+
       def process(label)
         processes.detect { |pconfig| pconfig.label == label }
       end
@@ -85,7 +89,8 @@ module Invoker
           port: port,
           label: section["label"] || section.key,
           dir: expand_directory(section["directory"]),
-          cmd: replace_port_in_command(section["command"], port)
+          cmd: replace_port_in_command(section["command"], port),
+          autostart: section['autostart'].nil? ? true : section['autostart']
         )
       end
 
@@ -93,7 +98,8 @@ module Invoker
         OpenStruct.new(
           label: section["label"] || section.key,
           dir: expand_directory(section["directory"]),
-          cmd: section["command"]
+          cmd: section["command"],
+          autostart: section['autostart'].nil? ? true : section['autostart']
         )
       end
 
