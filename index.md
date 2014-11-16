@@ -104,6 +104,12 @@ command = python manage.py runserver $PORT --noreload
 [typo]
 directory = /home/gnufied/typo
 command = bundle exec rails s -p $PORT
+
+[es]
+directory = /home/nishanth/elasticsearch
+command = asticsearch -D es.config=elasticsearch.yml
+# Stop invoker from auto-starting the process.
+disable_autorun = true
 {% endhighlight %}
 
 Now these services can be accessed via `http://terminal.dev` , `http://cms.dev`
