@@ -8,9 +8,11 @@ tags
 vendor/
 _site
 .bundle
-coverage
 invoker_profile/
 *.pid
 .ruby-version
 Gemfile.lock
+coverage/
+*.ini
+.ruby-version
 .overcommit.yml
