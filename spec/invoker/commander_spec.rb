@@ -19,7 +19,7 @@ describe "Invoker::Commander" do
     describe "when not daemonized" do
       before do
         invoker_config.stubs(:processes).returns(
-          [OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'], :autostart => true)]
+          [OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'])]
         )
         @commander = Invoker::Commander.new
         Invoker.commander = @commander
@@ -52,7 +52,7 @@ describe "Invoker::Commander" do
     describe "when daemonized" do
       before do
         invoker_config.stubs(:processes).returns(
-          [OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'], :autostart => true)]
+          [OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'])]
         )
         @commander = Invoker::Commander.new
         Invoker.commander = @commander
@@ -91,11 +91,11 @@ describe "Invoker::Commander" do
     context "a process can't be autostarted" do
       before do
         @processes = [
-          OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'], :autostart => true),
+          OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME']),
           OpenStruct.new(:label => "panda", :cmd => "panda_command", :dir => ENV['HOME'], :autostart => false)
         ]
         invoker_config.stubs(:processes).returns(@processes)
-        autostartable_processes = [OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'], :autostart => true)]
+        autostartable_processes = [OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'])]
         invoker_config.stubs(:autostartable_processes).returns(autostartable_processes)
 
         @commander = Invoker::Commander.new

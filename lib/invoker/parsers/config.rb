@@ -28,7 +28,7 @@ module Invoker
       end
 
       def autostartable_processes
-        processes.select { |pconfig| pconfig.autostart }
+        processes.reject { |pconfig| pconfig.autostart == false }
       end
 
       def process(label)
@@ -68,10 +68,13 @@ module Invoker
       def process_command_from_section(section)
         if supports_subdomain?(section)
           port = pick_port(section)
-          make_option_for_subdomain(section, port)
-        else
-          make_option(section)
+          if port
+            command = replace_port_in_command(section['command'], port)
+            section['port'], section['command'] = port, command
+          end
         end
+
+        make_pconfig(section)
       end
 
       def pick_port(section)
@@ -84,23 +87,16 @@ module Invoker
         end
       end
 
-      def make_option_for_subdomain(section, port)
-        OpenStruct.new(
-          port: port,
-          label: section["label"] || section.key,
-          dir: expand_directory(section["directory"]),
-          cmd: replace_port_in_command(section["command"], port),
-          autostart: section['autostart'].nil? ? true : section['autostart']
-        )
-      end
-
-      def make_option(section)
-        OpenStruct.new(
+      def make_pconfig(section)
+        pconfig = OpenStruct.new(
           label: section["label"] || section.key,
           dir: expand_directory(section["directory"]),
           cmd: section["command"],
           autostart: section['autostart'].nil? ? true : section['autostart']
         )
+        pconfig['port'] = section['port'] if section['port']
+        pconfig['autostart'] = section['autostart'] if section['autostart'] == false
+        pconfig
       end
 
       def supports_subdomain?(section)
