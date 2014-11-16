@@ -217,7 +217,7 @@ command = bundle exec rails s -p $PORT
         file.close
 
         config = Invoker::Parsers::Config.new(file.path, 9000)
-        expect(config.autostartable_processes.map { |process_info| process_info[:label] }).to eq(['postgres', 'memcached', 'panda-auth'])
+        expect(config.autostartable_processes.map { |process_info| process_info.label }).to eq(['postgres', 'memcached', 'panda-auth'])
       ensure
         file.unlink()
       end

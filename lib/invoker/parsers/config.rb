@@ -88,15 +88,16 @@ module Invoker
       end
 
       def make_pconfig(section)
-        pconfig = OpenStruct.new(
+        pconfig = {
           label: section["label"] || section.key,
           dir: expand_directory(section["directory"]),
           cmd: section["command"],
           autostart: section['autostart'].nil? ? true : section['autostart']
-        )
+        }
         pconfig['port'] = section['port'] if section['port']
         pconfig['autostart'] = section['autostart'] if section['autostart'] == false
-        pconfig
+
+        OpenStruct.new(pconfig)
       end
 
       def supports_subdomain?(section)
