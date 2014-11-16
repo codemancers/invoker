@@ -190,4 +190,37 @@ web: bundle exec rails s -p $PORT
     end
   end
 
+  describe "#autorunnable_processes" do
+    it "returns a list of processes that can be autorun" do
+      begin
+        file = Tempfile.new(["config", ".ini"])
+        config_data =<<-EOD
+[postgres]
+command = postgres -D /usr/local/var/postgres
+
+[redis]
+command = redis-server /usr/local/etc/redis.conf
+disable_autorun = true
+
+[memcached]
+command = /usr/local/opt/memcached/bin/memcached
+disable_autorun = false
+
+[panda-api]
+command = bundle exec rails s
+disable_autorun = true
+
+[panda-auth]
+command = bundle exec rails s -p $PORT
+      EOD
+        file.write(config_data)
+        file.close
+
+        config = Invoker::Parsers::Config.new(file.path, 9000)
+        expect(config.autorunnable_processes.map(&:label)).to eq(['postgres', 'memcached', 'panda-auth'])
+      ensure
+        file.unlink()
+      end
+    end
+  end
 end

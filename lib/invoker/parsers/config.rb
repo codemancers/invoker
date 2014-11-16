@@ -27,6 +27,10 @@ module Invoker
         power_config && power_config.https_port
       end
 
+      def autorunnable_processes
+        processes.reject(&:disable_autorun)
+      end
+
       def process(label)
         processes.detect { |pconfig| pconfig.label == label }
       end
@@ -64,10 +68,13 @@ module Invoker
       def process_command_from_section(section)
         if supports_subdomain?(section)
           port = pick_port(section)
-          make_option_for_subdomain(section, port)
-        else
-          make_option(section)
+          if port
+            command = replace_port_in_command(section['command'], port)
+            section['port'], section['command'] = port, command
+          end
         end
+
+        make_pconfig(section)
       end
 
       def pick_port(section)
@@ -80,21 +87,16 @@ module Invoker
         end
       end
 
-      def make_option_for_subdomain(section, port)
-        OpenStruct.new(
-          port: port,
-          label: section["label"] || section.key,
-          dir: expand_directory(section["directory"]),
-          cmd: replace_port_in_command(section["command"], port)
-        )
-      end
-
-      def make_option(section)
-        OpenStruct.new(
+      def make_pconfig(section)
+        pconfig = {
           label: section["label"] || section.key,
           dir: expand_directory(section["directory"]),
           cmd: section["command"]
-        )
+        }
+        pconfig['port'] = section['port'] if section['port']
+        pconfig['disable_autorun'] = section['disable_autorun'] if section['disable_autorun']
+
+        OpenStruct.new(pconfig)
       end
 
       def supports_subdomain?(section)
