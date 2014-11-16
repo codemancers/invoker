@@ -27,8 +27,8 @@ module Invoker
         power_config && power_config.https_port
       end
 
-      def autostartable_processes
-        processes.reject { |pconfig| pconfig.autostart == false }
+      def autorunnable_processes
+        processes.reject(&:disable_autorun)
       end
 
       def process(label)
@@ -91,11 +91,10 @@ module Invoker
         pconfig = {
           label: section["label"] || section.key,
           dir: expand_directory(section["directory"]),
-          cmd: section["command"],
-          autostart: section['autostart'].nil? ? true : section['autostart']
+          cmd: section["command"]
         }
         pconfig['port'] = section['port'] if section['port']
-        pconfig['autostart'] = section['autostart'] if section['autostart'] == false
+        pconfig['disable_autorun'] = section['disable_autorun'] if section['disable_autorun']
 
         OpenStruct.new(pconfig)
       end
