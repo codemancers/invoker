@@ -18,9 +18,9 @@ describe "Invoker::Commander" do
   describe "#start_process" do
     describe "when not daemonized" do
       before do
-        invoker_config.stubs(:processes).returns(
-          [OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'])]
-        )
+        processes = [OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'])]
+        invoker_config.stubs(:processes).returns(processes)
+        invoker_config.stubs(:autostartable_processes).returns(processes)
         @commander = Invoker::Commander.new
         Invoker.commander = @commander
       end
@@ -51,9 +51,9 @@ describe "Invoker::Commander" do
 
     describe "when daemonized" do
       before do
-        invoker_config.stubs(:processes).returns(
-          [OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'])]
-        )
+        processes = [OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'])]
+        invoker_config.stubs(:processes).returns(processes)
+        invoker_config.stubs(:autostartable_processes).returns(processes)
         @commander = Invoker::Commander.new
         Invoker.commander = @commander
         Invoker.daemonize = true
