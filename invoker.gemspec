@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   s.add_dependency("rainbow", "~> 2.0")
   s.add_dependency("iniparse", "~> 1.1")
   s.add_dependency("formatador", "~> 0.2")
-  s.add_dependency("eventmachine", "~> 1.0")
+  s.add_dependency("eventmachine", "~> 1.0.4")
   s.add_dependency("em-proxy", "~> 0.1")
   s.add_dependency("rubydns", "~> 0.8.5")
   s.add_dependency("uuid", "~> 2.3")
