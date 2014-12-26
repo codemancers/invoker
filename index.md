@@ -86,6 +86,14 @@ command = python manage.py runserver $PORT --noreload
 [typo]
 directory = /home/gnufied/typo
 command = bundle exec rails s -p $PORT
+
+[activemq]
+directory = /home/gnufied/tmp
+command = activemq-admin start
+# prevent Invoker from automatically starting the process
+# on start and the process can be manually started later via
+# invoker add activemq
+disable_autorun = true
 {% endhighlight %}
 
 Now these services can be accessed via `http://terminal.dev` , `http://cms.dev`
