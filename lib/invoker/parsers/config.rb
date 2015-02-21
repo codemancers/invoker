@@ -121,7 +121,8 @@ module Invoker
           label: section["label"] || section.key,
           dir: expand_directory(section["directory"]),
           cmd: section["command"],
-          group: section["group"]
+          group: section["group"],
+          stop_signal: section['stop_signal']
         }
         pconfig['port'] = section['port'] if section['port']
         pconfig['disable_autorun'] = section['disable_autorun'] if section['disable_autorun']

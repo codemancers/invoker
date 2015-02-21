@@ -56,7 +56,10 @@ module Invoker
     def stop_process(process_name, options = {})
       worker = workers[process_name]
       return false unless worker
-      signal_to_use = options[:stop_signal] || 'INT'
+
+      signal_to_use = options[:stop_signal]
+      signal_to_use ||= Invoker.config.process(process_name).stop_signal
+      signal_to_use ||= 'INT'
 
       Invoker::Logger.puts("Removing #{process_name} with signal #{signal_to_use}".color(:red))
       kill_or_remove_process(worker.pid, signal_to_use, process_name)

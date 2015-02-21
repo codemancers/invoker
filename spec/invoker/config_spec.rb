@@ -190,6 +190,29 @@ web: bundle exec rails s -p $PORT
     end
   end
 
+  describe 'stop signal option' do
+    it 'allows specifying a custom stop signal for each process' do
+      begin
+        file = Tempfile.new(["config", ".ini"])
+        config_data =<<-EOD
+[postgres]
+command = postgres -D /usr/local/var/postgres
+stop_signal = TERM
+
+[redis]
+command = redis-server /usr/local/etc/redis.conf
+EOD
+        file.write(config_data)
+        file.close
+
+        config = Invoker::Parsers::Config.new(file.path, 9000)
+        config.process('postgres').stop_signal.should == 'TERM'
+      ensure
+        file.unlink()
+      end
+    end
+  end
+
   describe "#autorunnable_processes" do
     it "returns a list of processes that can be autorun" do
       begin

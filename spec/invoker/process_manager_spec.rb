@@ -47,12 +47,12 @@ describe Invoker::ProcessManager do
   end
 
   describe "#stop_process" do
-    describe "when a worker is found" do
+    context "when a worker is found" do
       before do
         process_manager.workers.expects(:[]).returns(OpenStruct.new(:pid => "bogus"))
       end
 
-      describe "if a stop signal is specified" do
+      context "if a stop signal is specified" do
         it "should use that signal to kill the worker" do
           process_name, stop_signal = 'bogus', 'HUP'
 
@@ -65,16 +65,20 @@ describe Invoker::ProcessManager do
         it "should use INT signal" do
           process_name = 'bogus'
 
+          Invoker.config = mock
+          Invoker.config.expects(:process).returns(OpenStruct.new(label: process_name))
           process_manager.expects(:process_kill).with(process_name, 'INT').returns(true)
-          expect(process_manager.stop_process(process_name)).to be_truthy
+          expect(process_manager.stop_process(process_name, stop_signal: nil)).to be_truthy
         end
 
-        context 'stop signal is nil' do
-          it 'uses INT signal' do
+        context 'if stop signal is specified in the config file' do
+          it 'uses that signal to stop the process' do
             process_name = 'bogus'
 
-            process_manager.expects(:process_kill).with(process_name, 'INT').returns(true)
-            expect(process_manager.stop_process(process_name, stop_signal: nil)).to be_truthy
+            Invoker.config = mock
+            Invoker.config.expects(:process).returns(OpenStruct.new(label: process_name, stop_signal: 'TERM'))
+            process_manager.expects(:process_kill).with(process_name, 'TERM').returns(true)
+            expect(process_manager.stop_process(process_name)).to be_truthy
           end
         end
       end
