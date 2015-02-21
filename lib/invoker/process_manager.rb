@@ -26,6 +26,11 @@ module Invoker
       wait_on_pid(process_info.label, pid)
     end
 
+    def start_process_or_group_by_name(process_or_group_name)
+      processes_to_start = Invoker.config.processes_by_group_or_name(process_or_group_name)
+      processes_to_start.each { |process_info| start_process_by_name(process_info.label) }
+    end
+
     # Start a process given their name
     # @param process_name [String] Command label of process specified in config file.
     def start_process_by_name(process_name)

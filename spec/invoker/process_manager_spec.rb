@@ -2,6 +2,20 @@ require "spec_helper"
 
 describe Invoker::ProcessManager do
   let(:process_manager) { Invoker::ProcessManager.new }
+
+  describe '#start_process_or_group_by_name' do
+    it 'finds processes by group or process name and starts them' do
+      processes_to_start = [
+        OpenStruct.new(:label => "postgres", :cmd => "foo", :dir => "bar", :group => "db"),
+        OpenStruct.new(:label => "redis", :cmd => "foo", :dir => "bar", :group => "db")
+      ]
+      invoker_config.expects(:processes_by_group_or_name).with('db').returns(processes_to_start)
+      process_manager.expects(:start_process_by_name).with('postgres')
+      process_manager.expects(:start_process_by_name).with('redis')
+      process_manager.start_process_or_group_by_name('db')
+    end
+  end
+
   describe "#start_process_by_name" do
     it "should find command by label and start it, if found" do
       invoker_config.stubs(:processes).returns([OpenStruct.new(:label => "resque", :cmd => "foo", :dir => "bar")])
