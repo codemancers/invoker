@@ -43,31 +43,39 @@ module Invoker
       start_process(process_info) if process_info
     end
 
+    def stop_process_or_group_by_name(process_or_group_name, options)
+      processes_to_stop = Invoker.config.processes_by_group_or_name(process_or_group_name)
+      processes_to_stop.each { |process_info| stop_process(process_info.label, options) }
+    end
+
     # Remove a process from list of processes managed by invoker supervisor.It also
     # kills the process before removing it from the list.
     #
-    # @param remove_message [Invoker::IPC::Message::Remove]
+    # @param process_name [String] Command label of process specified in config file.
     # @return [Boolean] if process existed and was removed else false
-    def stop_process(remove_message)
-      worker = workers[remove_message.process_name]
-      command_label = remove_message.process_name
+    def stop_process(process_name, options = {})
+      worker = workers[process_name]
       return false unless worker
-      signal_to_use = remove_message.signal || 'INT'
+      signal_to_use = options[:stop_signal] || 'INT'
 
-      Invoker::Logger.puts("Removing #{command_label} with signal #{signal_to_use}".color(:red))
-      kill_or_remove_process(worker.pid, signal_to_use, command_label)
+      Invoker::Logger.puts("Removing #{process_name} with signal #{signal_to_use}".color(:red))
+      kill_or_remove_process(worker.pid, signal_to_use, process_name)
+    end
+
+    def restart_process_or_group_by_name(process_or_group_name, options)
+      processes_to_restart = Invoker.config.processes_by_group_or_name(process_or_group_name)
+      processes_to_restart.each { |process_info| restart_process(process_info.label, options) }
     end
 
     # Receive a message from user to restart a Process
-    # @param [Invoker::IPC::Message::Reload]
-    def restart_process(reload_message)
-      command_label = reload_message.process_name
-      if stop_process(reload_message.remove_message)
-        Invoker.commander.schedule_event(command_label, :worker_removed) do
-          start_process_by_name(command_label)
+    # @param process_name [String] Command label of process specified in config file.
+    def restart_process(process_name, options)
+      if stop_process(process_name, options)
+        Invoker.commander.schedule_event(process_name, :worker_removed) do
+          start_process_by_name(process_name)
         end
       else
-        start_process_by_name(command_label)
+        start_process_by_name(process_name)
       end
     end
 

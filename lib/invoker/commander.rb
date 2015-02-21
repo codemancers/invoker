@@ -10,7 +10,7 @@ module Invoker
     attr_accessor :event_manager, :runnables, :thread_group
     extend Forwardable
 
-    def_delegators :@process_manager, :start_process_by_name, :start_process_or_group_by_name, :stop_process
+    def_delegators :@process_manager, :start_process_by_name, :start_process_or_group_by_name, :stop_process, :stop_process_or_group_by_name, :restart_process_or_group_by_name
     def_delegators :@process_manager, :restart_process, :get_worker_from_fd, :process_list
 
     def_delegators :@event_manager, :schedule_event, :trigger
