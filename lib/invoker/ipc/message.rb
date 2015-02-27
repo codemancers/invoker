@@ -146,7 +146,7 @@ module Invoker
 
       class DnsCheck < Base
         include Serialization
-        message_attributes :process_name
+        message_attributes :host, :path
       end
 
       class DnsCheckResponse < Base

@@ -5,6 +5,16 @@ describe Invoker::Power::HttpParser do
 
   describe "complete message received" do
     before { parser.reset }
+    it "should call url received with url" do
+      @header, @path = nil
+      parser.on_headers_complete { |header| @header = header }
+      parser.on_url { |url| @path = url }
+      parser << "GET /blah HTTP/1.1\r\n"
+      parser << "Host: localhost\r\n"
+
+      expect(@path).to eql "/blah"
+    end
+
     it "should call header received with full header" do
       @header = nil
       parser.on_headers_complete { |header| @header = header }
