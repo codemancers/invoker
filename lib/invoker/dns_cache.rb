@@ -79,7 +79,7 @@ module Invoker
     end
 
     def path_matches_prefix?(path, prefix)
-      path == prefix || path.start_with?(prefix + '/')
+      path.start_with?(prefix) && [nil, "/", "?"].member?(path[prefix.length])
     end
   end
 end
