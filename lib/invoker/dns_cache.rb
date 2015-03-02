@@ -3,27 +3,36 @@ module Invoker
     attr_accessor :dns_data
 
     # INI:
-    # [www.app]
-    # port = 8000
-    #
-    # [www.app/chat]
-    # port = 8001
-    #
     # [app]
-    # port = 8002
+    # port = 8000
+    # location = www2.app/blah
     #
-    # [app/api]
-    # port = 8003
+    # [chat]
+    # port = 8001
+    # location www.app/chat
+    #
+    # [api]
+    # port = 8002
+    # location = www.app/api
     #
     # dns_data:
     # {
-    #   'www.app' => [
-    #     ['/', 8000],
-    #     ['/chat', 8001]
+    #   'api' => [
+    #     ['', 8002]
     #   ],
     #   'app' => [
-    #     ['/', 8002],
-    #     ['/api, 8003]
+    #     ['', 8000]
+    #   ],
+    #   'chat' => [
+    #     ['', 8001]
+    #   ],
+    #   'www.app' => [
+    #     ['', 8000],
+    #     ['/api, 8002],
+    #     ['/chat, 8001]
+    #   ],
+    #   'www2.app' => [
+    #     ['/blah', 8000]
     #   ]
     # }
     def initialize(config)
@@ -32,6 +41,11 @@ module Invoker
       Invoker.config.processes.each do |process|
         if process.port
           add(process.label, process.port)
+          if process.location
+            process.location.split(' ').each do |loc|
+              add(loc, process.port)
+            end
+          end
         end
       end
     end
@@ -42,9 +56,9 @@ module Invoker
           host = host.split('.', 2)[1]
         end
 
-        dns_data[host].reverse_each {|prefix, label, port|
+        dns_data[host].reverse_each {|prefix, port|
           if path_matches_prefix?(path, prefix)
-            return {:process_name => label, :port => port}
+            return {:port => port}
           end
         }
 
@@ -52,10 +66,10 @@ module Invoker
       }
     end
 
-    def add(name, port)
+    def add(location, port)
       @dns_mutex.synchronize {
-        host, path_prefix = split_host_path(name)
-        (dns_data[host] << [path_prefix.to_s, name, port]).sort!
+        host, path_prefix = split_host_path(location)
+        (dns_data[host] << [path_prefix.to_s, port]).sort_by! &:length
       }
     end
 
