@@ -43,6 +43,7 @@ module Invoker
         @connection = connection
         @protocol = protocol
         @http_parser = HttpParser.new(protocol)
+        @response_http_parser = HttpParser.new(protocol)
         @session = nil
         @buffer = []
       end
@@ -51,9 +52,24 @@ module Invoker
         http_parser.on_url { |url| url_received(url) }
         http_parser.on_headers_complete { |headers| headers_received(headers) }
         http_parser.on_message_complete { |full_message| complete_message_received(full_message) }
+
+        @response_http_parser.on_message_complete { response_complete }
+
         connection.on_data { |data| upstream_data(data) }
         connection.on_response { |backend, data| backend_data(backend, data) }
         connection.on_finish { |backend, name| frontend_disconnect(backend, name) }
+      end
+
+      def response_complete
+        # disconnect from backend after each response, since subsequent
+        # requests from persistent HTTP connections might be proxied to a stale
+        # backend
+        EventMachine.next_tick do # still needs chance to send data
+          connection.unbind_backend(@session)
+          @session = nil
+          @response_http_parser.reset
+          http_parser.reset
+        end
       end
 
       def complete_message_received(full_message)
@@ -66,9 +82,6 @@ module Invoker
       end
 
       def headers_received(headers)
-        if @session
-          return
-        end
         @session = UUID.generate()
         dns_check_response = select_backend_config(headers['Host'], @path)
         if dns_check_response && dns_check_response.port
@@ -93,6 +106,7 @@ module Invoker
       end
 
       def backend_data(backend, data)
+        @response_http_parser << data
         @backend_data = true
         data
       end
