@@ -22,8 +22,8 @@ module Invoker
 
     class Balancer
       attr_accessor :connection, :http_parser, :session, :protocol
-      DEV_MATCH_REGEX = /([\w-]+)\.dev(\:\d+)?$/
-      XIP_IO_MATCH_REGEX = /([\w-]+)\.\d+\.\d+\.\d+\.\d+\.xip\.io(\:\d+)?$/
+      DEV_MATCH_REGEX = /([\w.-]+)\.dev(\:\d+)?$/
+      XIP_IO_MATCH_REGEX = /([\w.-]+)\.\d+\.\d+\.\d+\.\d+\.xip\.io(\:\d+)?$/
 
       def self.run(options = {})
         start_http_proxy(InvokerHttpProxy, 'http', options)
@@ -43,16 +43,33 @@ module Invoker
         @connection = connection
         @protocol = protocol
         @http_parser = HttpParser.new(protocol)
+        @response_http_parser = HttpParser.new(protocol)
         @session = nil
         @buffer = []
       end
 
       def install_callbacks
+        http_parser.on_url { |url| url_received(url) }
         http_parser.on_headers_complete { |headers| headers_received(headers) }
         http_parser.on_message_complete { |full_message| complete_message_received(full_message) }
+
+        @response_http_parser.on_message_complete { response_complete }
+
         connection.on_data { |data| upstream_data(data) }
         connection.on_response { |backend, data| backend_data(backend, data) }
         connection.on_finish { |backend, name| frontend_disconnect(backend, name) }
+      end
+
+      def response_complete
+        # disconnect from backend after each response, since subsequent
+        # requests from persistent HTTP connections might be proxied to a stale
+        # backend
+        EventMachine.next_tick do # still needs chance to send data
+          connection.unbind_backend(@session)
+          @session = nil
+          @response_http_parser.reset
+          http_parser.reset
+        end
       end
 
       def complete_message_received(full_message)
@@ -60,12 +77,13 @@ module Invoker
         http_parser.reset
       end
 
+      def url_received(url)
+        @path = url
+      end
+
       def headers_received(headers)
-        if @session
-          return
-        end
         @session = UUID.generate()
-        dns_check_response = select_backend_config(headers['Host'])
+        dns_check_response = select_backend_config(headers['Host'], @path)
         if dns_check_response && dns_check_response.port
           connection.server(session, host: '0.0.0.0', port: dns_check_response.port)
         else
@@ -88,6 +106,7 @@ module Invoker
       end
 
       def backend_data(backend, data)
+        @response_http_parser << data
         @backend_data = true
         data
       end
@@ -107,11 +126,11 @@ module Invoker
 
       private
 
-      def select_backend_config(host)
-        matching_string = extract_host_from_domain(host)
+      def select_backend_config(domain, path)
+        matching_string = extract_host_from_domain(domain)
         return nil unless matching_string
-        if selected_app = matching_string[1]
-          dns_check(process_name: selected_app)
+        if host = matching_string[1]
+          dns_check(host: host, path: path)
         else
           nil
         end

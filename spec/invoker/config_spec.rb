@@ -183,7 +183,7 @@ web: bundle exec rails s -p $PORT
 
         expect(dns_cache.dns_data).to_not be_empty
         expect(dns_cache.dns_data['web']).to_not be_empty
-        expect(dns_cache.dns_data['web']['port']).to eql 9001
+        expect(dns_cache.dns_data['web'].first[1]).to eql 9001
       ensure
         File.delete("/tmp/Procfile")
       end

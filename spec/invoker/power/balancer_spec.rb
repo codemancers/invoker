@@ -27,7 +27,7 @@ describe Invoker::Power::Balancer do
       expect(match).to_not be_nil
 
       matching_string = match[1]
-      expect(matching_string).to eq("bar")
+      expect(matching_string).to eq("emacs.bar")
     end
 
     it "should match hello-world.dev" do
@@ -61,7 +61,7 @@ describe Invoker::Power::Balancer do
       expect(match).to_not be_nil
 
       matching_string = match[1]
-      expect(matching_string).to eq("bar")
+      expect(matching_string).to eq("emacs.bar")
     end
 
     it "should match hello-world.10.0.0.1.xip.io" do

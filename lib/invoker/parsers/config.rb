@@ -97,6 +97,7 @@ module Invoker
           cmd: section["command"]
         }
         pconfig['port'] = section['port'] if section['port']
+        pconfig['location'] = section['location'] if section['location']
         pconfig['disable_autorun'] = section['disable_autorun'] if section['disable_autorun']
 
         OpenStruct.new(pconfig)

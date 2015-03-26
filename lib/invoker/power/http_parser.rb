@@ -8,11 +8,16 @@ module Invoker
         @parser = HTTP::Parser.new
         @header = {}
         initialize_message_content
+        parser.on_url { |url| url_received(url) }
         parser.on_headers_complete { complete_headers_received }
         parser.on_header_field { |field_name| @last_key = field_name }
         parser.on_header_value { |field_value| header_value_received(field_value) }
 
         parser.on_message_complete { complete_message_received }
+      end
+
+      def on_url(&block)
+        @on_url_callback = block
       end
 
       # define a callback for invoking when complete header is parsed
@@ -61,6 +66,12 @@ module Invoker
       def complete_headers_received
         if @on_headers_complete_callback
           @on_headers_complete_callback.call(@header)
+        end
+      end
+      
+      def url_received(url)
+        if @on_url_callback
+          @on_url_callback.call(url)
         end
       end
     end
