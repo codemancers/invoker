@@ -29,3 +29,7 @@ b. On `Linux` - you can first uninstall `dnsmasq` and `rinetd` packages and afte
 </ul>
 
 Additionally you can also delete `Invoker` configuration file from `$HOME/.invoker`.
+
+<em> 3. How do I use Invoker with pry? </em>
+
+Try using something like [pry-remote](https://github.com/Mon-Ouie/pry-remote)
