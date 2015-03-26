@@ -223,4 +223,24 @@ command = bundle exec rails s -p $PORT
       end
     end
   end
+
+  describe "global config file" do
+    it "should use global config file if available" do
+      begin
+        filename = "#{Invoker::Power::Config.config_dir}/foo.ini"
+        file = File.open(filename, "w")
+        config_data =<<-EOD
+[try_sleep]
+directory = /tmp
+command = ruby try_sleep.rb
+        EOD
+        file.write(config_data)
+        file.close
+        config = Invoker::Parsers::Config.new("foo", 9000)
+        expect(config.filename).to eql(filename)
+      ensure
+        File.unlink(filename)
+      end
+    end
+  end
 end
