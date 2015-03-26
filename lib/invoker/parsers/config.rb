@@ -5,6 +5,7 @@ module Invoker
     class Config
       PORT_REGEX = /\$PORT/
       attr_accessor :processes, :power_config
+      attr_reader :filename
 
       def initialize(filename, port)
         @filename = filename
@@ -38,6 +39,8 @@ module Invoker
       private
 
       def load_config
+        @filename = to_global_file if is_global?
+
         if is_ini?
           process_ini
         elsif is_procfile?
@@ -127,6 +130,14 @@ module Invoker
 
       def is_procfile?
         @filename =~ /Procfile/
+      end
+
+      def to_global_file
+        File.join(Invoker::Power::Config.config_dir, "#{@filename}.ini")
+      end
+
+      def is_global?
+        @filename =~ /^\w+$/ && File.exist?(to_global_file)
       end
     end
   end
