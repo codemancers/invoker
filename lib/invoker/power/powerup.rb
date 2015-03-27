@@ -13,9 +13,7 @@ module Invoker
         EM.run do
           trap("TERM") { stop }
           trap("INT") { stop }
-          if Invoker.darwin?
-            RubyDNS.run_server(asynchronous: true, server_class: Invoker::Power::DNS)
-          end
+          RubyDNS.run_server(dns_options) if Invoker.darwin?
           Balancer.run
         end
       end
@@ -23,6 +21,16 @@ module Invoker
       def stop
         Invoker::Logger.puts "Terminating Proxy/Server"
         EventMachine.stop
+      end
+
+      private
+
+      def dns_options
+        {
+          asynchronous: true,
+          server_class: Invoker::Power::DNS,
+          listen: DNS.server_ports
+        }
       end
     end
   end
