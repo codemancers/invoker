@@ -10,14 +10,14 @@ module Invoker
       def run
         require "invoker/power/power"
         EM.epoll
-        EM.run {
+        EM.run do
           trap("TERM") { stop }
           trap("INT") { stop }
           if Invoker.darwin?
-            DNS.new.run(listen: DNS.server_ports)
+            RubyDNS.run_server(asynchronous: true, server_class: Invoker::Power::DNS)
           end
           Balancer.run
-        }
+        end
       end
 
       def stop
