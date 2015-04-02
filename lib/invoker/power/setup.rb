@@ -32,7 +32,8 @@ module Invoker
       end
 
       def drop_to_normal_user
-        EventMachine.set_effective_user(ENV["SUDO_USER"])
+        uid = Etc.getpwdnam(ENV["SUDO_USER"]).uid
+        Process::Sys.setuid(uid)
       end
 
       def find_open_ports
@@ -44,7 +45,7 @@ module Invoker
       end
 
       def check_if_setup_can_run?
-        !File.exists?(Invoker::Power::Config.config_file)
+        !File.exist?(Invoker::Power::Config.config_file)
       end
     end
   end

@@ -46,7 +46,8 @@ module Invoker
       end
 
       def drop_to_normal_user
-        EventMachine.set_effective_user(ENV["SUDO_USER"])
+        uid = Etc.getpwdnam(ENV["SUDO_USER"]).uid
+        Process::Sys.setuid(uid)
       end
 
       def osx_version
