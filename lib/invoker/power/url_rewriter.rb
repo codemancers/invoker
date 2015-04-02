@@ -9,7 +9,7 @@ module Invoker
         possible_matches.each do |match|
           if match
             exact_match = dns_check(process_name: match)
-            break
+            break if exact_match.port
           end
         end
         exact_match
