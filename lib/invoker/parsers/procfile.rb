@@ -6,7 +6,7 @@ module Invoker
       #
       # @param [String] filename (nil)  An optional filename to read from
       #
-      def initialize(filename=nil)
+      def initialize(filename = nil)
         @entries = []
         load(filename) if filename
       end
@@ -75,8 +75,8 @@ module Invoker
       private
 
       def parse(filename)
-        File.read(filename).gsub("\r\n","\n").split("\n").map do |line|
-          if line =~ /^([A-Za-z0-9_-]+):\s*(.+)$/
+        File.read(filename).gsub("\r\n", "\n").split("\n").map do |line|
+          if line =~ /^([A-Za-z0-9_\-\.]+):\s*(.+)$/
             [$1, $2]
           end
         end.compact
