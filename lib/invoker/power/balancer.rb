@@ -64,6 +64,11 @@ module Invoker
           return
         end
         @session = UUID.generate()
+        if !headers['Host'] || headers['Host'].empty?
+          return_error_page(400)
+          return
+        end
+
         dns_check_response = UrlRewriter.new.select_backend_config(headers['Host'])
         if dns_check_response && dns_check_response.port
           connection.server(session, host: '0.0.0.0', port: dns_check_response.port)
