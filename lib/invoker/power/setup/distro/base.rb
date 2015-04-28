@@ -16,6 +16,9 @@ module Invoker
           when "Archlinux"
             require "invoker/power/setup/distro/arch"
             Arch.new
+          when "Debian"
+            require "invoker/power/setup/distro/debian"
+            Debian.new
           else
             raise "Your selected distro is not supported by Invoker"
           end
