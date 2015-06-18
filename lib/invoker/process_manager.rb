@@ -26,11 +26,6 @@ module Invoker
       wait_on_pid(process_info.label, pid)
     end
 
-    def start_process_or_group_by_name(process_or_group_name)
-      processes_to_start = Invoker.config.processes_by_group_or_name(process_or_group_name)
-      processes_to_start.each { |process_info| start_process_by_name(process_info.label) }
-    end
-
     # Start a process given their name
     # @param process_name [String] Command label of process specified in config file.
     def start_process_by_name(process_name)
@@ -41,11 +36,6 @@ module Invoker
 
       process_info = Invoker.config.process(process_name)
       start_process(process_info) if process_info
-    end
-
-    def stop_process_or_group_by_name(process_or_group_name, options)
-      processes_to_stop = Invoker.config.processes_by_group_or_name(process_or_group_name)
-      processes_to_stop.each { |process_info| stop_process(process_info.label, options) }
     end
 
     # Remove a process from list of processes managed by invoker supervisor.It also
@@ -63,11 +53,6 @@ module Invoker
 
       Invoker::Logger.puts("Removing #{process_name} with signal #{signal_to_use}".color(:red))
       kill_or_remove_process(worker.pid, signal_to_use, process_name)
-    end
-
-    def restart_process_or_group_by_name(process_or_group_name, options)
-      processes_to_restart = Invoker.config.processes_by_group_or_name(process_or_group_name)
-      processes_to_restart.each { |process_info| restart_process(process_info.label, options) }
     end
 
     # Receive a message from user to restart a Process

@@ -3,20 +3,6 @@ require "spec_helper"
 describe Invoker::ProcessManager do
   let(:process_manager) { Invoker::ProcessManager.new }
 
-  describe '#start_process_or_group_by_name' do
-    it 'finds processes by process or group name and starts them' do
-      processes_to_start = [
-        OpenStruct.new(:label => "postgres", :cmd => "foo", :dir => "bar", :group => "db"),
-        OpenStruct.new(:label => "redis", :cmd => "foo", :dir => "bar", :group => "db")
-      ]
-
-      invoker_config.expects(:processes_by_group_or_name).with('db').returns(processes_to_start)
-      process_manager.expects(:start_process_by_name).with('postgres')
-      process_manager.expects(:start_process_by_name).with('redis')
-      process_manager.start_process_or_group_by_name('db')
-    end
-  end
-
   describe "#start_process_by_name" do
     it "should find command by label and start it, if found" do
       invoker_config.stubs(:processes).returns([OpenStruct.new(:label => "resque", :cmd => "foo", :dir => "bar")])
@@ -29,20 +15,6 @@ describe Invoker::ProcessManager do
     it "should not start already running process" do
       process_manager.workers.expects(:[]).returns(OpenStruct.new(:pid => "bogus"))
       expect(process_manager.start_process_by_name("resque")).to be_falsey
-    end
-  end
-
-  describe '#stop_process_or_group_by_name' do
-    it 'finds processes by process or group name and stops them' do
-      processes_to_stop = [
-        OpenStruct.new(:label => "postgres", :cmd => "foo", :dir => "bar", :group => "db"),
-        OpenStruct.new(:label => "redis", :cmd => "foo", :dir => "bar", :group => "db")
-      ]
-
-      invoker_config.expects(:processes_by_group_or_name).with('db').returns(processes_to_stop)
-      process_manager.expects(:stop_process).with('postgres', stop_signal: 'TERM')
-      process_manager.expects(:stop_process).with('redis', stop_signal: 'TERM')
-      process_manager.stop_process_or_group_by_name('db', stop_signal: 'TERM')
     end
   end
 
@@ -93,20 +65,6 @@ describe Invoker::ProcessManager do
         process_manager.expects(:process_kill).never
         process_manager.stop_process('bogus')
       end
-    end
-  end
-
-  describe '#restart_process_or_group_by_name' do
-    it 'finds processes by process or group name and restarts them' do
-      processes_to_restart = [
-        OpenStruct.new(:label => "postgres", :cmd => "foo", :dir => "bar", :group => "db"),
-        OpenStruct.new(:label => "redis", :cmd => "foo", :dir => "bar", :group => "db")
-      ]
-
-      invoker_config.expects(:processes_by_group_or_name).with('db').returns(processes_to_restart)
-      process_manager.expects(:restart_process).with('postgres', stop_signal: 'TERM')
-      process_manager.expects(:restart_process).with('redis', stop_signal: 'TERM')
-      process_manager.restart_process_or_group_by_name('db', stop_signal: 'TERM')
     end
   end
 
