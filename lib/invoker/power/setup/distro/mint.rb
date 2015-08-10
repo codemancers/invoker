@@ -1,9 +1,9 @@
-require "invoker/power/setup/distro/debian"
+require "invoker/power/setup/distro/ubuntu"
 
 module Invoker
   module Power
     module Distro
-      class Ubuntu < Debian
+      class Mint < Ubuntu
       end
     end
   end
