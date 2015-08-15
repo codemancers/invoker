@@ -34,10 +34,15 @@ module Invoker
       type: :boolean,
       banner: "Daemonize the server into the background",
       aliases: [:d]
+    option :backend_host,
+      type: :string,
+      banner: "Host to be used for backend services if they are not running locally. e.g. docker container services in Mac OS X",
+      aliases: [:h]
     def start(file)
       Invoker.setup_config_location
       port = options[:port] || 9000
       Invoker.daemonize = options[:daemon]
+      Invoker.backend_host = options[:backend_host]
       Invoker.load_invoker_config(file, port)
       warn_about_terminal_notifier
       warn_about_old_configuration
