@@ -71,7 +71,7 @@ module Invoker
 
         dns_check_response = UrlRewriter.new.select_backend_config(headers['Host'])
         if dns_check_response && dns_check_response.port
-          connection.server(session, host: '0.0.0.0', port: dns_check_response.port)
+          connection.server(session, host: dns_check_response.ip, port: dns_check_response.port)
         else
           return_error_page(404)
           http_parser.reset
