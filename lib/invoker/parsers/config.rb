@@ -82,7 +82,7 @@ module Invoker
 
       def pick_port(section)
         if section['command'] =~ PORT_REGEX
-          @port += 1
+          @port
         elsif section['port']
           section['port']
         else

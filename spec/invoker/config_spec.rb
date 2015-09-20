@@ -79,13 +79,13 @@ command = ls
         config = Invoker::Parsers::Config.new(file.path, 9000)
         command1 = config.processes.first
 
-        expect(command1.port).to eq(9001)
-        expect(command1.cmd).to match(/9001/)
+        expect(command1.port).to eq(9000)
+        expect(command1.cmd).to match(/9000/)
 
         command2 = config.processes[1]
 
-        expect(command2.port).to eq(9002)
-        expect(command2.cmd).to match(/9002/)
+        expect(command2.port).to eq(9000)
+        expect(command2.cmd).to match(/9000/)
 
         command2 = config.processes[2]
 
@@ -118,8 +118,8 @@ command = ls
         config = Invoker::Parsers::Config.new(file.path, 9000)
         command1 = config.processes.first
 
-        expect(command1.port).to eq(9001)
-        expect(command1.cmd).to match(/9001/)
+        expect(command1.port).to eq(9000)
+        expect(command1.cmd).to match(/9000/)
 
         command2 = config.processes[1]
 
@@ -162,7 +162,7 @@ web: bundle exec rails s -p $PORT
         config = Invoker::Parsers::Config.new("/tmp/Procfile", 9000)
         command1 = config.processes.first
 
-        expect(command1.port).to eq(9001)
+        expect(command1.port).to eq(9000)
         expect(command1.cmd).to match(/bundle exec rails/)
       ensure
         File.delete("/tmp/Procfile")
@@ -183,7 +183,7 @@ web: bundle exec rails s -p $PORT
 
         expect(dns_cache.dns_data).to_not be_empty
         expect(dns_cache.dns_data['web']).to_not be_empty
-        expect(dns_cache.dns_data['web']['port']).to eql 9001
+        expect(dns_cache.dns_data['web']['port']).to eql 9000
       ensure
         File.delete("/tmp/Procfile")
       end
