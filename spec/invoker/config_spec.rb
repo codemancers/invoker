@@ -84,8 +84,8 @@ command = ls
 
         command2 = config.processes[1]
 
-        expect(command2.port).to eq(9000)
-        expect(command2.cmd).to match(/9000/)
+        expect(command2.port).to eq(9001)
+        expect(command2.cmd).to match(/9001/)
 
         command2 = config.processes[2]
 

@@ -7,9 +7,15 @@ module Invoker
       attr_accessor :processes, :power_config
       attr_reader :filename
 
+      # initialize takes a port form cli and decrements it by 1 and sets the
+      # instance variable @port. This port value is used as the environment
+      # variable $PORT mentioned inside invoker.ini. When method pick_port gets
+      # fired it increments the value of port by 1, subsequently when pick_port
+      # again gets fired, for another command, it will again increment port
+      # value by 1, that way generating different ports for different commands.
       def initialize(filename, port)
         @filename = filename
-        @port = port
+        @port = port - 1
         @processes = load_config
         if Invoker.can_run_balancer?
           @power_config = Invoker::Power::Config.load_config()
@@ -82,7 +88,7 @@ module Invoker
 
       def pick_port(section)
         if section['command'] =~ PORT_REGEX
-          @port
+          @port += 1
         elsif section['port']
           section['port']
         else
