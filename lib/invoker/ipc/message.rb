@@ -136,7 +136,7 @@ module Invoker
 
       class Process < Base
         include Serialization
-        message_attributes :process_name, :shell_command, :dir, :pid
+        message_attributes :process_name, :shell_command, :dir, :pid, :port
       end
 
       class Remove < Base

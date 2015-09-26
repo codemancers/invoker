@@ -4,8 +4,10 @@ describe MM::ListResponse do
   context "serializing a response" do
     let(:process_array) do
       [
-        { shell_command: 'foo', process_name: 'foo', dir: '/tmp', pid: 100 },
-        { shell_command: 'bar', process_name: 'bar', dir: '/tmp', pid: 200 }
+        { shell_command: 'foo', process_name: 'foo', dir: '/tmp', pid: 100,
+          port: 9000 },
+        { shell_command: 'bar', process_name: 'bar', dir: '/tmp', pid: 200,
+          port: 9001 }
       ]
     end
 
