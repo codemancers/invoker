@@ -19,4 +19,16 @@ describe Invoker::Power::Balancer do
       @balancer.headers_received(headers)
     end
   end
+
+  describe "#backend_host" do
+    it "should return localhost as default when backend host is not configured" do
+      Invoker.backend_host = nil
+      expect(@balancer.backend_host).to eql("0.0.0.0")
+    end
+
+    it "should return as per configured backend host" do
+      Invoker.backend_host = "192.168.59.103"
+      expect(@balancer.backend_host).to eql("192.168.59.103")
+    end
+  end
 end

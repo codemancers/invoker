@@ -71,7 +71,7 @@ module Invoker
 
         dns_check_response = UrlRewriter.new.select_backend_config(headers['Host'])
         if dns_check_response && dns_check_response.port
-          connection.server(session, host: '0.0.0.0', port: dns_check_response.port)
+          connection.server(session, host: backend_host, port: dns_check_response.port)
         else
           return_error_page(404)
           http_parser.reset
@@ -103,6 +103,10 @@ module Invoker
         end
         @backend_data = false
         connection.close_connection_after_writing if backend == session
+      end
+
+      def backend_host
+        Invoker.backend_host || '0.0.0.0'
       end
 
       private

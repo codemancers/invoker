@@ -37,6 +37,7 @@ module Invoker
   class << self
     attr_accessor :config, :tail_watchers, :commander
     attr_accessor :dns_cache, :daemonize
+    attr_accessor :backend_host
 
     alias_method :daemonize?, :daemonize
 
