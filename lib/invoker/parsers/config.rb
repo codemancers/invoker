@@ -4,11 +4,15 @@ module Invoker
   module Parsers
     class Config
       PORT_REGEX = /\$PORT/
+
       attr_accessor :processes, :power_config
       attr_reader :filename
 
       def initialize(filename, port)
-        @filename = filename || auto_discover_config_file
+        @filename = filename || autodetect_config_file
+
+        print_message_and_abort if @filename.nil?
+
         @port = port
         @processes = load_config
         if Invoker.can_run_balancer?
@@ -46,8 +50,7 @@ module Invoker
         elsif is_procfile?
           process_procfile
         else
-          Invoker::Logger.puts("\n Invalid config file. Invoker requires an ini or a Procfile.".color(:red))
-          abort
+          print_message_and_abort
         end
       end
 
@@ -66,6 +69,11 @@ module Invoker
           section = { "label" => name, "command" => command }
           process_command_from_section(section)
         end
+      end
+
+      def print_message_and_abort
+        Invoker::Logger.puts("\n Invalid config file. Invoker requires an ini or a Procfile.".color(:red))
+        abort
       end
 
       def process_command_from_section(section)
@@ -124,8 +132,8 @@ module Invoker
         end
       end
 
-      def auto_discover_config_file
-        Dir.glob("{invoker.ini,project.ini,*.ini,Procfile}").first
+      def autodetect_config_file
+        Dir.glob("{invoker.ini,Procfile}").first
       end
 
       def is_ini?

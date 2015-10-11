@@ -34,7 +34,7 @@ module Invoker
       type: :boolean,
       banner: "Daemonize the server into the background",
       aliases: [:d]
-    def start(file=nil)
+    def start(file = nil)
       Invoker.setup_config_location
       port = options[:port] || 9000
       Invoker.daemonize = options[:daemon]

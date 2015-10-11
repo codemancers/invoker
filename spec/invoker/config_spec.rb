@@ -243,4 +243,79 @@ command = ruby try_sleep.rb
       end
     end
   end
+
+  describe "config file autodetection" do
+    context "no config file given" do
+
+      def create_invoker_ini
+        file = File.open("invoker.ini", "w")
+        config_data =<<-EOD
+[some_process]
+command = some_command
+        EOD
+        file.write(config_data)
+        file.close
+
+        file
+      end
+
+      def create_procfile
+        file = File.open("Procfile", "w")
+        config_data =<<-EOD
+some_other_process: some_other_command
+        EOD
+        file.write(config_data)
+        file.close
+
+        file
+      end
+
+      context "directory has invoker.ini" do
+        it "autodetects invoker.ini" do
+          begin
+            file = create_invoker_ini
+
+            config = Invoker::Parsers::Config.new(nil, 9000)
+            expect(config.process("some_process").cmd).to eq("some_command")
+          ensure
+            File.delete(file)
+          end
+        end
+      end
+
+      context "directory has Procfile" do
+        it "autodetects Procfile" do
+          begin
+            file = create_procfile
+
+            config = Invoker::Parsers::Config.new(nil, 9000)
+            expect(config.process("some_other_process").cmd).to eq("some_other_command")
+          ensure
+            File.delete(file)
+          end
+        end
+      end
+
+      context "directory has both invoker.ini and Procfile" do
+        it "prioritizes invoker.ini" do
+          begin
+            invoker_ini = create_invoker_ini
+            procfile = create_procfile
+
+            config = Invoker::Parsers::Config.new(nil, 9000)
+            expect(config.process("some_process").cmd).to eq("some_command")
+          ensure
+            File.delete(invoker_ini)
+            File.delete(procfile)
+          end
+        end
+      end
+
+      context "directory doesn't have invoker.ini or Procfile" do
+        it "aborts" do
+          expect { Invoker::Parsers::Config.new(nil, 9000) }.to raise_error(SystemExit)
+        end
+      end
+    end
+  end
 end
