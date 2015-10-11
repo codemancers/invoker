@@ -11,7 +11,7 @@ module Invoker
       def initialize(filename, port)
         @filename = filename || autodetect_config_file
 
-        print_message_and_abort if @filename.nil?
+        print_message_and_abort if invalid_config_file?
 
         @port = port
         @processes = load_config
@@ -41,6 +41,14 @@ module Invoker
       end
 
       private
+
+      def autodetect_config_file
+        Dir.glob("{invoker.ini,Procfile}").first
+      end
+
+      def invalid_config_file?
+        @filename.nil?
+      end
 
       def load_config
         @filename = to_global_file if is_global?
@@ -130,10 +138,6 @@ module Invoker
         else
           command
         end
-      end
-
-      def autodetect_config_file
-        Dir.glob("{invoker.ini,Procfile}").first
       end
 
       def is_ini?
