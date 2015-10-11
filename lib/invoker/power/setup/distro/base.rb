@@ -13,6 +13,12 @@ module Invoker
           when "Fedora"
             require "invoker/power/setup/distro/redhat"
             Redhat.new
+          when "Archlinux"
+            require "invoker/power/setup/distro/arch"
+            Arch.new
+          when "Debian"
+            require "invoker/power/setup/distro/debian"
+            Debian.new
           else
             raise "Your selected distro is not supported by Invoker"
           end
@@ -32,8 +38,13 @@ module Invoker
         end
 
         def restart_services
-          system("service rinetd restart")
-          system("service dnsmasq restart")
+          if Facter[:systemctl] == "true"
+            system("systemctl restart rinetd")
+            system("systemctl restart dnsmasq")
+          else
+            system("service rinetd restart")
+            system("service dnsmasq restart")
+          end
         end
       end
     end

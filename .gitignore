@@ -1,7 +1,6 @@
 invoker.ini
 config/
 *.gem
-Gemfile.lock
 pkg/
 *.ini
 tags
@@ -13,3 +12,6 @@ coverage
 invoker_profile/
 *.pid
 .ruby-version
+Gemfile.lock
+.overcommit.yml
+Procfile

@@ -1,6 +1,7 @@
 require 'em-proxy'
 require 'http-parser'
 require "invoker/power/http_parser"
+require "invoker/power/url_rewriter"
 
 module Invoker
   module Power
@@ -22,7 +23,6 @@ module Invoker
 
     class Balancer
       attr_accessor :connection, :http_parser, :session, :protocol
-      DEV_MATCH_REGEX = /([\w-]+)\.dev(\:\d+)?$/
 
       def self.run(options = {})
         start_http_proxy(InvokerHttpProxy, 'http', options)
@@ -64,7 +64,12 @@ module Invoker
           return
         end
         @session = UUID.generate()
-        dns_check_response = select_backend_config(headers['Host'])
+        if !headers['Host'] || headers['Host'].empty?
+          return_error_page(400)
+          return
+        end
+
+        dns_check_response = UrlRewriter.new.select_backend_config(headers['Host'])
         if dns_check_response && dns_check_response.port
           connection.server(session, host: '0.0.0.0', port: dns_check_response.port)
         else
@@ -100,27 +105,7 @@ module Invoker
         connection.close_connection_after_writing if backend == session
       end
 
-      def extract_host_from_domain(host)
-        host.match(DEV_MATCH_REGEX)
-      end
-
       private
-
-      def select_backend_config(host)
-        matching_string = extract_host_from_domain(host)
-        return nil unless matching_string
-        if selected_app = matching_string[1]
-          dns_check(process_name: selected_app)
-        else
-          nil
-        end
-      end
-
-      def dns_check(dns_args)
-        Invoker::IPC::UnixClient.send_command("dns_check", dns_args) do |dns_response|
-          dns_response
-        end
-      end
 
       def return_error_page(status)
         http_response = Invoker::Power::HttpResponse.new()

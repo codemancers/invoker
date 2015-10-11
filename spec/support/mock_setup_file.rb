@@ -30,7 +30,7 @@ module MockSetupFile
   end
 
   def restore_invoker_config
-    safe_remove_file(Invoker::Power::Config.config_file)
+    safe_remove_file("/tmp/.invoker/config")
   end
 
   def restore_osx_resolver_setup

@@ -10,7 +10,6 @@ module Invoker
           find_open_ports
           install_resolver(port_finder.dns_port)
           install_firewall(port_finder.http_port, port_finder.https_port)
-          flush_dns_rules
           # Before writing the config file, drop down to a normal user
           drop_to_normal_user
           create_config_file
@@ -26,14 +25,9 @@ module Invoker
         if uninstall_invoker_flag
           remove_resolver_file
           unload_firewall_rule(true)
-          flush_dns_rules
           Invoker::Power::Config.delete
           Invoker::Logger.puts("Firewall rules were removed")
         end
-      end
-
-      def flush_dns_rules
-        system("dscacheutil -flushcache")
       end
 
       def create_config_file
@@ -76,6 +70,7 @@ module Invoker
       end
 
       def unload_firewall_rule(remove = false)
+        system("pfctl -a com.apple/250.InvokerFirewall -F nat 2>/dev/null")
         system("launchctl unload -w #{FIREWALL_PLIST_FILE} 2>/dev/null")
         system("rm -rf #{FIREWALL_PLIST_FILE}") if remove
       end
@@ -115,9 +110,11 @@ port #{dns_port}
 
       # Ripped from Pow code
       def firewall_command(http_port, https_port)
-        "ipfw add fwd 127.0.0.1,#{http_port} tcp from any to me dst-port 80 in"\
-          "&amp;&amp; ipfw add fwd 127.0.0.1,#{https_port} tcp from any to me dst-port 443 in"\
-          "&amp;&amp; sysctl -w net.inet.ip.forwarding=1"
+        rules = [
+          "rdr pass on lo0 inet proto tcp from any to any port 80 -> 127.0.0.1 port #{http_port}",
+          "rdr pass on lo0 inet proto tcp from any to any port 443 -> 127.0.0.1 port #{https_port}"
+        ].join("\n")
+        "echo \"#{rules}\" | pfctl -a 'com.apple/250.InvokerFirewall' -f - -E"
       end
 
       def setup_resolver_file

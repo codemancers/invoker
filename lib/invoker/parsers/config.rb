@@ -5,6 +5,7 @@ module Invoker
     class Config
       PORT_REGEX = /\$PORT/
       attr_accessor :processes, :power_config
+      attr_reader :filename
 
       def initialize(filename, port)
         @filename = filename || auto_discover_config_file
@@ -27,6 +28,10 @@ module Invoker
         power_config && power_config.https_port
       end
 
+      def autorunnable_processes
+        processes.reject(&:disable_autorun)
+      end
+
       def process(label)
         processes.detect { |pconfig| pconfig.label == label }
       end
@@ -34,6 +39,8 @@ module Invoker
       private
 
       def load_config
+        @filename = to_global_file if is_global?
+
         if is_ini?
           process_ini
         elsif is_procfile?
@@ -64,10 +71,13 @@ module Invoker
       def process_command_from_section(section)
         if supports_subdomain?(section)
           port = pick_port(section)
-          make_option_for_subdomain(section, port)
-        else
-          make_option(section)
+          if port
+            command = replace_port_in_command(section['command'], port)
+            section['port'], section['command'] = port, command
+          end
         end
+
+        make_pconfig(section)
       end
 
       def pick_port(section)
@@ -80,21 +90,16 @@ module Invoker
         end
       end
 
-      def make_option_for_subdomain(section, port)
-        OpenStruct.new(
-          port: port,
+      def make_pconfig(section)
+        pconfig = {
           label: section["label"] || section.key,
-          dir: section["directory"],
-          cmd: replace_port_in_command(section["command"], port)
-        )
-      end
-
-      def make_option(section)
-        OpenStruct.new(
-          label: section["label"] || section.key,
-          dir: section["directory"],
+          dir: expand_directory(section["directory"]),
           cmd: section["command"]
-        )
+        }
+        pconfig['port'] = section['port'] if section['port']
+        pconfig['disable_autorun'] = section['disable_autorun'] if section['disable_autorun']
+
+        OpenStruct.new(pconfig)
       end
 
       def supports_subdomain?(section)
@@ -102,9 +107,13 @@ module Invoker
       end
 
       def check_directory(app_dir)
-        if app_dir && !app_dir.empty? && !File.directory?(app_dir)
+        if app_dir && !app_dir.empty? && !File.directory?(expand_directory(app_dir))
           raise Invoker::Errors::InvalidConfig.new("Invalid directory #{app_dir}")
         end
+      end
+
+      def expand_directory(app_dir)
+        File.expand_path(app_dir) if app_dir
       end
 
       def replace_port_in_command(command, port)
@@ -125,6 +134,14 @@ module Invoker
 
       def is_procfile?
         @filename =~ /Procfile/
+      end
+
+      def to_global_file
+        File.join(Invoker::Power::Config.config_dir, "#{@filename}.ini")
+      end
+
+      def is_global?
+        @filename =~ /^\w+$/ && File.exist?(to_global_file)
       end
     end
   end
