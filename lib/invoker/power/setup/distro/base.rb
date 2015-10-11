@@ -19,6 +19,9 @@ module Invoker
           when "Debian"
             require "invoker/power/setup/distro/debian"
             Debian.new
+          when "LinuxMint"
+            require "invoker/power/setup/distro/mint"
+            Mint.new
           else
             raise "Your selected distro is not supported by Invoker"
           end
