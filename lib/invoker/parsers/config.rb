@@ -4,6 +4,7 @@ module Invoker
   module Parsers
     class Config
       PORT_REGEX = /\$PORT/
+
       attr_accessor :processes, :power_config
       attr_reader :filename
 
@@ -14,7 +15,10 @@ module Invoker
       # again gets fired, for another command, it will again increment port
       # value by 1, that way generating different ports for different commands.
       def initialize(filename, port)
-        @filename = filename
+        @filename = filename || autodetect_config_file
+
+        print_message_and_abort if invalid_config_file?
+
         @port = port - 1
         @processes = load_config
         if Invoker.can_run_balancer?
@@ -44,6 +48,14 @@ module Invoker
 
       private
 
+      def autodetect_config_file
+        Dir.glob("{invoker.ini,Procfile}").first
+      end
+
+      def invalid_config_file?
+        @filename.nil?
+      end
+
       def load_config
         @filename = to_global_file if is_global?
 
@@ -52,8 +64,7 @@ module Invoker
         elsif is_procfile?
           process_procfile
         else
-          Invoker::Logger.puts("\n Invalid config file. Invoker requires an ini or a Procfile.".color(:red))
-          abort
+          print_message_and_abort
         end
       end
 
@@ -72,6 +83,11 @@ module Invoker
           section = { "label" => name, "command" => command }
           process_command_from_section(section)
         end
+      end
+
+      def print_message_and_abort
+        Invoker::Logger.puts("\n Invalid config file. Invoker requires an ini or a Procfile.".color(:red))
+        abort
       end
 
       def process_command_from_section(section)

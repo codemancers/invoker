@@ -28,13 +28,13 @@ module Invoker
       Invoker::Power::Setup.uninstall
     end
 
-    desc "start CONFIG_FILE", "Start Invoker Server"
+    desc "start [CONFIG_FILE]", "Start Invoker Server"
     option :port, type: :numeric, banner: "Port series to be used for starting rack servers"
     option :daemon,
       type: :boolean,
       banner: "Daemonize the server into the background",
       aliases: [:d]
-    def start(file)
+    def start(file = nil)
       Invoker.setup_config_location
       port = options[:port] || 9000
       Invoker.daemonize = options[:daemon]
