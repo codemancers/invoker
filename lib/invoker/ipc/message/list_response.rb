@@ -16,8 +16,10 @@ module Invoker
           process_array = []
           Invoker.config.processes.each do |process|
             worker_attrs = {
-              :shell_command => process.cmd, :process_name => process.label,
-              :dir => process.dir
+              shell_command: process.cmd,
+              process_name: process.label,
+              dir: process.dir,
+              port: process.port
             }
             if worker = workers[process.label]
               worker_attrs.update(pid: worker.pid)

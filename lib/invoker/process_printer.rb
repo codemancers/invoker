@@ -26,6 +26,7 @@ module Invoker
 
       hash_with_colors['dir'] = colored_string(process.dir, color)
       hash_with_colors['pid'] = colored_string(process.pid || 'Not Running', color)
+      hash_with_colors['port'] = colored_string(process.port, color)
       hash_with_colors['shell_command'] = colored_string(process.shell_command, color)
       hash_with_colors['process_name'] = colored_string(process.process_name, color)
       hash_with_colors

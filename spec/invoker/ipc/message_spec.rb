@@ -19,8 +19,10 @@ describe Invoker::IPC::Message do
     context "for nested messages" do
       let(:process_array) do
         [
-          { shell_command: 'foo', process_name: 'foo', dir: '/tmp', pid: 100 },
-          { shell_command: 'bar', process_name: 'bar', dir: '/tmp', pid: 200 }
+          { shell_command: 'foo', process_name: 'foo', dir: '/tmp', pid: 100,
+            port: 9000 },
+          { shell_command: 'bar', process_name: 'bar', dir: '/tmp', pid: 200,
+            port: 9001 }
         ]
       end
 
@@ -33,8 +35,10 @@ describe Invoker::IPC::Message do
 
       it "should report not equal for different objects" do
         another_process_array = [
-          { shell_command: 'baz', process_name: 'foo', dir: '/tmp', pid: 100 },
-          { shell_command: 'bar', process_name: 'bar', dir: '/tmp', pid: 200 }
+          { shell_command: 'baz', process_name: 'foo', dir: '/tmp', pid: 100,
+            port: 9000 },
+          { shell_command: 'bar', process_name: 'bar', dir: '/tmp', pid: 200,
+            port: 9001 }
         ]
 
         m2 = MM::ListResponse.new(processes: another_process_array)
