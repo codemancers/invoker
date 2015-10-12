@@ -152,6 +152,14 @@ for processes started by `Procfile` as well.
 
 # List currently running processes managed by invoker
 ~> invoker list
+ +-----------------------------------+-------+------+--------------+----------------+
+ | dir                               | pid   | port | process_name | shell_command  |
+ +-----------------------------------+-------+------+--------------+----------------+
+ | /Users/goromlagche/proj_1         | 21549 | 9000 | pj1          | bundle exec .. |
+ | /Users/goromlagche/proj_2         | 21550 | 9001 | pj2          | bundle exec .. |
+ | /Users/goromlagche/proj_3         | 21551 | 9002 | pj3          | bundle exec .. |
+ |                                   | 21552 |      | redis        | redis-server   |
+ +-----------------------------------+-------+------+--------------+----------------+
 
 # Restart process given by command Label
 ~> invoker reload dj
