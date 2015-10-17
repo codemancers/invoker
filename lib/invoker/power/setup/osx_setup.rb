@@ -1,7 +1,7 @@
 module Invoker
   module Power
     class OsxSetup < Setup
-      RESOLVER_FILE = "/etc/resolver/dev"
+      # RESOLVER_FILE = "/etc/resolver/dev"
       RESOLVER_DIR = "/etc/resolver"
       FIREWALL_PLIST_FILE = "/Library/LaunchDaemons/com.codemancers.invoker.firewall.plist"
 
@@ -35,7 +35,8 @@ module Invoker
         Invoker::Power::Config.create(
           dns_port: port_finder.dns_port,
           http_port: port_finder.http_port,
-          https_port: port_finder.https_port
+          https_port: port_finder.https_port,
+          tld: Invoker.tld
         )
       end
 
@@ -49,8 +50,8 @@ module Invoker
       end
 
       def remove_resolver_file
-        if File.exists?(RESOLVER_FILE)
-          File.delete(RESOLVER_FILE)
+        if File.exists?(resolver_file)
+          File.delete(resolver_file)
         end
       rescue Errno::EACCES
         Invoker::Logger.puts("Running uninstall requires root access, please rerun it with sudo".color(:red))
@@ -118,7 +119,7 @@ port #{dns_port}
       end
 
       def setup_resolver_file
-        return true unless File.exists?(RESOLVER_FILE)
+        return true unless File.exists?(resolver_file)
         Invoker::Logger.puts "Invoker has detected an existing Pow installation. We recommend "\
           "that you uninstall pow and rerun this setup.".color(:red)
 
@@ -139,10 +140,14 @@ port #{dns_port}
 
       def open_resolver_for_write
         FileUtils.mkdir(RESOLVER_DIR) unless Dir.exists?(RESOLVER_DIR)
-        fl = File.open(RESOLVER_FILE, "w")
+        fl = File.open(resolver_file, "w")
         yield fl
       ensure
         fl && fl.close
+      end
+
+      def resolver_file
+        "/etc/resolver/#{Invoker.tld}"
       end
     end
   end

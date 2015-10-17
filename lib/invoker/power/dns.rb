@@ -31,7 +31,7 @@ module Invoker
       end
 
       def name_matches?(name)
-        name =~ /.*\.dev/
+        name =~ /.*\.#{Invoker.tld}/
       end
     end
   end

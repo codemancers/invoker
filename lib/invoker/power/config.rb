@@ -38,6 +38,7 @@ module Invoker
 
       def self.load_config
         config_hash = File.open(config_file, "r") { |fl| YAML.load(fl) }
+        Invoker.tld = config_hash[:tld]
         new(config_hash)
       end
 

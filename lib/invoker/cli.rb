@@ -13,7 +13,9 @@ module Invoker
     end
 
     desc "setup", "Run Invoker setup"
+    option :tld
     def setup
+      Invoker.tld = options[:tld] if options[:tld]
       Invoker::Power::Setup.install
     end
 
