@@ -9,7 +9,6 @@ require "json"
 require "rainbow"
 require "rainbow/ext/string"
 require "etc"
-require "libnotify"
 
 require "invoker/version"
 require "invoker/logger"
@@ -122,6 +121,7 @@ module Invoker
     end
 
     def notify_with_libnotify(message)
+      require "libnotify"
       Libnotify.show(body: message, summary: "Invoker", timeout: 2.5)
     rescue StandardError => error
       Invoker::Logger.puts "Failed to show notification: #{error}"
