@@ -50,11 +50,19 @@ module MockSetupFile
 
   def setup_linux_resolver_path
     @old_linux_resolver = Invoker::Power::Distro::Base::RESOLVER_FILE
+    @old_socat_script = Invoker::Power::Distro::Base::SOCAT_SHELLSCRIPT
+    @old_socat_unit = Invoker::Power::Distro::Base::SOCAT_SYSTEMD
     Invoker::Power::Distro::Base.const_set(:RESOLVER_FILE, "/tmp/dev-tld")
+    Invoker::Power::Distro::Base.const_set(:SOCAT_SHELLSCRIPT, "/tmp/invoker_forwarder.sh")
+    Invoker::Power::Distro::Base.const_set(:SOCAT_SYSTEMD, "/tmp/socat_invoker.service")
   end
 
   def restore_linux_resolver_path
     safe_remove_file(Invoker::Power::Distro::Base::RESOLVER_FILE)
+    safe_remove_file(Invoker::Power::Distro::Base::SOCAT_SHELLSCRIPT)
+    safe_remove_file(Invoker::Power::Distro::Base::SOCAT_SYSTEMD)
     Invoker::Power::Distro::Base.const_set(:RESOLVER_FILE, @old_linux_resolver)
+    Invoker::Power::Distro::Base.const_set(:SOCAT_SHELLSCRIPT, @old_socat_script)
+    Invoker::Power::Distro::Base.const_set(:SOCAT_SYSTEMD, @old_socat_unit)
   end
 end
