@@ -3,8 +3,8 @@ module Invoker
     module Distro
       class Base
         RESOLVER_FILE = "/etc/dnsmasq.d/dev-tld"
-        SOCAT_SHELLSCRIPT = "files/invoker_forwarder.sh"
-        SOCAT_SYSTEMD = "files/socat_invoker.service"
+        SOCAT_SHELLSCRIPT = "/usr/bin/invoker_forwarder.sh"
+        SOCAT_SYSTEMD = "/etc/systemd/system/socat_invoker.service"
 
         def self.distro_installer
           case Facter[:operatingsystem].value

@@ -6,7 +6,11 @@ RSpec::Core::RakeTask.new
 task :default => :spec
 task :test => :spec
 
+current_directory = File.expand_path(File.dirname(__FILE__))
+
 desc "run specs inside docker"
 task :docker_spec do
-  system("docker run -t invoker-ruby")
+  system("docker build -t invoker-ruby . ")
+  system("docker run --name invoker-rspec -v #{current_directory}:/invoker -t invoker-ruby")
+  system("docker rm invoker-rspec")
 end

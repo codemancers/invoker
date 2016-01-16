@@ -72,17 +72,17 @@ address=/dev/127.0.0.1
         script_file = File.join(File.dirname(__FILE__), "files/invoker_forwarder.sh.erb")
         script_template = File.read(script_file)
         renderer = ERB.new(script_template)
-        script_output = renderer.result()
-        File.open("/usr/bin/invoker_forwarder.sh", "w") do |fl|
+        script_output = renderer.result(binding)
+        File.open(Invoker::Power::Distro::Base::SOCAT_SHELLSCRIPT, "w") do |fl|
           fl.write(script_output)
         end
-        system("chmod +x /usr/bin/invoker_forwarder.sh")
+        system("chmod +x #{Invoker::Power::Distro::Base::SOCAT_SHELLSCRIPT}")
       end
 
       def install_systemd_unit
         unit_file = File.join(File.dirname(__FILE__), "files/socat_invoker.service")
-        FileUtils.cp(unit_file, "/etc/systemd/system/")
-        system("chmod 644 /etc/systemd/system/socat_invoker.service")
+        FileUtils.cp(unit_file, Invoker::Power::Distro::Base::SOCAT_SYSTEMD)
+        system("chmod 644 #{Invoker::Power::Distro::Base::SOCAT_SYSTEMD}")
       end
 
       def get_user_confirmation?
