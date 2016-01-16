@@ -1,5 +1,7 @@
 require "invoker/power/setup/distro/base"
 require "facter"
+require 'erb'
+require 'fileutils'
 
 module Invoker
   module Power
@@ -32,7 +34,7 @@ module Invoker
 
       def uninstall_invoker
         Invoker::Logger.puts("Uninstall is not yet supported on Linux."\
-          " You can remove invoker changes by uninstalling dnsmasq and rinetd")
+          " You can remove invoker changes by uninstalling dnsmasq and socat")
       end
 
       private
@@ -54,10 +56,8 @@ module Invoker
       end
 
       def install_port_forwarder
-        File.open(distro_installer.rinetd_file, "a") do |fl|
-          fl << "\n"
-          fl << rinetd_setup(port_finder.http_port, port_finder.https_port)
-        end
+        install_forwarder_script()
+        install_systemd_unit()
       end
 
       def tld_setup
@@ -68,17 +68,26 @@ address=/dev/127.0.0.1
         tld_string
       end
 
-      def rinetd_setup(http_port, https_port)
-        rinetd_string =<<-EOD
-0.0.0.0 80 0.0.0.0 #{http_port}
-0.0.0.0 443 0.0.0.0 #{https_port}
-        EOD
-        rinetd_string
+      def install_forwarder_script(http_port, https_port)
+        script_file = File.join(File.dirname(__FILE__), "files/invoker_forwarder.sh.erb")
+        script_template = File.read(script_file)
+        renderer = ERB.new(script_template)
+        script_output = renderer.result()
+        File.open("/usr/bin/invoker_forwarder.sh", "w") do |fl|
+          fl.write(script_output)
+        end
+        system("chmod +x /usr/bin/invoker_forwarder.sh")
+      end
+
+      def install_systemd_unit
+        unit_file = File.join(File.dirname(__FILE__), "files/socat_invoker.service")
+        FileUtils.cp(unit_file, "/etc/systemd/system/")
+        system("chmod 644 /etc/systemd/system/socat_invoker.service")
       end
 
       def get_user_confirmation?
-        Invoker::Logger.puts("Invoker is going to install dnsmasq and rinetd on this machine."\
-          " It is also going to install a local resolver for .dev domain and a rinetd rule"\
+        Invoker::Logger.puts("Invoker is going to install dnsmasq and socat on this machine."\
+          " It is also going to install a local resolver for .dev domain and a socat service"\
           " which will forward all local requests on port 80 and 443 to another port")
         Invoker::Logger.puts("If you still want to proceed with installation, press y.")
         Invoker::CLI::Question.agree("Proceed with installation (y/n) : ")

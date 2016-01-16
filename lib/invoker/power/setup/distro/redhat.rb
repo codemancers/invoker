@@ -3,13 +3,7 @@ module Invoker
     module Distro
       class Redhat < Base
         def install_required_software
-          system("yum --assumeyes install dnsmasq rinetd")
-        end
-
-        def restart_services
-          system("systemctl enable rinetd")
-          system("service rinetd restart")
-          system("service dnsmasq restart")
+          system("yum --assumeyes install dnsmasq socat")
         end
       end
     end

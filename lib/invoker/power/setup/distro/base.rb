@@ -3,7 +3,8 @@ module Invoker
     module Distro
       class Base
         RESOLVER_FILE = "/etc/dnsmasq.d/dev-tld"
-        RINETD_FILE = "/etc/rinetd.conf"
+        SOCAT_SHELLSCRIPT = "files/invoker_forwarder.sh"
+        SOCAT_SYSTEMD = "files/socat_invoker.service"
 
         def self.distro_installer
           case Facter[:operatingsystem].value
@@ -22,6 +23,9 @@ module Invoker
           when "LinuxMint"
             require "invoker/power/setup/distro/mint"
             Mint.new
+          when "OpenSuSE"
+            require "invoker/power/setup/distro/opensuse"
+            Opensuse.new
           else
             raise "Your selected distro is not supported by Invoker"
           end
@@ -31,8 +35,12 @@ module Invoker
           RESOLVER_FILE
         end
 
-        def rinetd_file
-          RINETD_FILE
+        def socat_script
+          SOCAT_SHELLSCRIPT
+        end
+
+        def socat_systemd
+          SOCAT_SYSTEMD
         end
 
         # Install required software
@@ -41,13 +49,10 @@ module Invoker
         end
 
         def restart_services
-          if Facter[:systemctl] == "true"
-            system("systemctl restart rinetd")
-            system("systemctl restart dnsmasq")
-          else
-            system("service rinetd restart")
-            system("service dnsmasq restart")
-          end
+          system("systemctl enable socat_invoker.service")
+          system("systemctl enable dnsmasq")
+          system("systemctl start socat_invoker.service")
+          system("systemctl restart dnsmasq")
         end
       end
     end
