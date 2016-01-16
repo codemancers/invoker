@@ -33,8 +33,12 @@ module Invoker
       end
 
       def uninstall_invoker
-        Invoker::Logger.puts("Uninstall is not yet supported on Linux."\
-          " You can remove invoker changes by uninstalling dnsmasq and socat")
+        system("systemctl disable socat_invoker.service")
+        system("systemctl stop socat_invoker.service")
+        system("rm #{Invoker::Power::Distro::Base::SOCAT_SYSTEMD}")
+        system("rm #{Invoker::Power::Distro::Base::SOCAT_SHELLSCRIPT}")
+        drop_to_normal_user
+        Invoker::Power::Config.delete
       end
 
       private
