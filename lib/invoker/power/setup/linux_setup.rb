@@ -56,7 +56,7 @@ module Invoker
       end
 
       def install_port_forwarder
-        install_forwarder_script()
+        install_forwarder_script(port_finder.http_port, port_finder.https_port)
         install_systemd_unit()
       end
 
