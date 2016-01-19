@@ -1,14 +1,18 @@
+require 'securerandom'
+
 module MockSetupFile
   def setup_mocked_config_files
     setup_invoker_config
     setup_osx_resolver_path
     setup_linux_resolver_path
+    setup_socket_path
   end
 
   def remove_mocked_config_files
     restore_invoker_config
     restore_osx_resolver_setup
     restore_linux_resolver_path
+    restore_socket_path
   end
 
   def safe_remove_file(file_location)
@@ -46,6 +50,16 @@ module MockSetupFile
 
     safe_make_directory(Invoker::Power::OsxSetup::RESOLVER_DIR)
     safe_remove_file(Invoker::Power::OsxSetup::RESOLVER_FILE)
+  end
+
+  def setup_socket_path
+    @old_socket_path = Invoker::IPC::Server::SOCKET_PATH
+    socket_uuid = SecureRandom.urlsafe_base64
+    Invoker::IPC::Server.const_set(:SOCKET_PATH, "/tmp/invoker-#{socket_uuid}")
+  end
+
+  def restore_socket_path
+    Invoker::IPC::Server.const_set(:SOCKET_PATH, @old_socket_path)
   end
 
   def setup_linux_resolver_path
