@@ -1,14 +1,18 @@
+require 'securerandom'
+
 module MockSetupFile
   def setup_mocked_config_files
     setup_invoker_config
     setup_osx_resolver_path
     setup_linux_resolver_path
+    setup_socket_path
   end
 
   def remove_mocked_config_files
     restore_invoker_config
     restore_osx_resolver_setup
     restore_linux_resolver_path
+    restore_socket_path
   end
 
   def safe_remove_file(file_location)
@@ -48,17 +52,31 @@ module MockSetupFile
     safe_remove_file(Invoker::Power::OsxSetup::RESOLVER_FILE)
   end
 
+  def setup_socket_path
+    @old_socket_path = Invoker::IPC::Server::SOCKET_PATH
+    socket_uuid = SecureRandom.urlsafe_base64
+    Invoker::IPC::Server.const_set(:SOCKET_PATH, "/tmp/invoker-#{socket_uuid}")
+  end
+
+  def restore_socket_path
+    Invoker::IPC::Server.const_set(:SOCKET_PATH, @old_socket_path)
+  end
+
   def setup_linux_resolver_path
     @old_linux_resolver = Invoker::Power::Distro::Base::RESOLVER_FILE
-    @old_rinetd_config = Invoker::Power::Distro::Base::RINETD_FILE
+    @old_socat_script = Invoker::Power::Distro::Base::SOCAT_SHELLSCRIPT
+    @old_socat_unit = Invoker::Power::Distro::Base::SOCAT_SYSTEMD
     Invoker::Power::Distro::Base.const_set(:RESOLVER_FILE, "/tmp/dev-tld")
-    Invoker::Power::Distro::Base.const_set(:RINETD_FILE, "/tmp/rinetd.conf")
+    Invoker::Power::Distro::Base.const_set(:SOCAT_SHELLSCRIPT, "/tmp/invoker_forwarder.sh")
+    Invoker::Power::Distro::Base.const_set(:SOCAT_SYSTEMD, "/tmp/socat_invoker.service")
   end
 
   def restore_linux_resolver_path
     safe_remove_file(Invoker::Power::Distro::Base::RESOLVER_FILE)
-    safe_remove_file(Invoker::Power::Distro::Base::RINETD_FILE)
+    safe_remove_file(Invoker::Power::Distro::Base::SOCAT_SHELLSCRIPT)
+    safe_remove_file(Invoker::Power::Distro::Base::SOCAT_SYSTEMD)
     Invoker::Power::Distro::Base.const_set(:RESOLVER_FILE, @old_linux_resolver)
-    Invoker::Power::Distro::Base.const_set(:RINETD_FILE, @old_rinetd_config)
+    Invoker::Power::Distro::Base.const_set(:SOCAT_SHELLSCRIPT, @old_socat_script)
+    Invoker::Power::Distro::Base.const_set(:SOCAT_SYSTEMD, @old_socat_unit)
   end
 end
