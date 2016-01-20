@@ -4,6 +4,7 @@ module Invoker
   module Power
     class Setup
       attr_accessor :port_finder
+
       def self.install
         selected_installer_klass = installer_klass
         selected_installer_klass.new.install

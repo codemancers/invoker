@@ -1,7 +1,6 @@
 module Invoker
   module Power
     class OsxSetup < Setup
-      # RESOLVER_FILE = "/etc/resolver/dev"
       RESOLVER_DIR = "/etc/resolver"
       FIREWALL_PLIST_FILE = "/Library/LaunchDaemons/com.codemancers.invoker.firewall.plist"
 
