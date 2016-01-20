@@ -44,6 +44,10 @@ module Invoker
       ruby_platform.downcase.include?("darwin")
     end
 
+    def linux?
+      ruby_platform.downcase.include?("linux")
+    end
+
     def ruby_platform
       RUBY_PLATFORM
     end
@@ -100,16 +104,25 @@ module Invoker
     end
 
     def notify_user(message)
-      run_without_bundler { check_and_notify_with_terminal_notifier(message) }
+      if Invoker.darwin?
+        run_without_bundler { check_and_notify_with_terminal_notifier(message) }
+      elsif Invoker.linux?
+        notify_with_libnotify(message)
+      end
     end
 
     def check_and_notify_with_terminal_notifier(message)
-      return unless Invoker.darwin?
-
       command_path = `which terminal-notifier`
       if command_path && !command_path.empty?
         system("terminal-notifier -message '#{message}' -title Invoker")
       end
+    end
+
+    def notify_with_libnotify(message)
+      begin
+        require "libnotify"
+        Libnotify.show(body: message, summary: "Invoker", timeout: 2.5)
+      rescue LoadError; end
     end
 
     def migrate_old_config(old_config, config_location)
