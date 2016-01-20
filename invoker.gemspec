@@ -36,6 +36,7 @@ Gem::Specification.new do |s|
   s.add_dependency("facter", "~> 2.2")
   s.add_dependency("http-parser-lite", "~> 0.6")
   s.add_dependency("dotenv", "~> 1.0.2")
+  s.add_dependency("libnotify", "~> 0.9.1")
   s.add_development_dependency("rspec", "~> 3.0")
   s.add_development_dependency("mocha")
   s.add_development_dependency("rake")
