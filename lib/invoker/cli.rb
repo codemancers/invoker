@@ -113,7 +113,7 @@ module Invoker
 
     def validate_tld(tld)
       unless /^[a-z]+$/ =~ tld
-        error_message = 'Top level domain can only contain lower case alphabets'
+        error_message = 'Top level domain can only contain lower case alphabets. Please rerun setup with a valid top level subdomain.'
 
         Invoker::Logger.puts(error_message.color(:red))
         exit
