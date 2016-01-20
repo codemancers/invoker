@@ -1,9 +1,9 @@
 module Invoker
   module Power
     module Distro
-      class Debian < Base
+      class Opensuse < Base
         def install_required_software
-          system("apt-get --assume-yes install dnsmasq socat")
+          system("zypper install -l dnsmasq socat")
         end
       end
     end

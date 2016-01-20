@@ -27,7 +27,7 @@ describe Invoker::Power::LinuxSetup do
     end
   end
 
-  describe "configuring dnsmasq and rinetd" do
+  describe "configuring dnsmasq and socat" do
     before { invoker_setup.distro_installer = distro_installer }
 
     it "should create proper config file" do
@@ -46,10 +46,13 @@ describe Invoker::Power::LinuxSetup do
       expect(dnsmasq_content.strip).to_not be_empty
       expect(dnsmasq_content).to match(/dev/)
 
-      rinetd_content = File.read(distro_installer.rinetd_file)
-      expect(rinetd_content.strip).to_not be_empty
-      expect(rinetd_content.strip).to match(/#{config.https_port}/)
-      expect(rinetd_content.strip).to match(/#{config.http_port}/)
+      socat_content = File.read(distro_installer.socat_script)
+      expect(socat_content.strip).to_not be_empty
+      expect(socat_content.strip).to match(/#{config.https_port}/)
+      expect(socat_content.strip).to match(/#{config.http_port}/)
+
+      service_file = File.read(distro_installer.socat_systemd)
+      expect(service_file.strip).to_not be_empty
     end
   end
 end

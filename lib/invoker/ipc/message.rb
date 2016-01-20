@@ -118,7 +118,7 @@ module Invoker
 
       class AddHttp < Base
         include Serialization
-        message_attributes :process_name, :port
+        message_attributes :process_name, :port, :ip
       end
 
       class Reload < Base
@@ -151,7 +151,7 @@ module Invoker
 
       class DnsCheckResponse < Base
         include Serialization
-        message_attributes :process_name, :port
+        message_attributes :process_name, :port, :ip
       end
 
       class Ping < Base

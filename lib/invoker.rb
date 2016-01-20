@@ -112,8 +112,6 @@ module Invoker
     end
 
     def check_and_notify_with_terminal_notifier(message)
-      return unless Invoker.darwin?
-
       command_path = `which terminal-notifier`
       if command_path && !command_path.empty?
         system("terminal-notifier -message '#{message}' -title Invoker")
@@ -121,10 +119,10 @@ module Invoker
     end
 
     def notify_with_libnotify(message)
-      require "libnotify"
-      Libnotify.show(body: message, summary: "Invoker", timeout: 2.5)
-    rescue StandardError => error
-      Invoker::Logger.puts "Failed to show notification: #{error}"
+      begin
+        require "libnotify"
+        Libnotify.show(body: message, summary: "Invoker", timeout: 2.5)
+      rescue LoadError; end
     end
 
     def migrate_old_config(old_config, config_location)

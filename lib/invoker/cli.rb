@@ -39,7 +39,7 @@ module Invoker
       port = options[:port] || 9000
       Invoker.daemonize = options[:daemon]
       Invoker.load_invoker_config(file, port)
-      warn_about_terminal_notifier
+      warn_about_notification
       warn_about_old_configuration
       pinger = Invoker::CLI::Pinger.new(unix_socket)
       abort("Invoker is already running".color(:red)) if pinger.invoker_running?
@@ -51,9 +51,9 @@ module Invoker
       unix_socket.send_command('add', process_name: name)
     end
 
-    desc "add_http process_name port", "Add an external http process to Invoker DNS server"
-    def add_http(name, port)
-      unix_socket.send_command('add_http', process_name: name, port: port)
+    desc "add_http process_name port [IP]", "Add an external http process to Invoker DNS server"
+    def add_http(name, port, ip = nil)
+      unix_socket.send_command('add_http', process_name: name, port: port, ip: ip)
     end
 
     desc "tail process1 process2", "Tail a particular process"
@@ -109,8 +109,23 @@ module Invoker
       Invoker::IPC::UnixClient.new
     end
 
+    def warn_about_notification
+      if Invoker.darwin?
+        warn_about_terminal_notifier
+      else
+        warn_about_libnotify
+      end
+    end
+
+    def warn_about_libnotify
+      require "libnotify"
+    rescue LoadError
+      Invoker::Logger.puts "You can install libnotify gem for Invoker notifications "\
+        "via system tray".color(:red)
+    end
+
     def warn_about_terminal_notifier
-      if RUBY_PLATFORM.downcase.include?("darwin")
+      if Invoker.darwin?
         command_path = `which terminal-notifier`
         if !command_path || command_path.empty?
           Invoker::Logger.puts "You can enable OSX notification for processes "\
