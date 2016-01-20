@@ -7,15 +7,17 @@ module Invoker
 
         class << self
           # For use in tests
-          attr_writer :resolver_file
+          def resolver_file=(resolver_file)
+            Base.const_set(:RESOLVER_FILE, resolver_file)
+          end
 
           def resolver_file
-            return @resolver_file if @resolver_file
+            return Base::RESOLVER_FILE if Base::RESOLVER_FILE
             "/etc/dnsmasq.d/#{Invoker.tld}-tld"
           end
 
           def reset_resolver_file
-            @resolver_file = nil
+            Base.const_set(:RESOLVER_FILE, nil)
           end
         end
 
