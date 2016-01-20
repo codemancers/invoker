@@ -17,7 +17,7 @@ module Invoker
     def setup
       if options[:tld]
         validate_tld(options[:tld])
-        Invoker.tld = options[:tld]
+        Invoker::Power.tld = options[:tld]
       end
 
       Invoker::Power::Setup.install

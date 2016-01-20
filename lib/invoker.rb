@@ -37,7 +37,6 @@ module Invoker
   class << self
     attr_accessor :config, :tail_watchers, :commander
     attr_accessor :dns_cache, :daemonize
-    attr_writer :tld
 
     alias_method :daemonize?, :daemonize
 
@@ -131,20 +130,6 @@ module Invoker
       else
         Etc.getpwuid(Process.uid).dir
       end
-    end
-
-    def tld
-      @tld || default_tld
-    end
-
-    def reset_tld
-      @tld = nil
-    end
-
-    private
-
-    def default_tld
-      'dev'
     end
   end
 end

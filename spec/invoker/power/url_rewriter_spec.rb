@@ -37,7 +37,7 @@ describe Invoker::Power::UrlRewriter do
 
     context 'user sets up a custom top level domain' do
       before(:all) do
-        Invoker.tld = 'local'
+        Invoker::Power.tld = 'local'
       end
 
       it 'should match domain part of incoming request correctly' do

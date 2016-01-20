@@ -66,8 +66,8 @@ module Invoker
 
       def tld_setup
         tld_string =<<-EOD
-local=/#{Invoker.tld}/
-address=/#{Invoker.tld}/127.0.0.1
+local=/#{Invoker::Power.tld}/
+address=/#{Invoker::Power.tld}/127.0.0.1
         EOD
         tld_string
       end
@@ -91,7 +91,7 @@ address=/#{Invoker.tld}/127.0.0.1
 
       def get_user_confirmation?
         Invoker::Logger.puts("Invoker is going to install dnsmasq and socat on this machine."\
-          " It is also going to install a local resolver for .#{Invoker.tld} domain and a socat service"\
+          " It is also going to install a local resolver for .#{Invoker::Power.tld} domain and a socat service"\
           " which will forward all local requests on port 80 and 443 to another port")
         Invoker::Logger.puts("If you still want to proceed with installation, press y.")
         Invoker::CLI::Question.agree("Proceed with installation (y/n) : ")

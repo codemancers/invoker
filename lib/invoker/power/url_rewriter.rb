@@ -26,7 +26,7 @@ module Invoker
       private
 
       def tld_match_regex
-        tld = Invoker.tld
+        tld = Invoker::Power.tld
         [/([\w.-]+)\.#{tld}(\:\d+)?$/, /([\w-]+)\.#{tld}(\:\d+)?$/]
       end
 

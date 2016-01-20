@@ -61,7 +61,7 @@ describe Invoker::Power::LinuxSetup do
       it 'should create the correct resolver file' do
         remove_mocked_config_files
 
-        Invoker.tld = 'local'
+        Invoker::Power.tld = 'local'
         expect(Invoker::Power::Distro::Ubuntu.resolver_file).to eq('/etc/dnsmasq.d/local-tld')
         Invoker.reset_tld
 

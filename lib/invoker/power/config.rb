@@ -38,7 +38,6 @@ module Invoker
 
       def self.load_config
         config_hash = File.open(config_file, "r") { |fl| YAML.load(fl) }
-        Invoker.tld = config_hash[:tld]
         new(config_hash)
       end
 
@@ -61,10 +60,8 @@ module Invoker
       def dns_port; @config[:dns_port]; end
       def http_port; @config[:http_port]; end
       def ipfw_rule_number; @config[:ipfw_rule_number]; end
-
-      def https_port
-        @config[:https_port]
-      end
+      def https_port; @config[:https_port]; end
+      def tld; @config[:tld]; end
 
       def save
         File.open(self.class.config_file, "w") do |fl|
