@@ -5,6 +5,20 @@ module Invoker
         SOCAT_SHELLSCRIPT = "/usr/bin/invoker_forwarder.sh"
         SOCAT_SYSTEMD = "/etc/systemd/system/socat_invoker.service"
 
+        class << self
+          # For use in tests
+          attr_writer :resolver_file
+
+          def resolver_file
+            return @resolver_file if @resolver_file
+            "/etc/dnsmasq.d/#{Invoker.tld}-tld"
+          end
+
+          def reset_resolver_file
+            @resolver_file = nil
+          end
+        end
+
         def self.distro_installer
           case Facter[:operatingsystem].value
           when "Ubuntu"
@@ -31,7 +45,7 @@ module Invoker
         end
 
         def resolver_file
-          "/etc/dnsmasq.d/#{Invoker.tld}-tld"
+          self.class.resolver_file
         end
 
         def socat_script

@@ -1,8 +1,35 @@
 module Invoker
   module Power
     class OsxSetup < Setup
-      RESOLVER_DIR = "/etc/resolver"
       FIREWALL_PLIST_FILE = "/Library/LaunchDaemons/com.codemancers.invoker.firewall.plist"
+
+      class << self
+        # For use in tests
+        attr_writer :resolver_dir
+        attr_writer :resolver_file_name
+
+        def resolver_dir
+          return @resolver_dir if @resolver_dir
+          '/etc/resolver'
+        end
+
+        def resolver_file_name
+          return @resolver_file_name if @resolver_file_name
+          Invoker.tld
+        end
+
+        def reset_resolver_dir
+          @resolver_dir = nil
+        end
+
+        def reset_resolver_file_name
+          @resolver_file_name = nil
+        end
+
+        def resolver_file
+          File.join(resolver_dir, resolver_file_name)
+        end
+      end
 
       def setup_invoker
         if setup_resolver_file
@@ -138,15 +165,19 @@ port #{dns_port}
       private
 
       def open_resolver_for_write
-        FileUtils.mkdir(RESOLVER_DIR) unless Dir.exists?(RESOLVER_DIR)
+        FileUtils.mkdir(resolver_dir) unless Dir.exists?(resolver_dir)
         fl = File.open(resolver_file, "w")
         yield fl
       ensure
         fl && fl.close
       end
 
+      def resolver_dir
+        self.class.resolver_dir
+      end
+
       def resolver_file
-        "/etc/resolver/#{Invoker.tld}"
+        self.class.resolver_file
       end
     end
   end

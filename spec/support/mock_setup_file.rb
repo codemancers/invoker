@@ -38,18 +38,19 @@ module MockSetupFile
   end
 
   def restore_osx_resolver_setup
-    safe_remove_file(Invoker::Power::OsxSetup::RESOLVER_FILE)
-    FileUtils.rm_rf(Invoker::Power::OsxSetup::RESOLVER_DIR)
-    Invoker::Power::OsxSetup.const_set(:RESOLVER_FILE, @old_osx_resolver)
+    safe_remove_file(Invoker::Power::OsxSetup.resolver_file)
+    FileUtils.rmdir(Invoker::Power::OsxSetup.resolver_dir)
+
+    Invoker::Power::OsxSetup.reset_resolver_dir
+    Invoker::Power::OsxSetup.reset_resolver_file_name
   end
 
   def setup_osx_resolver_path
-    @old_osx_resolver = Invoker::Power::OsxSetup::RESOLVER_FILE
-    Invoker::Power::OsxSetup.const_set(:RESOLVER_FILE, "/tmp/resolver/invoker-dev")
-    Invoker::Power::OsxSetup.const_set(:RESOLVER_DIR, "/tmp/resolver")
+    Invoker::Power::OsxSetup.resolver_dir = '/tmp/resolver'
+    Invoker::Power::OsxSetup.resolver_file_name = 'invoker-dev'
 
-    safe_make_directory(Invoker::Power::OsxSetup::RESOLVER_DIR)
-    safe_remove_file(Invoker::Power::OsxSetup::RESOLVER_FILE)
+    safe_make_directory(Invoker::Power::OsxSetup::resolver_dir)
+    safe_remove_file(Invoker::Power::OsxSetup::resolver_file)
   end
 
   def setup_socket_path
@@ -63,19 +64,19 @@ module MockSetupFile
   end
 
   def setup_linux_resolver_path
-    @old_linux_resolver = Invoker::Power::Distro::Base::RESOLVER_FILE
     @old_socat_script = Invoker::Power::Distro::Base::SOCAT_SHELLSCRIPT
     @old_socat_unit = Invoker::Power::Distro::Base::SOCAT_SYSTEMD
-    Invoker::Power::Distro::Base.const_set(:RESOLVER_FILE, "/tmp/dev-tld")
+    Invoker::Power::Distro::Base.resolver_file = "/tmp/dev-tld"
     Invoker::Power::Distro::Base.const_set(:SOCAT_SHELLSCRIPT, "/tmp/invoker_forwarder.sh")
     Invoker::Power::Distro::Base.const_set(:SOCAT_SYSTEMD, "/tmp/socat_invoker.service")
   end
 
   def restore_linux_resolver_path
-    safe_remove_file(Invoker::Power::Distro::Base::RESOLVER_FILE)
+    safe_remove_file(Invoker::Power::Distro::Base.resolver_file)
     safe_remove_file(Invoker::Power::Distro::Base::SOCAT_SHELLSCRIPT)
     safe_remove_file(Invoker::Power::Distro::Base::SOCAT_SYSTEMD)
-    Invoker::Power::Distro::Base.const_set(:RESOLVER_FILE, @old_linux_resolver)
+
+    Invoker::Power::Distro::Base.reset_resolver_file
     Invoker::Power::Distro::Base.const_set(:SOCAT_SHELLSCRIPT, @old_socat_script)
     Invoker::Power::Distro::Base.const_set(:SOCAT_SYSTEMD, @old_socat_unit)
   end

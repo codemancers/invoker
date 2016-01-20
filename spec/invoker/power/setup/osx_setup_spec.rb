@@ -29,7 +29,7 @@ describe Invoker::Power::OsxSetup do
 
   describe "when pow like setup exists" do
     before {
-      File.open(Invoker::Power::OsxSetup::RESOLVER_FILE, "w") {|fl|
+      File.open(Invoker::Power::OsxSetup.resolver_file, "w") {|fl|
         fl.write("hello")
       }
       @setup = Invoker::Power::OsxSetup.new
@@ -75,7 +75,7 @@ describe Invoker::Power::OsxSetup do
     context "when resolver directory does not exist" do
       before do
         @setup = Invoker::Power::OsxSetup.new
-        FileUtils.rm_rf(Invoker::Power::OsxSetup::RESOLVER_DIR)
+        FileUtils.rm_rf(Invoker::Power::OsxSetup.resolver_dir)
       end
 
       it "should create the directory and install" do
@@ -84,7 +84,7 @@ describe Invoker::Power::OsxSetup do
         @setup.expects(:install_firewall).once()
 
         @setup.setup_invoker
-        expect(Dir.exist?(Invoker::Power::OsxSetup::RESOLVER_DIR)).to be_truthy
+        expect(Dir.exist?(Invoker::Power::OsxSetup.resolver_dir)).to be_truthy
       end
     end
   end
