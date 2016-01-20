@@ -2,7 +2,6 @@ module Invoker
   module Power
     module Distro
       class Base
-        RESOLVER_FILE = "/etc/dnsmasq.d/dev-tld"
         SOCAT_SHELLSCRIPT = "/usr/bin/invoker_forwarder.sh"
         SOCAT_SYSTEMD = "/etc/systemd/system/socat_invoker.service"
 
@@ -32,7 +31,7 @@ module Invoker
         end
 
         def resolver_file
-          RESOLVER_FILE
+          "/etc/dnsmasq.d/#{Invoker.tld}-tld"
         end
 
         def socat_script
