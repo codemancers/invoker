@@ -63,6 +63,7 @@ describe Invoker::Power::OsxSetup do
       setup = Invoker::Power::OsxSetup.new
 
       Invoker::CLI::Question.expects(:agree).returns(true)
+      Invoker::Power::Config.expects(:load_config).once
       setup.expects(:remove_resolver_file).once
       setup.expects(:unload_firewall_rule).with(true).once
       Invoker::Power::Config.expects(:delete).once

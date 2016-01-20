@@ -49,7 +49,7 @@ module Invoker
         uninstall_invoker_flag = Invoker::CLI::Question.agree("Are you sure you want to uninstall firewall rules created by setup (y/n) : ")
 
         if uninstall_invoker_flag
-          Invoker::Power::Config.load_config
+          Invoker::Power::Config.load_config # Load custom tld (if any) from config
           remove_resolver_file
           unload_firewall_rule(true)
           Invoker::Power::Config.delete
