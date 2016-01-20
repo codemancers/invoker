@@ -15,7 +15,11 @@ module Invoker
     desc "setup", "Run Invoker setup"
     option :tld
     def setup
-      Invoker.tld = options[:tld] if options[:tld]
+      if options[:tld]
+        validate_tld(options[:tld])
+        Invoker.tld = options[:tld]
+      end
+
       Invoker::Power::Setup.install
     end
 
@@ -105,6 +109,15 @@ module Invoker
 
     def self.valid_tasks
       tasks.keys + ["help"]
+    end
+
+    def validate_tld(tld)
+      unless /^[a-z]+$/ =~ tld
+        error_message = 'Top level domain can only contain lower case alphabets'
+
+        Invoker::Logger.puts(error_message.color(:red))
+        exit
+      end
     end
 
     def unix_socket
