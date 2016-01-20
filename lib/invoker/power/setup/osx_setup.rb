@@ -66,7 +66,7 @@ module Invoker
           dns_port: port_finder.dns_port,
           http_port: port_finder.http_port,
           https_port: port_finder.https_port,
-          tld: Invoket::Power.tld
+          tld: Invoker::Power.tld
         )
       end
 
