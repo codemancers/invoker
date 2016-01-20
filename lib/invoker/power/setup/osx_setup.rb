@@ -119,18 +119,17 @@ port #{dns_port}
 
       def setup_resolver_file
         return true unless File.exists?(resolver_file)
+
         Invoker::Logger.puts "Invoker has detected an existing Pow installation. We recommend "\
           "that you uninstall pow and rerun this setup.".color(:red)
-
         Invoker::Logger.puts "If you have already uninstalled Pow, proceed with installation"\
           " by pressing y/n."
-
         replace_resolver_flag = Invoker::CLI::Question.agree("Replace Pow configuration (y/n) : ")
 
         if replace_resolver_flag
           Invoker::Logger.puts "Invoker has overwritten one or more files created by Pow. "\
-          "If .dev domains still don't resolve locally. Try turning off the wi-fi"\
-          " and turning it on. It will force OSX to reload network configuration".color(:green)
+          "If .#{Invoker.tld} domains still don't resolve locally, try turning off the wi-fi"\
+          " and turning it on. It'll force OS X to reload network configuration".color(:green)
         end
         replace_resolver_flag
       end
