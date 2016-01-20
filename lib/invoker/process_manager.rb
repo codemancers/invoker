@@ -95,11 +95,7 @@ module Invoker
 
     def kill_workers
       @workers.each do |key, worker|
-        begin
-          Process.kill("INT", -Process.getpgid(worker.pid))
-        rescue Errno::ESRCH
-          Invoker::Logger.puts "Error killing #{key}"
-        end
+        kill_or_remove_process(worker.pid, "INT", worker.command_label)
       end
       @workers = {}
     end

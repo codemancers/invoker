@@ -41,7 +41,7 @@ end
 
 describe 'Web sockets support' do
   it 'can ping pong via balancer' do
-    dns_response = Struct.new(:port).new(28080)
+    dns_response = Struct.new(:port, :ip).new(28080, "0.0.0.0")
     Invoker::Power::UrlRewriter.any_instance
       .stubs(:select_backend_config)
       .returns(dns_response)
