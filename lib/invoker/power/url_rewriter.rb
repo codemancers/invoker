@@ -15,7 +15,7 @@ module Invoker
 
       def extract_host_from_domain(complete_path)
         matching_strings = []
-        dev_match_regex.map do |regexp|
+        tld_match_regex.map do |regexp|
           if (match_result = complete_path.match(regexp))
             matching_strings << match_result[1]
           end
@@ -25,7 +25,7 @@ module Invoker
 
       private
 
-      def dev_match_regex
+      def tld_match_regex
         tld = Invoker.tld
         [/([\w.-]+)\.#{tld}(\:\d+)?$/, /([\w-]+)\.#{tld}(\:\d+)?$/]
       end

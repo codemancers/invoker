@@ -55,4 +55,28 @@ describe Invoker::Power::LinuxSetup do
       expect(service_file.strip).to_not be_empty
     end
   end
+
+  describe 'resolver file' do
+    context 'user sets up a custom top level domain' do
+      it 'should create the correct resolver file' do
+        remove_mocked_config_files
+
+        Invoker.tld = 'local'
+        expect(Invoker::Power::Distro::Ubuntu.resolver_file).to eq('/etc/dnsmasq.d/local-tld')
+        Invoker.reset_tld
+
+        setup_mocked_config_files
+      end
+    end
+
+    context "user doesn't setup a custom top level domain" do
+      it 'should create the correct resolver file' do
+        remove_mocked_config_files
+
+        expect(Invoker::Power::Distro::Ubuntu.resolver_file).to eq('/etc/dnsmasq.d/dev-tld')
+
+        setup_mocked_config_files
+      end
+    end
+  end
 end

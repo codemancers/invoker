@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe Invoker::Power::OsxSetup do
-  describe "When no setup exists" do
+  describe "when no setup exists" do
     it "should create a config file with port etc" do
       setup = Invoker::Power::OsxSetup.new
       setup.expects(:install_resolver).returns(true)
@@ -86,6 +86,30 @@ describe Invoker::Power::OsxSetup do
 
         @setup.setup_invoker
         expect(Dir.exist?(Invoker::Power::OsxSetup.resolver_dir)).to be_truthy
+      end
+    end
+  end
+
+  describe '.resolver_file' do
+    context 'user sets up a custom top level domain' do
+      it 'should create the correct resolver file' do
+        remove_mocked_config_files
+
+        Invoker.tld = 'local'
+        expect(Invoker::Power::OsxSetup.resolver_file).to eq('/etc/resolver/local')
+        Invoker.reset_tld
+
+        setup_mocked_config_files
+      end
+    end
+
+    context "user doesn't setup a custom top level domain" do
+      it 'should create the correct resolver file' do
+        remove_mocked_config_files
+
+        expect(Invoker::Power::OsxSetup.resolver_file).to eq('/etc/resolver/dev')
+
+        setup_mocked_config_files
       end
     end
   end

@@ -137,6 +137,10 @@ module Invoker
       @tld || default_tld
     end
 
+    def reset_tld
+      @tld = nil
+    end
+
     private
 
     def default_tld

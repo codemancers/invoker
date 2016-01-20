@@ -6,7 +6,8 @@ module Invoker
         SOCAT_SYSTEMD = "/etc/systemd/system/socat_invoker.service"
 
         class << self
-          # For use in tests
+          # @!group Helpers for use in tests
+
           def resolver_file=(resolver_file)
             Base.const_set(:RESOLVER_FILE, resolver_file)
           end
@@ -19,6 +20,8 @@ module Invoker
           def reset_resolver_file
             Base.const_set(:RESOLVER_FILE, nil)
           end
+
+          # @!endgroup
         end
 
         def self.distro_installer

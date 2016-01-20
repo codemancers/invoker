@@ -4,7 +4,8 @@ module Invoker
       FIREWALL_PLIST_FILE = "/Library/LaunchDaemons/com.codemancers.invoker.firewall.plist"
 
       class << self
-        # For use in tests
+        # @!group Helpers for use in tests
+
         attr_writer :resolver_dir
         attr_writer :resolver_file_name
 
@@ -25,6 +26,8 @@ module Invoker
         def reset_resolver_file_name
           @resolver_file_name = nil
         end
+
+        # @!endgroup
 
         def resolver_file
           File.join(resolver_dir, resolver_file_name)
