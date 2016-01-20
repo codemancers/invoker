@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+KillJobs() {
+    for job in $(jobs -p); do
+        kill -s SIGTERM $job > /dev/null 2>&1 || (sleep 10 && kill -9 $job > /dev/null 2>&1 &)
+    done
+}
+
+# Whatever you need to clean here
+trap KillJobs SIGINT SIGTERM EXIT
+
+/usr/bin/socat TCP-LISTEN:80,reuseaddr,fork TCP:0.0.0.0:<%= http_port %>&
+pid1=$!
+/usr/bin/socat TCP-LISTEN:443,reuseaddr,fork TCP:0.0.0.0:<%= https_port %>&
+pid2=$!
+wait $pid1 $pid2
+wait $pid1 $pid2

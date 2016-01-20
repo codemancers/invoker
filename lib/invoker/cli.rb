@@ -53,9 +53,9 @@ module Invoker
       unix_socket.send_command('add', process_name: name)
     end
 
-    desc "add_http process_name port", "Add an external http process to Invoker DNS server"
-    def add_http(name, port)
-      unix_socket.send_command('add_http', process_name: name, port: port)
+    desc "add_http process_name port [IP]", "Add an external http process to Invoker DNS server"
+    def add_http(name, port, ip = nil)
+      unix_socket.send_command('add_http', process_name: name, port: port, ip: ip)
     end
 
     desc "tail process1 process2", "Tail a particular process"

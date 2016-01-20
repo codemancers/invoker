@@ -1,0 +1,12 @@
+[Unit]
+Description=Socat port forwarding service
+After=network.target
+Documentation=man:socat(1)
+
+[Service]
+ExecStart=/usr/bin/invoker_forwarder.sh
+Restart=on-success
+
+
+[Install]
+WantedBy=multi-user.target

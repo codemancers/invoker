@@ -16,8 +16,8 @@ module Invoker
       @dns_mutex.synchronize { dns_data[process_name] }
     end
 
-    def add(name, port)
-      @dns_mutex.synchronize { dns_data[name] = { 'port' => port } }
+    def add(name, port, ip = nil)
+      @dns_mutex.synchronize { dns_data[name] = { 'port' => port, 'ip' => ip } }
     end
   end
 end
