@@ -112,12 +112,16 @@ module Invoker
     end
 
     def validate_tld(tld)
-      unless /^[a-z]+$/ =~ tld
+      unless valid_tld?(tld)
         error_message = 'Top level domain can only contain lower case alphabets. Please rerun setup with a valid top level subdomain.'
 
         Invoker::Logger.puts(error_message.color(:red))
         exit
       end
+    end
+
+    def valid_tld?(tld)
+      /^[a-z]+$/ =~ tld
     end
 
     def unix_socket
