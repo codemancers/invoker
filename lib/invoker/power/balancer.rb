@@ -22,7 +22,7 @@ module Invoker
     end
 
     class Balancer
-      attr_accessor :connection, :http_parser, :session, :protocol
+      attr_accessor :connection, :http_parser, :session, :protocol, :upgraded_to
 
       def self.run(options = {})
         start_http_proxy(InvokerHttpProxy, 'http', options)
@@ -43,6 +43,7 @@ module Invoker
         @protocol = protocol
         @http_parser = HttpParser.new(protocol)
         @session = nil
+        @upgraded_to = nil
         @buffer = []
       end
 
@@ -80,8 +81,12 @@ module Invoker
       end
 
       def upstream_data(data)
-        append_for_http_parsing(data)
-        nil
+        if upgraded_to == "websocket"
+          data
+        else
+          append_for_http_parsing(data)
+          nil
+        end
       end
 
       def append_for_http_parsing(data)
@@ -93,6 +98,13 @@ module Invoker
 
       def backend_data(backend, data)
         @backend_data = true
+
+        # check backend data for websockets connection. check for upgrade headers
+        # - Upgarde: websocket\r\n
+        if data =~ /Upgrade: websocket/
+          @upgraded_to = "websocket"
+        end
+
         data
       end
 
