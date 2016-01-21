@@ -106,6 +106,7 @@ describe Invoker::Power::OsxSetup do
       it 'should create the correct resolver file' do
         remove_mocked_config_files
 
+        Invoker::Power.reset_tld_value
         expect(Invoker::Power::OsxSetup.resolver_file).to eq('/etc/resolver/dev')
 
         setup_mocked_config_files
