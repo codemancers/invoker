@@ -2,7 +2,15 @@ require "spec_helper"
 
 describe "Invoker::Commander" do
   describe "With no processes configured" do
-    before do
+    before(:all) do
+      @old_invoker_config = Invoker.config
+    end
+
+    after(:all) do
+      Invoker.config = @old_invoker_config
+    end
+
+    before(:each) do
       @commander = Invoker::Commander.new
     end
 
