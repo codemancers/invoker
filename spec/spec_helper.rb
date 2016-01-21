@@ -38,6 +38,10 @@ def invoker_config
   Invoker.config ||= mock
 end
 
+def reset_invoker_config
+  Invoker.config = mock
+end
+
 def invoker_commander
   Invoker.commander ||= mock
 end
