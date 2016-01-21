@@ -28,7 +28,19 @@ describe Invoker::Power::LinuxSetup do
   end
 
   describe "configuring dnsmasq and socat" do
-    before { invoker_setup.distro_installer = distro_installer }
+    before(:all) do
+      @old_invoker_config = Invoker.config
+      reset_invoker_config
+      Invoker.config.stubs(:tld).returns(nil)
+    end
+
+    after(:all) do
+      Invoker.config = @old_invoker_config
+    end
+
+    before(:each) do
+      invoker_setup.distro_installer = distro_installer
+    end
 
     it "should create proper config file" do
       invoker_setup.expects(:initialize_distro_installer).returns(true)
