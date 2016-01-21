@@ -70,13 +70,24 @@ describe Invoker::Power::LinuxSetup do
     end
 
     context "user doesn't setup a custom top level domain" do
+      before(:all) do
+        Invoker::Power.reset_tld_value
+
+        @old_invoker_config = Invoker.config
+        reset_invoker_config
+        Invoker.config.expects(:tld).returns(nil)
+      end
+
       it 'should create the correct resolver file' do
         remove_mocked_config_files
 
-        Invoker::Power.reset_tld_value
         expect(Invoker::Power::Distro::Ubuntu.resolver_file).to eq('/etc/dnsmasq.d/dev-tld')
 
         setup_mocked_config_files
+      end
+
+      after(:all) do
+        Invoker.config = @old_invoker_config
       end
     end
   end
