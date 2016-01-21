@@ -54,10 +54,15 @@ describe Invoker::Power::PfMigrate do
 
   describe "#migrate" do
     before do
+      @old_config = Invoker.config
       mock_config = mock()
       mock_config.stubs(:http_port).returns(80)
       mock_config.stubs(:https_port).returns(443)
       Invoker.config = mock_config
+    end
+
+    after do
+      Invoker.config = @old_config
     end
 
     it "should migrate firewall to new system" do

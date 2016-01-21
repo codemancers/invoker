@@ -20,7 +20,7 @@ module Invoker
 
           def resolver_file
             return Base::RESOLVER_FILE if Base::RESOLVER_FILE
-            "/etc/dnsmasq.d/#{Invoker::Power.tld}-tld"
+            "/etc/dnsmasq.d/#{Invoker::Power.tld_value}-tld"
           end
         end
 

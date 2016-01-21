@@ -38,6 +38,10 @@ module Invoker
         power_config && power_config.https_port
       end
 
+      def tld
+        power_config && power_config.tld
+      end
+
       def autorunnable_processes
         processes.reject(&:disable_autorun)
       end

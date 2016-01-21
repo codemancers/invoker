@@ -2,10 +2,13 @@ require "invoker/power/setup/distro/base"
 require "facter"
 require 'erb'
 require 'fileutils'
+require 'invoker/power/setup/common'
 
 module Invoker
   module Power
     class LinuxSetup < Setup
+      extend Setup::Common
+
       attr_accessor :distro_installer
 
       def setup_invoker
@@ -66,8 +69,8 @@ module Invoker
 
       def tld_setup
         tld_string =<<-EOD
-local=/#{Invoker::Power.tld}/
-address=/#{Invoker::Power.tld}/127.0.0.1
+local=/#{self.class.tld_value}/
+address=/#{self.class.tld_value}/127.0.0.1
         EOD
         tld_string
       end
@@ -91,7 +94,7 @@ address=/#{Invoker::Power.tld}/127.0.0.1
 
       def get_user_confirmation?
         Invoker::Logger.puts("Invoker is going to install dnsmasq and socat on this machine."\
-          " It is also going to install a local resolver for .#{Invoker::Power.tld} domain and a socat service"\
+          " It is also going to install a local resolver for .#{self.class.tld_value} domain and a socat service"\
           " which will forward all local requests on port 80 and 443 to another port")
         Invoker::Logger.puts("If you still want to proceed with installation, press y.")
         Invoker::CLI::Question.agree("Proceed with installation (y/n) : ")

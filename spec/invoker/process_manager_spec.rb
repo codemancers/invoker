@@ -4,11 +4,15 @@ describe Invoker::ProcessManager do
   let(:process_manager) { Invoker::ProcessManager.new }
   describe "#start_process_by_name" do
     it "should find command by label and start it, if found" do
+      @old_invoker_config = Invoker.config
+
       invoker_config.stubs(:processes).returns([OpenStruct.new(:label => "resque", :cmd => "foo", :dir => "bar")])
       invoker_config.expects(:process).returns(OpenStruct.new(:label => "resque", :cmd => "foo", :dir => "bar"))
       process_manager.expects(:start_process).returns(true)
 
       process_manager.start_process_by_name("resque")
+
+      Invoker.config = @old_invoker_config
     end
 
     it "should not start already running process" do

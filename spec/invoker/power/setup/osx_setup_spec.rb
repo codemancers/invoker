@@ -63,7 +63,6 @@ describe Invoker::Power::OsxSetup do
       setup = Invoker::Power::OsxSetup.new
 
       Invoker::CLI::Question.expects(:agree).returns(true)
-      Invoker::Power::Config.expects(:load_config).once
       setup.expects(:remove_resolver_file).once
       setup.expects(:unload_firewall_rule).with(true).once
       Invoker::Power::Config.expects(:delete).once
@@ -95,9 +94,9 @@ describe Invoker::Power::OsxSetup do
       it 'should create the correct resolver file' do
         remove_mocked_config_files
 
-        Invoker::Power.tld = 'local'
+        Invoker::Power.tld_value = 'local'
         expect(Invoker::Power::OsxSetup.resolver_file).to eq('/etc/resolver/local')
-        Invoker.reset_tld
+        Invoker::Power.reset_tld_value
 
         setup_mocked_config_files
       end

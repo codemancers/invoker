@@ -1,6 +1,10 @@
+require 'invoker/power/setup/common'
+
 module Invoker
   module Power
     class OsxSetup < Setup
+      extend Setup::Common
+
       FIREWALL_PLIST_FILE = "/Library/LaunchDaemons/com.codemancers.invoker.firewall.plist"
 
       class << self
@@ -16,7 +20,7 @@ module Invoker
 
         def resolver_file_name
           return @resolver_file_name if @resolver_file_name
-          Invoker::Power.tld
+          tld_value
         end
 
         def reset_resolver_dir
@@ -52,7 +56,6 @@ module Invoker
         uninstall_invoker_flag = Invoker::CLI::Question.agree("Are you sure you want to uninstall firewall rules created by setup (y/n) : ")
 
         if uninstall_invoker_flag
-          Invoker::Power::Config.load_config # Load custom tld (if any) from config
           remove_resolver_file
           unload_firewall_rule(true)
           Invoker::Power::Config.delete
@@ -62,12 +65,13 @@ module Invoker
 
       def create_config_file
         Invoker.setup_config_location
-        Invoker::Power::Config.create(
+        config = {
           dns_port: port_finder.dns_port,
           http_port: port_finder.http_port,
-          https_port: port_finder.https_port,
-          tld: Invoker::Power.tld
-        )
+          https_port: port_finder.https_port
+        }
+        config[:tld] = self.class.tld.value if self.class.tld.custom?
+        Invoker::Power::Config.create(config)
       end
 
       def install_resolver(dns_port)
@@ -80,6 +84,7 @@ module Invoker
       end
 
       def remove_resolver_file
+        load_tld_value
         if File.exists?(resolver_file)
           File.delete(resolver_file)
         end
@@ -159,7 +164,7 @@ port #{dns_port}
 
         if replace_resolver_flag
           Invoker::Logger.puts "Invoker has overwritten one or more files created by Pow. "\
-          "If .#{Invoker::Power.tld} domains still don't resolve locally, try turning off the wi-fi"\
+          "If .#{self.class.tld_value} domains still don't resolve locally, try turning off the wi-fi"\
           " and turning it on. It'll force OS X to reload network configuration".color(:green)
         end
         replace_resolver_flag
@@ -173,6 +178,12 @@ port #{dns_port}
         yield fl
       ensure
         fl && fl.close
+      end
+
+      # Load custom tld value (if any) from config
+      def load_tld_value
+        power_config = Invoker::Power::Config.load_config
+        Invoker::Power.tld_value = power_config.tld if power_config
       end
 
       def resolver_dir

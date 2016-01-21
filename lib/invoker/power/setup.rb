@@ -1,11 +1,15 @@
 require "eventmachine"
+require "invoker/power/tld"
 
 module Invoker
   module Power
     class Setup
       attr_accessor :port_finder
 
-      def self.install
+      def self.install(options = {})
+        validate_tld(options[:tld])
+
+        Invoker::Power.tld_value = options[:tld]
         selected_installer_klass = installer_klass
         selected_installer_klass.new.install
       end
@@ -21,6 +25,10 @@ module Invoker
         else
           Invoker::Power::LinuxSetup
         end
+      end
+
+      def self.validate_tld(tld)
+        Invoker::Power::Tld.new(tld).validate
       end
 
       def install

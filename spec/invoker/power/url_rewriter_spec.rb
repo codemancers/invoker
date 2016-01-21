@@ -37,7 +37,7 @@ describe Invoker::Power::UrlRewriter do
 
     context 'user sets up a custom top level domain' do
       before(:all) do
-        Invoker::Power.tld = 'local'
+        Invoker::Power.tld_value = 'local'
       end
 
       it 'should match domain part of incoming request correctly' do
@@ -49,7 +49,7 @@ describe Invoker::Power::UrlRewriter do
       end
 
       after(:all) do
-        Invoker.reset_tld
+        Invoker.reset_tld_value
       end
     end
   end

@@ -31,7 +31,7 @@ module Invoker
       end
 
       def name_matches?(name)
-        name =~ /.*\.#{Invoker::Power.tld}/
+        name =~ /.*\.#{Invoker::Power.tld_value}/
       end
     end
   end
