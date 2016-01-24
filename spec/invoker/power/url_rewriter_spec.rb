@@ -60,7 +60,7 @@ describe Invoker::Power::UrlRewriter do
       end
 
       after(:all) do
-        Invoker.reset_tld_value
+        Invoker::Power.reset_tld_value
       end
     end
   end
