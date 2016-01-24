@@ -3,8 +3,6 @@ require 'invoker/power/setup/common'
 module Invoker
   module Power
     class OsxSetup < Setup
-      extend Setup::Common
-
       FIREWALL_PLIST_FILE = "/Library/LaunchDaemons/com.codemancers.invoker.firewall.plist"
 
       class << self
@@ -20,7 +18,7 @@ module Invoker
 
         def resolver_file_name
           return @resolver_file_name if @resolver_file_name
-          tld_value
+          Invoker::Power.tld.value
         end
 
         def reset_resolver_dir
@@ -70,7 +68,8 @@ module Invoker
           http_port: port_finder.http_port,
           https_port: port_finder.https_port
         }
-        config[:tld] = self.class.tld.value if self.class.tld.custom?
+        tld = Invoker::Power.tld
+        config[:tld] = tld.value if tld.custom?
         Invoker::Power::Config.create(config)
       end
 
@@ -164,7 +163,7 @@ port #{dns_port}
 
         if replace_resolver_flag
           Invoker::Logger.puts "Invoker has overwritten one or more files created by Pow. "\
-          "If .#{self.class.tld_value} domains still don't resolve locally, try turning off the wi-fi"\
+          "If .#{Invoker::Power.tld.value} domains still don't resolve locally, try turning off the wi-fi"\
           " and turning it on. It'll force OS X to reload network configuration".color(:green)
         end
         replace_resolver_flag

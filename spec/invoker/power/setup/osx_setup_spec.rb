@@ -1,15 +1,6 @@
 require "spec_helper"
 
 describe Invoker::Power::OsxSetup do
-  before(:all) do
-    @old_invoker_config = Invoker.config
-    reset_invoker_config
-  end
-
-  after(:all) do
-    Invoker.config = @old_invoker_config
-  end
-
   describe "when no setup exists" do
     it "should create a config file with port etc" do
       setup = Invoker::Power::OsxSetup.new
