@@ -1,6 +1,15 @@
 require "spec_helper"
 
 describe Invoker::Power::OsxSetup do
+  before(:all) do
+    @old_invoker_config = Invoker.config
+    reset_invoker_config
+  end
+
+  after(:all) do
+    Invoker.config = @old_invoker_config
+  end
+
   describe "when no setup exists" do
     it "should create a config file with port etc" do
       setup = Invoker::Power::OsxSetup.new
@@ -103,10 +112,13 @@ describe Invoker::Power::OsxSetup do
     end
 
     context "user doesn't setup a custom top level domain" do
+      before(:each) do
+        Invoker::Power.reset_tld_value
+      end
+
       it 'should create the correct resolver file' do
         remove_mocked_config_files
 
-        Invoker::Power.reset_tld_value
         expect(Invoker::Power::OsxSetup.resolver_file).to eq('/etc/resolver/dev')
 
         setup_mocked_config_files
