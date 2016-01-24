@@ -61,16 +61,10 @@ module Invoker
         end
       end
 
-      def create_config_file
-        Invoker.setup_config_location
-        config = {
-          dns_port: port_finder.dns_port,
-          http_port: port_finder.http_port,
-          https_port: port_finder.https_port
-        }
-        tld = Invoker::Power.tld
-        config[:tld] = tld.value if tld.custom?
-        Invoker::Power::Config.create(config)
+      def build_power_config
+        config = super
+        config[:dns_port] = port_finder.dns_port
+        config
       end
 
       def install_resolver(dns_port)

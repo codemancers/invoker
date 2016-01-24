@@ -55,6 +55,23 @@ module Invoker
       def check_if_setup_can_run?
         !File.exists?(Invoker::Power::Config.config_file)
       end
+
+      def create_config_file
+        Invoker.setup_config_location
+        config = build_power_config
+        Invoker::Power::Config.create(config)
+      end
+
+      # Builds and return power config hash. Override in subclasses if necessary.
+      def build_power_config
+        config = {
+          http_port: port_finder.http_port,
+          https_port: port_finder.https_port
+        }
+        tld = Invoker::Power.tld
+        config[:tld] = tld.value if tld.custom?
+        config
+      end
     end
   end
 end

@@ -27,14 +27,6 @@ module Invoker
         self
       end
 
-      def create_config_file
-        Invoker.setup_config_location
-        Invoker::Power::Config.create(
-          http_port: port_finder.http_port,
-          https_port: port_finder.https_port
-        )
-      end
-
       def uninstall_invoker
         system("systemctl disable socat_invoker.service")
         system("systemctl stop socat_invoker.service")
