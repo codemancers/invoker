@@ -29,14 +29,14 @@ describe Invoker::Power::LinuxSetup do
 
   describe "configuring dnsmasq and socat" do
     before(:all) do
-      @old_invoker_config = Invoker.config
-      reset_invoker_config
       Invoker::Power.reset_tld_value
+      @original_invoker_config = Invoker.config
+      Invoker.config = mock
       Invoker.config.stubs(:tld).returns(nil)
     end
 
     after(:all) do
-      Invoker.config = @old_invoker_config
+      Invoker.config = @original_invoker_config
     end
 
     before(:each) do
@@ -86,8 +86,8 @@ describe Invoker::Power::LinuxSetup do
       before(:all) do
         Invoker::Power.reset_tld_value
 
-        @old_invoker_config = Invoker.config
-        reset_invoker_config
+        @original_invoker_config = Invoker.config
+        Invoker.config = mock
         Invoker.config.expects(:tld).returns(nil)
       end
 
@@ -100,7 +100,7 @@ describe Invoker::Power::LinuxSetup do
       end
 
       after(:all) do
-        Invoker.config = @old_invoker_config
+        Invoker.config = @original_invoker_config
       end
     end
   end

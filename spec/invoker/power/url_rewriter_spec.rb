@@ -5,14 +5,14 @@ describe Invoker::Power::UrlRewriter do
 
   context "matching domain part of incoming request" do
     before(:all) do
-      @old_invoker_config = Invoker.config
+      @original_invoker_config = Invoker.config
 
-      reset_invoker_config
+      Invoker.config = mock
       Invoker.config.stubs(:tld).returns(nil)
     end
 
     after(:all) do
-      Invoker.config = @old_invoker_config
+      Invoker.config = @original_invoker_config
     end
 
     it "should match foo.dev" do
