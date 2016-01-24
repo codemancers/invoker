@@ -9,17 +9,17 @@ module Invoker
           # @!group Helpers for use in tests
 
           def resolver_file=(resolver_file)
-            Base.const_set(:RESOLVER_FILE, resolver_file)
+            @@resolver_file = resolver_file
           end
 
           def reset_resolver_file
-            Base.const_set(:RESOLVER_FILE, nil)
+            @@resolver_file = nil
           end
 
           # @!endgroup
 
           def resolver_file
-            return Base::RESOLVER_FILE if Base::RESOLVER_FILE
+            return @@resolver_file if @@resolver_file
             "/etc/dnsmasq.d/#{Invoker::Power.tld_value}-tld"
           end
         end
