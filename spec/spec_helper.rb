@@ -34,10 +34,6 @@ end
 
 ENV["INVOKER_TESTS"] = "true"
 
-def invoker_config
-  Invoker.config ||= mock
-end
-
 def reset_invoker_config
   Invoker.config = mock
 end
