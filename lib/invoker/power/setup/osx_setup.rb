@@ -76,16 +76,6 @@ module Invoker
         raise
       end
 
-      def remove_resolver_file
-        load_tld_value
-        if File.exists?(resolver_file)
-          File.delete(resolver_file)
-        end
-      rescue Errno::EACCES
-        Invoker::Logger.puts("Running uninstall requires root access, please rerun it with sudo".color(:red))
-        raise
-      end
-
       def install_firewall(http_port, https_port)
         File.open(FIREWALL_PLIST_FILE, "w") { |fl|
           fl.write(plist_string(http_port, https_port))
@@ -171,12 +161,6 @@ port #{dns_port}
         yield fl
       ensure
         fl && fl.close
-      end
-
-      # Load custom tld value (if any) from config
-      def load_tld_value
-        power_config = Invoker::Power::Config.load_config
-        Invoker::Power.tld_value = power_config.tld if power_config
       end
 
       def resolver_dir

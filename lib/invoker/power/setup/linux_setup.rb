@@ -32,6 +32,8 @@ module Invoker
         system("systemctl stop socat_invoker.service")
         system("rm #{Invoker::Power::Distro::Base::SOCAT_SYSTEMD}")
         system("rm #{Invoker::Power::Distro::Base::SOCAT_SHELLSCRIPT}")
+        initialize_distro_installer
+        remove_resolver_file
         drop_to_normal_user
         Invoker::Power::Config.delete
       end
@@ -49,7 +51,7 @@ module Invoker
       end
 
       def install_resolver
-        File.open(distro_installer.resolver_file, "w") do |fl|
+        File.open(resolver_file, "w") do |fl|
           fl.write(tld_setup)
         end
       end
@@ -90,6 +92,10 @@ address=/#{self.class.tld_value}/127.0.0.1
           " which will forward all local requests on port 80 and 443 to another port")
         Invoker::Logger.puts("If you still want to proceed with installation, press y.")
         Invoker::CLI::Question.agree("Proceed with installation (y/n) : ")
+      end
+
+      def resolver_file
+        distro_installer.resolver_file
       end
     end
   end
