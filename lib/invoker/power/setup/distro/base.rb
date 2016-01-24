@@ -19,7 +19,10 @@ module Invoker
           # @!endgroup
 
           def resolver_file
-            return @@resolver_file if @@resolver_file
+            begin
+              return @@resolver_file if @@resolver_file
+            rescue NameError
+            end
             "/etc/dnsmasq.d/#{Invoker::Power.tld_value}-tld"
           end
         end
