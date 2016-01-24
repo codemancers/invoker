@@ -31,6 +31,7 @@ describe Invoker::Power::LinuxSetup do
     before(:all) do
       @old_invoker_config = Invoker.config
       reset_invoker_config
+      Invoker::Power.reset_tld_value
       Invoker.config.stubs(:tld).returns(nil)
     end
 
