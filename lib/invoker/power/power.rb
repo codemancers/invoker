@@ -7,9 +7,11 @@ require "invoker/power/tld"
 module Invoker
   module Power
     class << self
-      attr_writer :tld_value
+      def set_tld(tld_value)
+        @tld_value = tld_value
+      end
 
-      def reset_tld_value
+      def reset_tld
         @tld_value = nil
       end
 

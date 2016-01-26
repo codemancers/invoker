@@ -9,7 +9,7 @@ module Invoker
       def self.install(options = {})
         validate_tld(options[:tld])
 
-        Invoker::Power.tld_value = options[:tld]
+        Invoker::Power.set_tld(options[:tld])
         selected_installer_klass = installer_klass
         selected_installer_klass.new.install
       end
@@ -84,7 +84,7 @@ module Invoker
       # Load custom tld value (if any) from config
       def load_tld_value
         power_config = Invoker::Power::Config.load_config
-        Invoker::Power.tld_value = power_config.tld if power_config
+        Invoker::Power.set_tld(power_config.tld) if power_config
       end
 
       def safe_remove_file(file)

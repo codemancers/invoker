@@ -29,7 +29,7 @@ describe Invoker::Power::LinuxSetup do
 
   describe "configuring dnsmasq and socat" do
     before(:all) do
-      Invoker::Power.reset_tld_value
+      Invoker::Power.reset_tld
       @original_invoker_config = Invoker.config
       Invoker.config = mock
       Invoker.config.stubs(:tld).returns(nil)
@@ -74,9 +74,9 @@ describe Invoker::Power::LinuxSetup do
       it 'should create the correct resolver file' do
         remove_mocked_config_files
 
-        Invoker::Power.tld_value = 'local'
+        Invoker::Power.set_tld('local')
         expect(Invoker::Power::Distro::Ubuntu.resolver_file).to eq('/etc/dnsmasq.d/local-tld')
-        Invoker::Power.reset_tld_value
+        Invoker::Power.reset_tld
 
         setup_mocked_config_files
       end
@@ -84,7 +84,7 @@ describe Invoker::Power::LinuxSetup do
 
     context "user doesn't setup a custom top level domain" do
       before(:all) do
-        Invoker::Power.reset_tld_value
+        Invoker::Power.reset_tld
 
         @original_invoker_config = Invoker.config
         Invoker.config = mock

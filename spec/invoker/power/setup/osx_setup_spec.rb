@@ -94,9 +94,9 @@ describe Invoker::Power::OsxSetup do
       it 'should create the correct resolver file' do
         remove_mocked_config_files
 
-        Invoker::Power.tld_value = 'local'
+        Invoker::Power.set_tld('local')
         expect(Invoker::Power::OsxSetup.resolver_file).to eq('/etc/resolver/local')
-        Invoker::Power.reset_tld_value
+        Invoker::Power.reset_tld
 
         setup_mocked_config_files
       end
@@ -104,7 +104,7 @@ describe Invoker::Power::OsxSetup do
 
     context "user doesn't setup a custom top level domain" do
       before(:each) do
-        Invoker::Power.reset_tld_value
+        Invoker::Power.reset_tld
       end
 
       it 'should create the correct resolver file' do
