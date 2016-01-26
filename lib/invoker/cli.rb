@@ -13,7 +13,9 @@ module Invoker
     end
 
     desc "setup", "Run Invoker setup"
-    option :tld
+    option :tld,
+      type: :string,
+      banner: 'Configure invoker to use a different top level domain'
     def setup
       Invoker::Power::Setup.install(tld: options[:tld])
     end
