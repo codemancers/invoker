@@ -74,15 +74,15 @@ module Invoker
       end
 
       def remove_resolver_file
-        load_tld_value
+        set_tld
         safe_remove_file(resolver_file)
       rescue Errno::EACCES
         Invoker::Logger.puts("Running uninstall requires root access, please rerun it with sudo".color(:red))
         raise
       end
 
-      # Load custom tld value (if any) from config
-      def load_tld_value
+      # Load custom tld from config file and set tld
+      def set_tld
         power_config = Invoker::Power::Config.load_config
         Invoker::Power.set_tld(power_config.tld) if power_config
       end
