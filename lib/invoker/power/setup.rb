@@ -62,7 +62,7 @@ module Invoker
         Invoker::Power::Config.create(config)
       end
 
-      # Builds and returns power config hash. Override in subclasses if necessary.
+      # Builds and returns power config hash. Override this method in subclasses if necessary.
       def build_power_config
         config = {
           http_port: port_finder.http_port,
