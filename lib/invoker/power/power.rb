@@ -2,8 +2,6 @@ require "invoker/power/http_response"
 require "invoker/power/dns"
 require "invoker/power/balancer"
 
-require "invoker/power/tld"
-
 module Invoker
   module Power
     class << self
