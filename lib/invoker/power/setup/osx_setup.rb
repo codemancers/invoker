@@ -16,7 +16,7 @@ module Invoker
 
         def resolver_file_name
           return @resolver_file_name if @resolver_file_name
-          Invoker::Power.tld.value
+          tld
         end
 
         def reset_resolver_dir
@@ -145,7 +145,7 @@ port #{dns_port}
 
         if replace_resolver_flag
           Invoker::Logger.puts "Invoker has overwritten one or more files created by Pow. "\
-          "If .#{Invoker::Power.tld.value} domains still don't resolve locally, try turning off the wi-fi"\
+          "If .#{self.class.tld} domains still don't resolve locally, try turning off the wi-fi"\
           " and turning it on. It'll force OS X to reload network configuration".color(:green)
         end
         replace_resolver_flag

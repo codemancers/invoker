@@ -23,7 +23,7 @@ module Invoker
               return @@resolver_file if @@resolver_file
             rescue NameError
             end
-            "/etc/dnsmasq.d/#{Invoker::Power.tld_value}-tld"
+            "/etc/dnsmasq.d/#{Invoker::Power::Setup.tld}-tld"
           end
         end
 

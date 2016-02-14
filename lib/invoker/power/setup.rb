@@ -1,5 +1,5 @@
 require "eventmachine"
-require "invoker/power/tld"
+require "invoker/power/tld_validator"
 
 module Invoker
   module Power
@@ -7,11 +7,13 @@ module Invoker
       attr_accessor :port_finder
 
       def self.install(options = {})
-        validate_tld(options[:tld])
+        tld = options[:tld] || Invoker.default_tld
+        validate_tld(tld)
 
-        Invoker::Power.set_tld(options[:tld])
         selected_installer_klass = installer_klass
-        selected_installer_klass.new.install
+        selected_installer_klass.tld = tld
+        installer = selected_installer_klass.new
+        installer.install
       end
 
       def self.uninstall
@@ -28,7 +30,15 @@ module Invoker
       end
 
       def self.validate_tld(tld)
-        Invoker::Power::Tld.new(tld).validate
+        Invoker::Power::TldValidator.validate(tld)
+      end
+
+      def self.tld=(tld)
+        @@tld = tld
+      end
+
+      def self.tld
+        @@tld
       end
 
       def install
@@ -68,8 +78,8 @@ module Invoker
           http_port: port_finder.http_port,
           https_port: port_finder.https_port
         }
-        tld = Invoker::Power.tld
-        config[:tld] = tld.value if tld.custom?
+        tld = self.class.tld
+        config[:tld] = tld if Invoker.custom_tld?(tld)
         config
       end
 
