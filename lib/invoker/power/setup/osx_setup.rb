@@ -1,5 +1,3 @@
-require 'invoker/power/setup/common'
-
 module Invoker
   module Power
     class OsxSetup < Setup
