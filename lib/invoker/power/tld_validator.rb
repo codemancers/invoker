@@ -18,18 +18,5 @@ module Invoker
         end
       end
     end
-
-      private
-    end
-
-    class Tld
-      def self.new(tld_value = nil)
-        tld_value.nil? ? DefaultTld.new : CustomTld.new(tld_value)
-      end
-
-      def self.default_value
-        DefaultTld.value
-      end
-    end
   end
 end
