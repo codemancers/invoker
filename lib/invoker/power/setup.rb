@@ -7,11 +7,12 @@ module Invoker
       attr_accessor :port_finder
 
       def self.install(options = {})
-        tld = options[:tld] || Invoker.default_tld
-        validate_tld(tld)
-
         selected_installer_klass = installer_klass
-        selected_installer_klass.tld = tld
+
+        if options[:tld]
+          validate_tld(options[:tld])  
+          selected_installer_klass.tld = tld
+        end
         installer = selected_installer_klass.new
         installer.install
       end
@@ -38,7 +39,7 @@ module Invoker
       end
 
       def self.tld
-        @@tld
+        class_variable_defined?(:@@tld) ? @@tld : Invoker.default_tld
       end
 
       def install
