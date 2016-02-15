@@ -49,7 +49,7 @@ module Invoker
 
       def install_resolver
         File.open(resolver_file, "w") do |fl|
-          fl.write(tld_setup)
+          fl.write(resolver_file_content)
         end
       end
 
@@ -58,12 +58,14 @@ module Invoker
         install_systemd_unit()
       end
 
-      def tld_setup
-        tld_string =<<-EOD
-local=/#{self.class.tld}/
-address=/#{self.class.tld}/127.0.0.1
+      def resolver_file_content
+        tld = Invoker::Power::Setup.tld
+
+        content =<<-EOD
+local=/#{tld}/
+address=/#{tld}/127.0.0.1
         EOD
-        tld_string
+        content
       end
 
       def install_forwarder_script(http_port, https_port)
@@ -84,8 +86,10 @@ address=/#{self.class.tld}/127.0.0.1
       end
 
       def get_user_confirmation?
+        tld = Invoker::Power::Setup.tld
+
         Invoker::Logger.puts("Invoker is going to install dnsmasq and socat on this machine."\
-          " It is also going to install a local resolver for .#{self.class.tld} domain and a socat service"\
+          " It is also going to install a local resolver for .#{tld} domain and a socat service"\
           " which will forward all local requests on port 80 and 443 to another port")
         Invoker::Logger.puts("If you still want to proceed with installation, press y.")
         Invoker::CLI::Question.agree("Proceed with installation (y/n) : ")

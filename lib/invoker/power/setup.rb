@@ -7,17 +7,19 @@ module Invoker
       attr_accessor :port_finder
 
       def self.install(options = {})
-        selected_installer_klass = installer_klass
-
         if options[:tld]
           validate_tld(options[:tld])  
-          selected_installer_klass.tld = tld
+          Invoker::Power::Setup.tld = tld
         end
-        installer = selected_installer_klass.new
-        installer.install
+
+        selected_installer_klass = installer_klass
+        selected_installer_klass.new.install
       end
 
       def self.uninstall
+        power_config = Invoker::Power::Config.load_config
+        Invoker::Power::Setup.tld = power_config.tld
+
         selected_installer_klass = installer_klass
         selected_installer_klass.new.uninstall_invoker
       end
@@ -35,11 +37,11 @@ module Invoker
       end
 
       def self.tld=(tld)
-        @@tld = tld
+        @tld = tld
       end
 
       def self.tld
-        class_variable_defined?(:@@tld) ? @@tld : Invoker.default_tld
+        @tld || Invoker.default_tld
       end
 
       def install
@@ -85,20 +87,12 @@ module Invoker
       end
 
       def remove_resolver_file
-        set_tld
-
         begin
           safe_remove_file(resolver_file)
         rescue Errno::EACCES
           Invoker::Logger.puts("Running uninstall requires root access, please rerun it with sudo".color(:red))
           raise
         end
-      end
-
-      # Load tld from power config file
-      def set_tld
-        power_config = Invoker::Power::Config.load_config
-        Invoker::Power::Setup.tld = power_config.tld
       end
 
       def safe_remove_file(file)
