@@ -8,7 +8,7 @@ describe Invoker::Power::UrlRewriter do
       @original_invoker_config = Invoker.config
 
       Invoker.config = mock
-      Invoker.config.stubs(:tld).returns(nil)
+      Invoker.config.stubs(:tld).returns("dev")
     end
 
     after(:all) do
@@ -48,7 +48,10 @@ describe Invoker::Power::UrlRewriter do
 
     context 'user sets up a custom top level domain' do
       before(:all) do
-        Invoker::Power.set_tld('local')
+        @original_invoker_config = Invoker.config
+
+        Invoker.config = mock
+        Invoker.config.stubs(:tld).returns("local")
       end
 
       it 'should match domain part of incoming request correctly' do
@@ -60,7 +63,7 @@ describe Invoker::Power::UrlRewriter do
       end
 
       after(:all) do
-        Invoker::Power.reset_tld
+        Invoker.config = @original_invoker_config
       end
     end
   end
