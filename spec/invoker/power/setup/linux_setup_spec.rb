@@ -70,7 +70,7 @@ describe Invoker::Power::LinuxSetup do
   describe 'resolver file' do
     context 'user sets up a custom top level domain' do
       before(:all) do
-        original_tld = Invoker::Power::Setup.tld
+        @original_tld = Invoker::Power::Setup.tld
         Invoker::Power::Setup.tld = 'local'
       end
 
@@ -83,7 +83,7 @@ describe Invoker::Power::LinuxSetup do
       end
 
       after(:all) do
-        Invoker::Power::Setup.tld = original_tld
+        Invoker::Power::Setup.tld = @original_tld
       end
     end
 
