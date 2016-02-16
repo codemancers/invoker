@@ -8,8 +8,8 @@ module Invoker
 
       def self.install(options = {})
         if options[:tld]
-          validate_tld(options[:tld])  
-          Invoker::Power::Setup.tld = tld
+          validate_tld(options[:tld])
+          Invoker::Power::Setup.tld = options[:tld]
         end
 
         selected_installer_klass = installer_klass
