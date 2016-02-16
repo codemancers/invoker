@@ -81,7 +81,7 @@ module Invoker
           http_port: port_finder.http_port,
           https_port: port_finder.https_port
         }
-        tld = self.class.tld
+        tld = Invoker::Power::Setup.tld
         config[:tld] = tld if Invoker.custom_tld?(tld)
         config
       end
