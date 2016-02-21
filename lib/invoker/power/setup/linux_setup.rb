@@ -35,6 +35,10 @@ module Invoker
         Invoker::Power::Config.delete
       end
 
+      def resolver_file
+        distro_installer.resolver_file
+      end
+
       private
 
       def initialize_distro_installer
@@ -89,10 +93,6 @@ address=/#{tld}/127.0.0.1
           " which will forward all local requests on port 80 and 443 to another port")
         Invoker::Logger.puts("If you still want to proceed with installation, press y.")
         Invoker::CLI::Question.agree("Proceed with installation (y/n) : ")
-      end
-
-      def resolver_file
-        distro_installer.resolver_file
       end
     end
   end

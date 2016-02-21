@@ -1,5 +1,6 @@
 require "spec_helper"
 require "invoker/power/setup/distro/ubuntu"
+require "invoker/power/setup/distro/opensuse"
 
 describe Invoker::Power::LinuxSetup, fakefs: true do
   before do
@@ -75,17 +76,10 @@ describe Invoker::Power::LinuxSetup, fakefs: true do
   describe 'resolver file' do
     context 'user sets up a custom top level domain' do
       it 'should create the correct resolver file' do
-        expect(Invoker::Power::Distro::Ubuntu.resolver_file).to eq('/etc/dnsmasq.d/local-tld')
-      end
-
-      after(:all) do
-        Invoker::Power::Setup.tld = @original_tld
-      end
-    end
-
-    context "user doesn't setup a custom top level domain" do
-      it 'should create the correct resolver file' do
-        expect(Invoker::Power::Distro::Ubuntu.resolver_file).to eq('/etc/dnsmasq.d/dev-tld')
+        linux_setup = Invoker::Power::LinuxSetup.new('local')
+        suse_installer = Invoker::Power::Distro::Opensuse.new('local')
+        linux_setup.distro_installer = suse_installer
+        expect(linux_setup.resolver_file).to eq('/etc/dnsmasq.d/local-tld')
       end
     end
   end
