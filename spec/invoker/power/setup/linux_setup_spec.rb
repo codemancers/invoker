@@ -1,11 +1,16 @@
 require "spec_helper"
 require "invoker/power/setup/distro/ubuntu"
 
-describe Invoker::Power::LinuxSetup do
+describe Invoker::Power::LinuxSetup, fakefs: true do
+  before do
+    FileUtils.mkdir_p(inv_conf_dir)
+    FileUtils.mkdir_p(Invoker::Power::OsxSetup::RESOLVER_DIR)
+  end
+
   let(:invoker_setup) { Invoker::Power::LinuxSetup.new('dev') }
   let(:distro_installer) { Invoker::Power::Distro::Ubuntu.new('dev') }
 
-  describe "should only proceed after user confirmation", fakefs: true do
+  describe "should only proceed after user confirmation" do
     before { invoker_setup.distro_installer = distro_installer }
 
     it "should create config file with port" do
@@ -27,7 +32,7 @@ describe Invoker::Power::LinuxSetup do
     end
   end
 
-  describe "configuring dnsmasq and socat", fakefs: true do
+  describe "configuring dnsmasq and socat" do
     before(:all) do
       @original_invoker_config = Invoker.config
       Invoker.config = mock
@@ -67,13 +72,8 @@ describe Invoker::Power::LinuxSetup do
     end
   end
 
-  describe 'resolver file', fakefs: true do
+  describe 'resolver file' do
     context 'user sets up a custom top level domain' do
-      before(:all) do
-        @original_tld = Invoker::Power::Setup.tld
-        Invoker::Power::Setup.tld = 'local'
-      end
-
       it 'should create the correct resolver file' do
         expect(Invoker::Power::Distro::Ubuntu.resolver_file).to eq('/etc/dnsmasq.d/local-tld')
       end

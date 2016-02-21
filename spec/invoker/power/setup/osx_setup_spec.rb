@@ -1,9 +1,14 @@
 require "spec_helper"
 
-describe Invoker::Power::OsxSetup do
-  describe "when no setup exists", fakefs: true do
+describe Invoker::Power::OsxSetup, fakefs: true do
+  before do
+    FileUtils.mkdir_p(inv_conf_dir)
+    FileUtils.mkdir_p(Invoker::Power::OsxSetup::RESOLVER_DIR)
+  end
+
+  describe "when no setup exists" do
     it "should create a config file with port etc" do
-      setup = Invoker::Power::OsxSetup.new
+      setup = Invoker::Power::OsxSetup.new('dev')
       setup.expects(:install_resolver).returns(true)
       setup.expects(:drop_to_normal_user).returns(true)
       setup.expects(:install_firewall).once
@@ -17,23 +22,22 @@ describe Invoker::Power::OsxSetup do
     end
   end
 
-  describe "when a setup file exists", fakefs: true do
+  describe "when a setup file exists" do
     it "should throw error about existing file" do
-      FileUtils.mkdir(Invoker::Power::Config.config_dir)
       File.open(Invoker::Power::Config.config_file, "w") {|fl|
         fl.write("foo test")
       }
       Invoker::Power::Setup.any_instance.expects(:setup_invoker).never
-      Invoker::Power::Setup.install()
+      Invoker::Power::Setup.install('dev')
     end
   end
 
-  describe "when pow like setup exists", fakefs: true do
+  describe "when pow like setup exists" do
     before {
-      File.open(Invoker::Power::OsxSetup.resolver_file, "w") {|fl|
+      File.open(File.join(Invoker::Power::OsxSetup::RESOLVER_DIR, "dev"), "w") { |fl|
         fl.write("hello")
       }
-      @setup = Invoker::Power::OsxSetup.new
+      @setup = Invoker::Power::OsxSetup.new('dev')
     }
 
     describe "when user selects to overwrite it" do
@@ -59,9 +63,9 @@ describe Invoker::Power::OsxSetup do
     end
   end
 
-  describe "uninstalling firewall rules", fakefs: true do
+  describe "uninstalling firewall rules" do
     it "should uninstall firewall rules and remove all files created by setup" do
-      setup = Invoker::Power::OsxSetup.new
+      setup = Invoker::Power::OsxSetup.new('dev')
 
       Invoker::CLI::Question.expects(:agree).returns(true)
       setup.expects(:remove_resolver_file).once
@@ -72,11 +76,11 @@ describe Invoker::Power::OsxSetup do
     end
   end
 
-  describe "setup on fresh osx install", fakefs: true do
+  describe "setup on fresh osx install" do
     context "when resolver directory does not exist" do
       before do
-        @setup = Invoker::Power::OsxSetup.new
-        FileUtils.rm_rf(Invoker::Power::OsxSetup.resolver_dir)
+        @setup = Invoker::Power::OsxSetup.new('dev')
+        FileUtils.rm_rf(Invoker::Power::OsxSetup::RESOLVER_DIR)
       end
 
       it "should create the directory and install" do
@@ -85,24 +89,16 @@ describe Invoker::Power::OsxSetup do
         @setup.expects(:install_firewall).once()
 
         @setup.setup_invoker
-        expect(Dir.exist?(Invoker::Power::OsxSetup.resolver_dir)).to be_truthy
+        expect(Dir.exist?(Invoker::Power::OsxSetup::RESOLVER_DIR)).to be_truthy
       end
     end
   end
 
-  describe '.resolver_file', fakefs: true do
+  describe '.resolver_file' do
     context 'user sets up a custom top level domain' do
       it 'should create the correct resolver file' do
-        original_tld = Invoker::Power::Setup.tld
-        Invoker::Power::Setup.tld = 'local'
-        expect(Invoker::Power::OsxSetup.resolver_file).to eq('/etc/resolver/local')
-        Invoker::Power::Setup.tld = original_tld
-      end
-    end
-
-    context "user doesn't setup a custom top level domain" do
-      it 'should create the correct resolver file' do
-        expect(Invoker::Power::OsxSetup.resolver_file).to eq('/etc/resolver/dev')
+        setup = Invoker::Power::OsxSetup.new('local')
+        expect(setup.resolver_file).to eq('/etc/resolver/local')
       end
     end
   end
