@@ -135,9 +135,5 @@ module Invoker
     def default_tld
       'dev'
     end
-
-    def custom_tld?(tld)
-      tld != default_tld
-    end
   end
 end

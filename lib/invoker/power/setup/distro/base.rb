@@ -4,27 +4,11 @@ module Invoker
       class Base
         SOCAT_SHELLSCRIPT = "/usr/bin/invoker_forwarder.sh"
         SOCAT_SYSTEMD = "/etc/systemd/system/socat_invoker.service"
+        RESOLVER_DIR = "/etc/dnsmasq.d"
+        attr_accessor :tld
 
-        class << self
-          # @!group Helpers for use in tests
-
-          def resolver_file=(resolver_file)
-            @@resolver_file = resolver_file
-          end
-
-          def reset_resolver_file
-            @@resolver_file = nil
-          end
-
-          # @!endgroup
-
-          def resolver_file
-            begin
-              return @@resolver_file if @@resolver_file
-            rescue NameError
-            end
-            "/etc/dnsmasq.d/#{Invoker::Power::Setup.tld}-tld"
-          end
+        def resolver_file
+          File.join(RESOLVER_DIR, "#{tld}-tld")
         end
 
         def self.distro_installer
@@ -52,16 +36,8 @@ module Invoker
           end
         end
 
-        def resolver_file
-          self.class.resolver_file
-        end
-
-        def socat_script
-          SOCAT_SHELLSCRIPT
-        end
-
-        def socat_systemd
-          SOCAT_SYSTEMD
+        def initialize(tld)
+          self.tld = tld
         end
 
         # Install required software

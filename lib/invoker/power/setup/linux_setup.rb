@@ -44,7 +44,7 @@ module Invoker
             Facter::Util::Resolution.exec("[ -e /usr/bin/systemctl ] && echo 'true' || echo 'false'")
           end
         end
-        @distro_installer =  Invoker::Power::Distro::Base.distro_installer
+        @distro_installer = Invoker::Power::Distro::Base.distro_installer(tld)
       end
 
       def install_resolver
@@ -59,8 +59,6 @@ module Invoker
       end
 
       def resolver_file_content
-        tld = Invoker::Power::Setup.tld
-
         content =<<-EOD
 local=/#{tld}/
 address=/#{tld}/127.0.0.1
@@ -86,8 +84,6 @@ address=/#{tld}/127.0.0.1
       end
 
       def get_user_confirmation?
-        tld = Invoker::Power::Setup.tld
-
         Invoker::Logger.puts("Invoker is going to install dnsmasq and socat on this machine."\
           " It is also going to install a local resolver for .#{tld} domain and a socat service"\
           " which will forward all local requests on port 80 and 443 to another port")

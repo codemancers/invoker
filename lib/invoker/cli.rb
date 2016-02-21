@@ -17,7 +17,7 @@ module Invoker
       type: :string,
       banner: 'Configure invoker to use a different top level domain'
     def setup
-      Invoker::Power::Setup.install(tld: options[:tld])
+      Invoker::Power::Setup.install(get_tld(options))
     end
 
     desc "version", "Print Invoker version"
@@ -106,6 +106,14 @@ module Invoker
 
     def self.valid_tasks
       tasks.keys + ["help"]
+    end
+
+    def get_tld(options)
+      if options[:tld] && !options[:tld].empty?
+        options[:tld]
+      else
+        'dev'
+      end
     end
 
     def unix_socket
