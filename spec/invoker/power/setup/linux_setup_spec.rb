@@ -4,7 +4,7 @@ require "invoker/power/setup/distro/ubuntu"
 describe Invoker::Power::LinuxSetup, fakefs: true do
   before do
     FileUtils.mkdir_p(inv_conf_dir)
-    FileUtils.mkdir_p(Invoker::Power::OsxSetup::RESOLVER_DIR)
+    FileUtils.mkdir_p(Invoker::Power::Distro::Base::RESOLVER_DIR)
   end
 
   let(:invoker_setup) { Invoker::Power::LinuxSetup.new('dev') }
