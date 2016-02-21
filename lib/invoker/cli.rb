@@ -17,7 +17,8 @@ module Invoker
       type: :string,
       banner: 'Configure invoker to use a different top level domain'
     def setup
-      Invoker::Power::Setup.install(tld: options[:tld])
+      tld = get_tld(options)
+      Invoker::Power::Setup.install(tld)
     end
 
     desc "version", "Print Invoker version"
@@ -110,6 +111,14 @@ module Invoker
 
     def unix_socket
       Invoker::IPC::UnixClient.new
+    end
+
+    def get_tld(options)
+      if options[:tld] && !options[:tld].empty?
+        options[:tld]
+      else
+        'dev'
+      end
     end
 
     def warn_about_terminal_notifier

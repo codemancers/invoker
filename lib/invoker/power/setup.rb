@@ -1,22 +1,18 @@
 require "eventmachine"
-require "invoker/power/tld"
 
 module Invoker
   module Power
     class Setup
-      attr_accessor :port_finder
+      attr_accessor :port_finder, :tld
 
-      def self.install(options = {})
-        validate_tld(options[:tld])
-
-        Invoker::Power.set_tld(options[:tld])
+      def self.install(tld)
         selected_installer_klass = installer_klass
-        selected_installer_klass.new.install
+        selected_installer_klass.new(tld).install
       end
 
       def self.uninstall
         selected_installer_klass = installer_klass
-        selected_installer_klass.new.uninstall_invoker
+        selected_installer_klass.new(Invoker.config.tld).uninstall_invoker
       end
 
       def self.installer_klass
@@ -27,8 +23,12 @@ module Invoker
         end
       end
 
-      def self.validate_tld(tld)
-        Invoker::Power::Tld.new(tld).validate
+      def initialize(tld)
+        if tld !~ /^[a-z]+$/
+          Invoker::Logger.puts("Invalid tld specified".color(:red))
+          exit(1)
+        end
+        self.tld = tld
       end
 
       def install
@@ -66,25 +66,17 @@ module Invoker
       def build_power_config
         config = {
           http_port: port_finder.http_port,
-          https_port: port_finder.https_port
+          https_port: port_finder.https_port,
+          tld: tld
         }
-        tld = Invoker::Power.tld
-        config[:tld] = tld.value if tld.custom?
         config
       end
 
       def remove_resolver_file
-        set_tld
         safe_remove_file(resolver_file)
       rescue Errno::EACCES
         Invoker::Logger.puts("Running uninstall requires root access, please rerun it with sudo".color(:red))
         raise
-      end
-
-      # Load custom tld from config file and set tld
-      def set_tld
-        power_config = Invoker::Power::Config.load_config
-        Invoker::Power.set_tld(power_config.tld) if power_config
       end
 
       def safe_remove_file(file)

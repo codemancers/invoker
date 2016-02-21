@@ -4,36 +4,10 @@ module Invoker
   module Power
     class OsxSetup < Setup
       FIREWALL_PLIST_FILE = "/Library/LaunchDaemons/com.codemancers.invoker.firewall.plist"
+      RESOLVER_DIR = "/etc/resolver"
 
-      class << self
-        # @!group Helpers for use in tests
-
-        attr_writer :resolver_dir
-        attr_writer :resolver_file_name
-
-        def resolver_dir
-          return @resolver_dir if @resolver_dir
-          '/etc/resolver'
-        end
-
-        def resolver_file_name
-          return @resolver_file_name if @resolver_file_name
-          Invoker::Power.tld.value
-        end
-
-        def reset_resolver_dir
-          @resolver_dir = nil
-        end
-
-        def reset_resolver_file_name
-          @resolver_file_name = nil
-        end
-
-        # @!endgroup
-
-        def resolver_file
-          File.join(resolver_dir, resolver_file_name)
-        end
+      def resolver_file
+        File.join(RESOLVER_DIR, tld)
       end
 
       def setup_invoker
@@ -137,7 +111,7 @@ port #{dns_port}
       end
 
       def setup_resolver_file
-        return true unless File.exists?(resolver_file)
+        return true unless File.exist?(resolver_file)
 
         Invoker::Logger.puts "Invoker has detected an existing Pow installation. We recommend "\
           "that you uninstall pow and rerun this setup.".color(:red)
@@ -147,7 +121,7 @@ port #{dns_port}
 
         if replace_resolver_flag
           Invoker::Logger.puts "Invoker has overwritten one or more files created by Pow. "\
-          "If .#{Invoker::Power.tld.value} domains still don't resolve locally, try turning off the wi-fi"\
+          "If .#{tld} domains still don't resolve locally, try turning off the wi-fi"\
           " and turning it on. It'll force OS X to reload network configuration".color(:green)
         end
         replace_resolver_flag
@@ -161,14 +135,6 @@ port #{dns_port}
         yield fl
       ensure
         fl && fl.close
-      end
-
-      def resolver_dir
-        self.class.resolver_dir
-      end
-
-      def resolver_file
-        self.class.resolver_file
       end
     end
   end
