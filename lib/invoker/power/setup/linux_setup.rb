@@ -2,7 +2,6 @@ require "invoker/power/setup/distro/base"
 require "facter"
 require 'erb'
 require 'fileutils'
-require 'invoker/power/setup/common'
 
 module Invoker
   module Power
