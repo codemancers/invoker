@@ -80,7 +80,7 @@ module Invoker
       end
 
       def safe_remove_file(file)
-        File.delete(file) if File.exists?(file)
+        File.delete(file) if File.exist?(file)
       end
     end
   end

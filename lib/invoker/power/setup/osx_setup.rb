@@ -130,7 +130,7 @@ port #{dns_port}
       private
 
       def open_resolver_for_write
-        FileUtils.mkdir(resolver_dir) unless Dir.exists?(resolver_dir)
+        FileUtils.mkdir(RESOLVER_DIR) unless Dir.exists?(RESOLVER_DIR)
         fl = File.open(resolver_file, "w")
         yield fl
       ensure
