@@ -16,7 +16,6 @@ module Invoker
       # value by 1, that way generating different ports for different commands.
       def initialize(filename, port)
         @filename = filename || autodetect_config_file
-
         print_message_and_abort if invalid_config_file?
 
         @port = port - 1

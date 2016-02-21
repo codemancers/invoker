@@ -33,3 +33,11 @@ end
 def invoker_dns_cache
   Invoker.dns_cache ||= mock
 end
+
+def inv_conf_dir
+  File.join(ENV['HOME'], '.invoker')
+end
+
+def inv_conf_file
+  File.join(inv_conf_dir, 'config')
+end

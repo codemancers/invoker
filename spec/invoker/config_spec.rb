@@ -136,18 +136,20 @@ command = ls
 
   describe "loading power config", fakefs: true do
     before do
-      @file = Tempfile.new(["config", ".ini"])
+      FileUtils.mkdir_p('/tmp')
+      FileUtils.mkdir_p(inv_conf_dir)
+      File.open("/tmp/foo.ini", "w") { |fl| fl.write("") }
     end
 
     it "does not load config if platform is darwin but there is no power config file" do
       Invoker::Power::Config.expects(:load_config).never
-      Invoker::Parsers::Config.new(@file.path, 9000)
+      Invoker::Parsers::Config.new("/tmp/foo.ini", 9000)
     end
 
     it "loads config if platform is darwin and power config file exists" do
       File.open(Invoker::Power::Config.config_file, "w") { |fl| fl.puts "sample" }
       Invoker::Power::Config.expects(:load_config).once
-      Invoker::Parsers::Config.new(@file.path, 9000)
+      Invoker::Parsers::Config.new("/tmp/foo.ini", 9000)
     end
   end
 
