@@ -2,10 +2,10 @@ require "spec_helper"
 require "invoker/power/setup/distro/ubuntu"
 
 describe Invoker::Power::LinuxSetup do
-  let(:invoker_setup) { Invoker::Power::LinuxSetup.new }
-  let(:distro_installer) { Invoker::Power::Distro::Ubuntu.new }
+  let(:invoker_setup) { Invoker::Power::LinuxSetup.new('dev') }
+  let(:distro_installer) { Invoker::Power::Distro::Ubuntu.new('dev') }
 
-  describe "should only proceed after user confirmation" do
+  describe "should only proceed after user confirmation", fakefs: true do
     before { invoker_setup.distro_installer = distro_installer }
 
     it "should create config file with port" do
@@ -27,7 +27,7 @@ describe Invoker::Power::LinuxSetup do
     end
   end
 
-  describe "configuring dnsmasq and socat" do
+  describe "configuring dnsmasq and socat", fakefs: true do
     before(:all) do
       @original_invoker_config = Invoker.config
       Invoker.config = mock
@@ -67,7 +67,7 @@ describe Invoker::Power::LinuxSetup do
     end
   end
 
-  describe 'resolver file' do
+  describe 'resolver file', fakefs: true do
     context 'user sets up a custom top level domain' do
       before(:all) do
         @original_tld = Invoker::Power::Setup.tld
@@ -75,11 +75,7 @@ describe Invoker::Power::LinuxSetup do
       end
 
       it 'should create the correct resolver file' do
-        remove_mocked_config_files
-
         expect(Invoker::Power::Distro::Ubuntu.resolver_file).to eq('/etc/dnsmasq.d/local-tld')
-
-        setup_mocked_config_files
       end
 
       after(:all) do
@@ -89,11 +85,7 @@ describe Invoker::Power::LinuxSetup do
 
     context "user doesn't setup a custom top level domain" do
       it 'should create the correct resolver file' do
-        remove_mocked_config_files
-
         expect(Invoker::Power::Distro::Ubuntu.resolver_file).to eq('/etc/dnsmasq.d/dev-tld')
-
-        setup_mocked_config_files
       end
     end
   end

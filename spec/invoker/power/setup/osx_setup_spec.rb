@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe Invoker::Power::OsxSetup do
-  describe "when no setup exists" do
+  describe "when no setup exists", fakefs: true do
     it "should create a config file with port etc" do
       setup = Invoker::Power::OsxSetup.new
       setup.expects(:install_resolver).returns(true)
@@ -17,8 +17,9 @@ describe Invoker::Power::OsxSetup do
     end
   end
 
-  describe "when a setup file exists" do
+  describe "when a setup file exists", fakefs: true do
     it "should throw error about existing file" do
+      FileUtils.mkdir(Invoker::Power::Config.config_dir)
       File.open(Invoker::Power::Config.config_file, "w") {|fl|
         fl.write("foo test")
       }
@@ -27,7 +28,7 @@ describe Invoker::Power::OsxSetup do
     end
   end
 
-  describe "when pow like setup exists" do
+  describe "when pow like setup exists", fakefs: true do
     before {
       File.open(Invoker::Power::OsxSetup.resolver_file, "w") {|fl|
         fl.write("hello")
@@ -58,7 +59,7 @@ describe Invoker::Power::OsxSetup do
     end
   end
 
-  describe "uninstalling firewall rules" do
+  describe "uninstalling firewall rules", fakefs: true do
     it "should uninstall firewall rules and remove all files created by setup" do
       setup = Invoker::Power::OsxSetup.new
 
@@ -71,7 +72,7 @@ describe Invoker::Power::OsxSetup do
     end
   end
 
-  describe "setup on fresh osx install" do
+  describe "setup on fresh osx install", fakefs: true do
     context "when resolver directory does not exist" do
       before do
         @setup = Invoker::Power::OsxSetup.new
@@ -89,27 +90,19 @@ describe Invoker::Power::OsxSetup do
     end
   end
 
-  describe '.resolver_file' do
+  describe '.resolver_file', fakefs: true do
     context 'user sets up a custom top level domain' do
       it 'should create the correct resolver file' do
-        remove_mocked_config_files
-
         original_tld = Invoker::Power::Setup.tld
         Invoker::Power::Setup.tld = 'local'
         expect(Invoker::Power::OsxSetup.resolver_file).to eq('/etc/resolver/local')
         Invoker::Power::Setup.tld = original_tld
-
-        setup_mocked_config_files
       end
     end
 
     context "user doesn't setup a custom top level domain" do
       it 'should create the correct resolver file' do
-        remove_mocked_config_files
-
         expect(Invoker::Power::OsxSetup.resolver_file).to eq('/etc/resolver/dev')
-
-        setup_mocked_config_files
       end
     end
   end

@@ -1,8 +1,9 @@
 require "spec_helper"
 
-describe "Invoker Power configuration" do
+describe "Invoker Power configuration", fakefs: true do
   describe "#create" do
     it "should create a config file given a hash" do
+      FileUtils.mkdir(Invoker::Power::Config.config_dir)
       config = Invoker::Power::Config.create(
         dns_port: 1200, http_port: 1201, ipfw_rule_number: 010
       )
