@@ -2,7 +2,7 @@ require "spec_helper"
 
 require "tempfile"
 
-describe "Invoker::Config", fakefs: true do
+describe "Invoker::Config" do
   describe "with invalid directory" do
     it "should raise error during startup" do
       begin
@@ -134,7 +134,7 @@ command = ls
     end
   end
 
-  describe "loading power config" do
+  describe "loading power config", fakefs: true do
     before do
       @file = Tempfile.new(["config", ".ini"])
     end
@@ -153,40 +153,32 @@ command = ls
 
   describe "Procfile" do
     it "should load Procfiles and create config object" do
-      begin
-        File.open("/tmp/Procfile", "w") {|fl| 
-          fl.write <<-EOD
+      File.open("/tmp/Procfile", "w") {|fl| 
+        fl.write <<-EOD
 web: bundle exec rails s -p $PORT
           EOD
-        }
-        config = Invoker::Parsers::Config.new("/tmp/Procfile", 9000)
-        command1 = config.processes.first
+      }
+      config = Invoker::Parsers::Config.new("/tmp/Procfile", 9000)
+      command1 = config.processes.first
 
-        expect(command1.port).to eq(9000)
-        expect(command1.cmd).to match(/bundle exec rails/)
-      ensure
-        File.delete("/tmp/Procfile")
-      end
+      expect(command1.port).to eq(9000)
+      expect(command1.cmd).to match(/bundle exec rails/)
     end
   end
 
   describe "Copy of DNS information" do
     it "should allow copy of DNS information" do
-      begin
-        File.open("/tmp/Procfile", "w") {|fl| 
-          fl.write <<-EOD
+      File.open("/tmp/Procfile", "w") {|fl| 
+        fl.write <<-EOD
 web: bundle exec rails s -p $PORT
           EOD
-        }
-        Invoker.load_invoker_config("/tmp/Procfile", 9000)
-        dns_cache = Invoker::DNSCache.new(Invoker.config)
+      }
+      Invoker.load_invoker_config("/tmp/Procfile", 9000)
+      dns_cache = Invoker::DNSCache.new(Invoker.config)
 
-        expect(dns_cache.dns_data).to_not be_empty
-        expect(dns_cache.dns_data['web']).to_not be_empty
-        expect(dns_cache.dns_data['web']['port']).to eql 9000
-      ensure
-        File.delete("/tmp/Procfile")
-      end
+      expect(dns_cache.dns_data).to_not be_empty
+      expect(dns_cache.dns_data['web']).to_not be_empty
+      expect(dns_cache.dns_data['web']['port']).to eql 9000
     end
   end
 
