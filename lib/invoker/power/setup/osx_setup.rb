@@ -40,9 +40,7 @@ module Invoker
       end
 
       def install_resolver(dns_port)
-        open_resolver_for_write { |fl|
-          fl.write(resolve_string(dns_port))
-        }
+        open_resolver_for_write { |fl| fl.write(resolve_string(dns_port)) }
       rescue Errno::EACCES
         Invoker::Logger.puts("Running setup requires root access, please rerun it with sudo".color(:red))
         raise
