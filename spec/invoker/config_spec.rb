@@ -2,7 +2,7 @@ require "spec_helper"
 
 require "tempfile"
 
-describe "Invoker::Config" do
+describe "Invoker::Config", fakefs: true do
   describe "with invalid directory" do
     it "should raise error during startup" do
       begin
