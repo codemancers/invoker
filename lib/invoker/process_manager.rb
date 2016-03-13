@@ -13,15 +13,15 @@ module Invoker
     end
 
     def start_process(process_info)
+      return if process_info[:cmd].nil?
+
       m, s = PTY.open
       s.raw! # disable newline conversion.
 
       pid = run_command(process_info, s)
-
       s.close
 
       worker = CommandWorker.new(process_info.label, m, pid, select_color)
-
       add_worker(worker)
       wait_on_pid(process_info.label, pid)
     end
@@ -105,6 +105,7 @@ module Invoker
 
     def kill_workers
       @workers.each do |key, worker|
+        next if worker.pid.nil?
         kill_or_remove_process(worker.pid, "INT", worker.command_label)
       end
       @workers = {}
