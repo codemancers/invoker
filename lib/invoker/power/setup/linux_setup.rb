@@ -39,6 +39,14 @@ module Invoker
         distro_installer.resolver_file
       end
 
+      def forwarder_script
+        File.join(File.dirname(__FILE__), "files/invoker_forwarder.sh.erb")
+      end
+
+      def socat_unit
+        File.join(File.dirname(__FILE__), "files/socat_invoker.service")
+      end
+
       private
 
       def initialize_distro_installer
@@ -59,7 +67,7 @@ module Invoker
 
       def install_port_forwarder
         install_forwarder_script(port_finder.http_port, port_finder.https_port)
-        install_systemd_unit()
+        install_systemd_unit
       end
 
       def resolver_file_content
@@ -71,8 +79,7 @@ address=/#{tld}/127.0.0.1
       end
 
       def install_forwarder_script(http_port, https_port)
-        script_file = File.join(File.dirname(__FILE__), "files/invoker_forwarder.sh.erb")
-        script_template = File.read(script_file)
+        script_template = File.read(forwarder_script)
         renderer = ERB.new(script_template)
         script_output = renderer.result(binding)
         File.open(Invoker::Power::Distro::Base::SOCAT_SHELLSCRIPT, "w") do |fl|
@@ -82,8 +89,7 @@ address=/#{tld}/127.0.0.1
       end
 
       def install_systemd_unit
-        unit_file = File.join(File.dirname(__FILE__), "files/socat_invoker.service")
-        FileUtils.cp(unit_file, Invoker::Power::Distro::Base::SOCAT_SYSTEMD)
+        FileUtils.cp(socat_unit, Invoker::Power::Distro::Base::SOCAT_SYSTEMD)
         system("chmod 644 #{Invoker::Power::Distro::Base::SOCAT_SYSTEMD}")
       end
 

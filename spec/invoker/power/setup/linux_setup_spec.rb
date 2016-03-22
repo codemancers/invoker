@@ -2,6 +2,22 @@ require "spec_helper"
 require "invoker/power/setup/distro/ubuntu"
 require "invoker/power/setup/distro/opensuse"
 
+def mock_socat_scripts
+  FakeFS.deactivate!
+  socat_content = File.read(invoker_setup.forwarder_script)
+  socat_systemd = File.read(invoker_setup.socat_unit)
+  FakeFS.activate!
+  FileUtils.mkdir_p(File.dirname(invoker_setup.forwarder_script))
+  FileUtils.mkdir_p(File.dirname(invoker_setup.socat_unit))
+  File.open(invoker_setup.socat_unit, "w") do |fl|
+    fl.write(socat_systemd)
+  end
+  File.open(invoker_setup.forwarder_script, "w") do |fl|
+    fl.write(socat_content)
+  end
+  FileUtils.mkdir_p("/usr/bin")
+end
+
 describe Invoker::Power::LinuxSetup, fakefs: true do
   before do
     FileUtils.mkdir_p(inv_conf_dir)
@@ -45,6 +61,7 @@ describe Invoker::Power::LinuxSetup, fakefs: true do
 
     before(:each) do
       invoker_setup.distro_installer = distro_installer
+      mock_socat_scripts
     end
 
     it "should create proper config file" do
@@ -63,12 +80,12 @@ describe Invoker::Power::LinuxSetup, fakefs: true do
       expect(dnsmasq_content.strip).to_not be_empty
       expect(dnsmasq_content).to match(/dev/)
 
-      socat_content = File.read(distro_installer.socat_script)
+      socat_content = File.read(Invoker::Power::Distro::Base::SOCAT_SHELLSCRIPT)
       expect(socat_content.strip).to_not be_empty
       expect(socat_content.strip).to match(/#{config.https_port}/)
       expect(socat_content.strip).to match(/#{config.http_port}/)
 
-      service_file = File.read(distro_installer.socat_systemd)
+      service_file = File.read(Invoker::Power::Distro::Base::SOCAT_SYSTEMD)
       expect(service_file.strip).to_not be_empty
     end
   end

@@ -30,6 +30,7 @@ describe "Invoker::Commander" do
         processes = [OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'])]
         Invoker.config.stubs(:processes).returns(processes)
         Invoker.config.stubs(:autorunnable_processes).returns(processes)
+        Invoker.stubs(:can_run_balancer?).returns(false)
         @commander = Invoker::Commander.new
         Invoker.commander = @commander
       end
@@ -63,6 +64,7 @@ describe "Invoker::Commander" do
         processes = [OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'])]
         Invoker.config.stubs(:processes).returns(processes)
         Invoker.config.stubs(:autorunnable_processes).returns(processes)
+        Invoker.stubs(:can_run_balancer?).returns(false)
         @commander = Invoker::Commander.new
         Invoker.commander = @commander
         Invoker.daemonize = true

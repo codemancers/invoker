@@ -221,6 +221,7 @@ command = bundle exec rails s -p $PORT
   describe "global config file" do
     it "should use global config file if available" do
       begin
+        FileUtils.mkdir_p(Invoker::Power::Config.config_dir)
         filename = "#{Invoker::Power::Config.config_dir}/foo.ini"
         file = File.open(filename, "w")
         config_data =<<-EOD

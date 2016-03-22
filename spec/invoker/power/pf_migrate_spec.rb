@@ -2,6 +2,7 @@ require "spec_helper"
 
 describe Invoker::Power::PfMigrate do
   before do
+    FileUtils.mkdir_p("/tmp/.invoker")
     @old_firewall_file = Invoker::Power::OsxSetup::FIREWALL_PLIST_FILE
     Invoker::Power::OsxSetup.const_set(:FIREWALL_PLIST_FILE, "/tmp/.invoker/firewall")
   end
@@ -58,6 +59,7 @@ describe Invoker::Power::PfMigrate do
       mock_config = mock()
       mock_config.stubs(:http_port).returns(80)
       mock_config.stubs(:https_port).returns(443)
+      mock_config.stubs(:tld).returns('dev')
       Invoker.config = mock_config
     end
 
