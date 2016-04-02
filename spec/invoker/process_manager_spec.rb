@@ -3,6 +3,15 @@ require "spec_helper"
 describe Invoker::ProcessManager do
   let(:process_manager) { Invoker::ProcessManager.new }
 
+  describe "#start_process" do
+    it "should work with no command" do
+      process = OpenStruct.new(:label => "resque", :dir => "bar")
+      invoker_config.stubs(:processes).returns([process])
+      invoker_config.expects(:process).returns(process)
+      process_manager.start_process(process)
+    end
+  end
+
   describe "#start_process_by_name" do
     it "should find command by label and start it, if found" do
       @original_invoker_config = Invoker.config
