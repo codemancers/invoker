@@ -13,7 +13,7 @@ module Invoker
     end
 
     def start_process(process_info)
-      return if process_info[:cmd].nil?
+      return if process_info.cmd.nil?
 
       m, s = PTY.open
       s.raw! # disable newline conversion.
