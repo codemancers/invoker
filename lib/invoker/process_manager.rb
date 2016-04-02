@@ -105,7 +105,6 @@ module Invoker
 
     def kill_workers
       @workers.each do |key, worker|
-        next if worker.pid.nil?
         kill_or_remove_process(worker.pid, "INT", worker.command_label)
       end
       @workers = {}
