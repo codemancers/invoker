@@ -1,8 +1,11 @@
 module Invoker
   module Power
     class UrlRewriter
+      DEFAULT_PROCESS_NAME = "default"
+
       def select_backend_config(complete_path)
         possible_matches = extract_host_from_domain(complete_path)
+        possible_matches.push(DEFAULT_PROCESS_NAME)
         exact_match = nil
         possible_matches.each do |match|
           if match
