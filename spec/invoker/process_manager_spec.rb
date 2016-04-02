@@ -7,7 +7,6 @@ describe Invoker::ProcessManager do
     it "should work with no command" do
       process = OpenStruct.new(:label => "resque", :dir => "bar")
       invoker_config.stubs(:processes).returns([process])
-      invoker_config.expects(:process).returns(process)
       process_manager.start_process(process)
     end
   end
