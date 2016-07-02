@@ -1,9 +1,31 @@
 require "spec_helper"
 require "invoker/power/setup/distro/ubuntu"
+require "invoker/power/setup/distro/opensuse"
 
-describe Invoker::Power::LinuxSetup do
-  let(:invoker_setup) { Invoker::Power::LinuxSetup.new }
-  let(:distro_installer) { Invoker::Power::Distro::Ubuntu.new }
+def mock_socat_scripts
+  FakeFS.deactivate!
+  socat_content = File.read(invoker_setup.forwarder_script)
+  socat_systemd = File.read(invoker_setup.socat_unit)
+  FakeFS.activate!
+  FileUtils.mkdir_p(File.dirname(invoker_setup.forwarder_script))
+  FileUtils.mkdir_p(File.dirname(invoker_setup.socat_unit))
+  File.open(invoker_setup.socat_unit, "w") do |fl|
+    fl.write(socat_systemd)
+  end
+  File.open(invoker_setup.forwarder_script, "w") do |fl|
+    fl.write(socat_content)
+  end
+  FileUtils.mkdir_p("/usr/bin")
+end
+
+describe Invoker::Power::LinuxSetup, fakefs: true do
+  before do
+    FileUtils.mkdir_p(inv_conf_dir)
+    FileUtils.mkdir_p(Invoker::Power::Distro::Base::RESOLVER_DIR)
+  end
+
+  let(:invoker_setup) { Invoker::Power::LinuxSetup.new('dev') }
+  let(:distro_installer) { Invoker::Power::Distro::Ubuntu.new('dev') }
 
   describe "should only proceed after user confirmation" do
     before { invoker_setup.distro_installer = distro_installer }
@@ -28,7 +50,19 @@ describe Invoker::Power::LinuxSetup do
   end
 
   describe "configuring dnsmasq and socat" do
-    before { invoker_setup.distro_installer = distro_installer }
+    before(:all) do
+      @original_invoker_config = Invoker.config
+      Invoker.config = mock
+    end
+
+    after(:all) do
+      Invoker.config = @original_invoker_config
+    end
+
+    before(:each) do
+      invoker_setup.distro_installer = distro_installer
+      mock_socat_scripts
+    end
 
     it "should create proper config file" do
       invoker_setup.expects(:initialize_distro_installer).returns(true)
@@ -46,13 +80,24 @@ describe Invoker::Power::LinuxSetup do
       expect(dnsmasq_content.strip).to_not be_empty
       expect(dnsmasq_content).to match(/dev/)
 
-      socat_content = File.read(distro_installer.socat_script)
+      socat_content = File.read(Invoker::Power::Distro::Base::SOCAT_SHELLSCRIPT)
       expect(socat_content.strip).to_not be_empty
       expect(socat_content.strip).to match(/#{config.https_port}/)
       expect(socat_content.strip).to match(/#{config.http_port}/)
 
-      service_file = File.read(distro_installer.socat_systemd)
+      service_file = File.read(Invoker::Power::Distro::Base::SOCAT_SYSTEMD)
       expect(service_file.strip).to_not be_empty
+    end
+  end
+
+  describe 'resolver file' do
+    context 'user sets up a custom top level domain' do
+      it 'should create the correct resolver file' do
+        linux_setup = Invoker::Power::LinuxSetup.new('local')
+        suse_installer = Invoker::Power::Distro::Opensuse.new('local')
+        linux_setup.distro_installer = suse_installer
+        expect(linux_setup.resolver_file).to eq('/etc/dnsmasq.d/local-tld')
+      end
     end
   end
 end

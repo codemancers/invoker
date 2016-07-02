@@ -3,15 +3,16 @@ require "eventmachine"
 module Invoker
   module Power
     class Setup
-      attr_accessor :port_finder
-      def self.install
+      attr_accessor :port_finder, :tld
+
+      def self.install(tld)
         selected_installer_klass = installer_klass
-        selected_installer_klass.new.install
+        selected_installer_klass.new(tld).install
       end
 
       def self.uninstall
         selected_installer_klass = installer_klass
-        selected_installer_klass.new.uninstall_invoker
+        selected_installer_klass.new(Invoker.config.tld).uninstall_invoker
       end
 
       def self.installer_klass
@@ -20,6 +21,14 @@ module Invoker
         else
           Invoker::Power::LinuxSetup
         end
+      end
+
+      def initialize(tld)
+        if tld !~ /^[a-z]+$/
+          Invoker::Logger.puts("Please specify valid tld".color(:red))
+          exit(1)
+        end
+        self.tld = tld
       end
 
       def install
@@ -45,6 +54,35 @@ module Invoker
 
       def check_if_setup_can_run?
         !File.exists?(Invoker::Power::Config.config_file)
+      end
+
+      def create_config_file
+        Invoker.setup_config_location
+        config = build_power_config
+        Invoker::Power::Config.create(config)
+      end
+
+      # Builds and returns power config hash. Override this method in subclasses if necessary.
+      def build_power_config
+        config = {
+          http_port: port_finder.http_port,
+          https_port: port_finder.https_port,
+          tld: tld
+        }
+        config
+      end
+
+      def remove_resolver_file
+        begin
+          safe_remove_file(resolver_file)
+        rescue Errno::EACCES
+          Invoker::Logger.puts("Running uninstall requires root access, please rerun it with sudo".color(:red))
+          raise
+        end
+      end
+
+      def safe_remove_file(file)
+        File.delete(file) if File.exists?(file)
       end
     end
   end

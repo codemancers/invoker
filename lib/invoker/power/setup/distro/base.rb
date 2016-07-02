@@ -2,9 +2,14 @@ module Invoker
   module Power
     module Distro
       class Base
-        RESOLVER_FILE = "/etc/dnsmasq.d/dev-tld"
         SOCAT_SHELLSCRIPT = "/usr/bin/invoker_forwarder.sh"
         SOCAT_SYSTEMD = "/etc/systemd/system/socat_invoker.service"
+        RESOLVER_DIR = "/etc/dnsmasq.d"
+        attr_accessor :tld
+
+        def resolver_file
+          File.join(RESOLVER_DIR, "#{tld}-tld")
+        end
 
         def self.distro_installer
           case Facter[:operatingsystem].value
@@ -31,16 +36,8 @@ module Invoker
           end
         end
 
-        def resolver_file
-          RESOLVER_FILE
-        end
-
-        def socat_script
-          SOCAT_SHELLSCRIPT
-        end
-
-        def socat_systemd
-          SOCAT_SYSTEMD
+        def initialize(tld)
+          self.tld = tld
         end
 
         # Install required software

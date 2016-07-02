@@ -1,13 +1,22 @@
 require "spec_helper"
 
 describe "Invoker::Commander" do
+  before(:each) do
+    @original_invoker_config = Invoker.config
+    Invoker.config = mock
+  end
+
+  after(:each) do
+    Invoker.config = @original_invoker_config
+  end
+
   describe "With no processes configured" do
-    before do
+    before(:each) do
       @commander = Invoker::Commander.new
     end
 
     it "should throw error" do
-      invoker_config.stubs(:processes).returns([])
+      Invoker.config.stubs(:processes).returns([])
 
       expect {
         @commander.start_manager
@@ -19,8 +28,9 @@ describe "Invoker::Commander" do
     describe "when not daemonized" do
       before do
         processes = [OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'])]
-        invoker_config.stubs(:processes).returns(processes)
-        invoker_config.stubs(:autorunnable_processes).returns(processes)
+        Invoker.config.stubs(:processes).returns(processes)
+        Invoker.config.stubs(:autorunnable_processes).returns(processes)
+        Invoker.stubs(:can_run_balancer?).returns(false)
         @commander = Invoker::Commander.new
         Invoker.commander = @commander
       end
@@ -52,8 +62,9 @@ describe "Invoker::Commander" do
     describe "when daemonized" do
       before do
         processes = [OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'])]
-        invoker_config.stubs(:processes).returns(processes)
-        invoker_config.stubs(:autorunnable_processes).returns(processes)
+        Invoker.config.stubs(:processes).returns(processes)
+        Invoker.config.stubs(:autorunnable_processes).returns(processes)
+        Invoker.stubs(:can_run_balancer?).returns(false)
         @commander = Invoker::Commander.new
         Invoker.commander = @commander
         Invoker.daemonize = true
@@ -94,8 +105,8 @@ describe "Invoker::Commander" do
           OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME']),
           OpenStruct.new(:label => "panda", :cmd => "panda_command", :dir => ENV['HOME'], :disable_autorun => true)
         ]
-        invoker_config.stubs(:processes).returns(@processes)
-        invoker_config.stubs(:autorunnable_processes).returns([@processes.first])
+        Invoker.config.stubs(:processes).returns(@processes)
+        Invoker.config.stubs(:autorunnable_processes).returns([@processes.first])
 
         @commander = Invoker::Commander.new
       end

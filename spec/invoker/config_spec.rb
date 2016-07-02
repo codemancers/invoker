@@ -134,59 +134,53 @@ command = ls
     end
   end
 
-  describe "loading power config" do
+  describe "loading power config", fakefs: true do
     before do
-      @file = Tempfile.new(["config", ".ini"])
+      FileUtils.mkdir_p('/tmp')
+      FileUtils.mkdir_p(inv_conf_dir)
+      File.open("/tmp/foo.ini", "w") { |fl| fl.write("") }
     end
 
     it "does not load config if platform is darwin but there is no power config file" do
       Invoker::Power::Config.expects(:load_config).never
-      Invoker::Parsers::Config.new(@file.path, 9000)
+      Invoker::Parsers::Config.new("/tmp/foo.ini", 9000)
     end
 
     it "loads config if platform is darwin and power config file exists" do
       File.open(Invoker::Power::Config.config_file, "w") { |fl| fl.puts "sample" }
       Invoker::Power::Config.expects(:load_config).once
-      Invoker::Parsers::Config.new(@file.path, 9000)
+      Invoker::Parsers::Config.new("/tmp/foo.ini", 9000)
     end
   end
 
   describe "Procfile" do
     it "should load Procfiles and create config object" do
-      begin
-        File.open("/tmp/Procfile", "w") {|fl| 
-          fl.write <<-EOD
+      File.open("/tmp/Procfile", "w") {|fl| 
+        fl.write <<-EOD
 web: bundle exec rails s -p $PORT
           EOD
-        }
-        config = Invoker::Parsers::Config.new("/tmp/Procfile", 9000)
-        command1 = config.processes.first
+      }
+      config = Invoker::Parsers::Config.new("/tmp/Procfile", 9000)
+      command1 = config.processes.first
 
-        expect(command1.port).to eq(9000)
-        expect(command1.cmd).to match(/bundle exec rails/)
-      ensure
-        File.delete("/tmp/Procfile")
-      end
+      expect(command1.port).to eq(9000)
+      expect(command1.cmd).to match(/bundle exec rails/)
     end
   end
 
   describe "Copy of DNS information" do
     it "should allow copy of DNS information" do
-      begin
-        File.open("/tmp/Procfile", "w") {|fl| 
-          fl.write <<-EOD
+      File.open("/tmp/Procfile", "w") {|fl| 
+        fl.write <<-EOD
 web: bundle exec rails s -p $PORT
           EOD
-        }
-        Invoker.load_invoker_config("/tmp/Procfile", 9000)
-        dns_cache = Invoker::DNSCache.new(Invoker.config)
+      }
+      Invoker.load_invoker_config("/tmp/Procfile", 9000)
+      dns_cache = Invoker::DNSCache.new(Invoker.config)
 
-        expect(dns_cache.dns_data).to_not be_empty
-        expect(dns_cache.dns_data['web']).to_not be_empty
-        expect(dns_cache.dns_data['web']['port']).to eql 9000
-      ensure
-        File.delete("/tmp/Procfile")
-      end
+      expect(dns_cache.dns_data).to_not be_empty
+      expect(dns_cache.dns_data['web']).to_not be_empty
+      expect(dns_cache.dns_data['web']['port']).to eql 9000
     end
   end
 
@@ -227,6 +221,7 @@ command = bundle exec rails s -p $PORT
   describe "global config file" do
     it "should use global config file if available" do
       begin
+        FileUtils.mkdir_p(Invoker::Power::Config.config_dir)
         filename = "#{Invoker::Power::Config.config_dir}/foo.ini"
         file = File.open(filename, "w")
         config_data =<<-EOD

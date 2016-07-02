@@ -144,5 +144,9 @@ module Invoker
         Etc.getpwuid(Process.uid).dir
       end
     end
+
+    def default_tld
+      'dev'
+    end
   end
 end

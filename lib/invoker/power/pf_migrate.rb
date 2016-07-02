@@ -13,7 +13,7 @@ module Invoker
       def migrate
         if firewall_config_requires_migration? && ask_user_for_migration
           sudome
-          osx_setup = Invoker::Power::OsxSetup.new()
+          osx_setup = Invoker::Power::OsxSetup.new(Invoker.config.tld)
           osx_setup.install_firewall(Invoker.config.http_port, Invoker.config.https_port)
           drop_to_normal_user
           Invoker::Logger.puts "Invoker has updated its configuration for yosemite."\

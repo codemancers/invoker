@@ -13,7 +13,8 @@ describe "Invoker" do
     end
   end
 
-  describe "#can_run_balancer?" do
+  describe "#can_run_balancer?", fakefs: true do
+    before { FileUtils.mkdir_p(Invoker::Power::Config.config_dir) }
     it "should return false if setup command was not run" do
       expect(Invoker.can_run_balancer?).to be_falsey
     end

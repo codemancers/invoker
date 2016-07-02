@@ -60,9 +60,9 @@ module Invoker
       def dns_port; @config[:dns_port]; end
       def http_port; @config[:http_port]; end
       def ipfw_rule_number; @config[:ipfw_rule_number]; end
-
-      def https_port
-        @config[:https_port]
+      def https_port; @config[:https_port]; end
+      def tld
+        @config[:tld] || Invoker.default_tld
       end
 
       def save

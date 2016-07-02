@@ -1,9 +1,12 @@
 module Invoker
   module Power
     class OsxSetup < Setup
-      RESOLVER_FILE = "/etc/resolver/dev"
-      RESOLVER_DIR = "/etc/resolver"
       FIREWALL_PLIST_FILE = "/Library/LaunchDaemons/com.codemancers.invoker.firewall.plist"
+      RESOLVER_DIR = "/etc/resolver"
+
+      def resolver_file
+        File.join(RESOLVER_DIR, tld)
+      end
 
       def setup_invoker
         if setup_resolver_file
@@ -30,30 +33,16 @@ module Invoker
         end
       end
 
-      def create_config_file
-        Invoker.setup_config_location
-        Invoker::Power::Config.create(
-          dns_port: port_finder.dns_port,
-          http_port: port_finder.http_port,
-          https_port: port_finder.https_port
-        )
+      def build_power_config
+        config = super
+        config[:dns_port] = port_finder.dns_port
+        config
       end
 
       def install_resolver(dns_port)
-        open_resolver_for_write { |fl|
-          fl.write(resolve_string(dns_port))
-        }
+        open_resolver_for_write { |fl| fl.write(resolve_string(dns_port)) }
       rescue Errno::EACCES
         Invoker::Logger.puts("Running setup requires root access, please rerun it with sudo".color(:red))
-        raise
-      end
-
-      def remove_resolver_file
-        if File.exists?(RESOLVER_FILE)
-          File.delete(RESOLVER_FILE)
-        end
-      rescue Errno::EACCES
-        Invoker::Logger.puts("Running uninstall requires root access, please rerun it with sudo".color(:red))
         raise
       end
 
@@ -118,19 +107,18 @@ port #{dns_port}
       end
 
       def setup_resolver_file
-        return true unless File.exists?(RESOLVER_FILE)
+        return true unless File.exist?(resolver_file)
+
         Invoker::Logger.puts "Invoker has detected an existing Pow installation. We recommend "\
           "that you uninstall pow and rerun this setup.".color(:red)
-
         Invoker::Logger.puts "If you have already uninstalled Pow, proceed with installation"\
           " by pressing y/n."
-
         replace_resolver_flag = Invoker::CLI::Question.agree("Replace Pow configuration (y/n) : ")
 
         if replace_resolver_flag
           Invoker::Logger.puts "Invoker has overwritten one or more files created by Pow. "\
-          "If .dev domains still don't resolve locally. Try turning off the wi-fi"\
-          " and turning it on. It will force OSX to reload network configuration".color(:green)
+          "If .#{tld} domains still don't resolve locally, try turning off the wi-fi"\
+          " and turning it on. It'll force OS X to reload network configuration".color(:green)
         end
         replace_resolver_flag
       end
@@ -138,8 +126,8 @@ port #{dns_port}
       private
 
       def open_resolver_for_write
-        FileUtils.mkdir(RESOLVER_DIR) unless Dir.exists?(RESOLVER_DIR)
-        fl = File.open(RESOLVER_FILE, "w")
+        FileUtils.mkdir(RESOLVER_DIR) unless Dir.exist?(RESOLVER_DIR)
+        fl = File.open(resolver_file, "w")
         yield fl
       ensure
         fl && fl.close

@@ -1,8 +1,6 @@
 module Invoker
   module Power
     class UrlRewriter
-      DEV_MATCH_REGEX = [/([\w.-]+)\.dev(\:\d+)?$/, /([\w-]+)\.dev(\:\d+)?$/]
-
       def select_backend_config(complete_path)
         possible_matches = extract_host_from_domain(complete_path)
         exact_match = nil
@@ -17,7 +15,7 @@ module Invoker
 
       def extract_host_from_domain(complete_path)
         matching_strings = []
-        DEV_MATCH_REGEX.map do |regexp|
+        tld_match_regex.map do |regexp|
           if (match_result = complete_path.match(regexp))
             matching_strings << match_result[1]
           end
@@ -26,6 +24,11 @@ module Invoker
       end
 
       private
+
+      def tld_match_regex
+        tld = Invoker.config.tld
+        [/([\w.-]+)\.#{tld}(\:\d+)?$/, /([\w-]+)\.#{tld}(\:\d+)?$/]
+      end
 
       def dns_check(dns_args)
         Invoker::IPC::UnixClient.send_command("dns_check", dns_args) do |dns_response|
