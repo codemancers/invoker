@@ -11,26 +11,26 @@ module Invoker
           File.join(RESOLVER_DIR, "#{tld}-tld")
         end
 
-        def self.distro_installer
+        def self.distro_installer(tld)
           case Facter[:operatingsystem].value
           when "Ubuntu"
             require "invoker/power/setup/distro/ubuntu"
-            Ubuntu.new
+            Ubuntu.new(tld)
           when "Fedora"
             require "invoker/power/setup/distro/redhat"
-            Redhat.new
+            Redhat.new(tld)
           when "Archlinux"
             require "invoker/power/setup/distro/arch"
-            Arch.new
+            Arch.new(tld)
           when "Debian"
             require "invoker/power/setup/distro/debian"
-            Debian.new
+            Debian.new(tld)
           when "LinuxMint"
             require "invoker/power/setup/distro/mint"
-            Mint.new
+            Mint.new(tld)
           when "OpenSuSE"
             require "invoker/power/setup/distro/opensuse"
-            Opensuse.new
+            Opensuse.new(tld)
           else
             raise "Your selected distro is not supported by Invoker"
           end
