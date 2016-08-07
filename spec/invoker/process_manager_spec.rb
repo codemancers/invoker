@@ -123,6 +123,7 @@ FOO=emacs
         expect(env_options).to include("FOO" => "emacs", "BAR" => "bar")
       ensure
         File.delete(env_file.path)
+        File.delete(local_env_file.path)
       end
     end
   end
