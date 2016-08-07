@@ -1,6 +1,6 @@
 name: Invoker - A Process manager
 markdown: redcarpet
-pygments: true
+highlighter: rouge
 
 links:
   - title: Linux

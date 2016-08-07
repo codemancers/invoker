@@ -9,6 +9,10 @@ Use it for managing multiple processes with ease.
 
 Use it for developing web applications on different local domains without
 `/etc/hosts` hacks.
+
+Invoker supports DNS and proxying of HTTP/HTTPS/WebSocket applications over a `.dev`
+like local TLD.
+
 <img src="images/Invoker-Infographics.svg">
 <a name="usage"></a>
 ## How to use it?
@@ -61,7 +65,12 @@ To make it work though, you need to run following command, just once from anywhe
 ~> sudo invoker setup # read below if you are migrating from Pow
 {% endhighlight %}
 
-This feature has been well tested to work on both `OSX` and `Linux`.
+This feature has been well tested to work on both `OSX` and `Linux`. You can additionally
+run above command with:
+
+{% highlight bash %}
+~> sudo invoker setup --tld local #specify a custom TLD, the default is `dev`
+{% endhighlight %}
 
 If you decide to remove Invoker, you can remove things installed by Invoker using command
 
