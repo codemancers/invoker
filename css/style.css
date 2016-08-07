@@ -138,15 +138,14 @@ ul.getting-started-list {
 	display: none !important;
 }
 
-ul {
+.content-container ul {
     list-style: disc;
     margin: 10px auto 10px 20px;
 }
 
-ul > li {
+.content-container ul > li {
     margin: 5px auto 5px auto;
 }
-
 
 .left-side-bar ul {
     list-style: none;
