@@ -89,8 +89,18 @@ module Invoker
     def load_env(directory = nil)
       directory ||= ENV['PWD']
       default_env = File.join(directory, '.env')
-      return {} unless File.exist?(default_env)
-      Dotenv::Environment.new(default_env)
+      local_env = File.join(directory, '.env.local')
+      env = {}
+
+      if File.exist?(default_env)
+        env.merge!(Dotenv::Environment.new(default_env))
+      end
+
+      if File.exist?(local_env)
+        env.merge!(Dotenv::Environment.new(local_env))
+      end
+
+      env
     end
 
     def kill_workers
