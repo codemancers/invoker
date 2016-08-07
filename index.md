@@ -15,6 +15,17 @@ like local TLD.
 
 <img src="images/Invoker-Infographics.svg">
 <a name="usage"></a>
+
+## Features
+
+A brief overview of Invoker features are:
+
+* Manage multiple dependent processes using Invoker. You can use Procfile or a INI file to define multiple processes managed by Invoker.
+* Invoker supports proxying to your HTTP application via a locally defined TLD like `.dev`.
+* Invoker automatically supports HTTPS, Websocket for your application.
+* Any externally running HTTP application can use HTTP proxy of Invoker for access via `http://app.dev` domain.
+
+
 ## How to use it?
 
 First we need to install invoker gem to get command line utility called invoker, we can do that via:
