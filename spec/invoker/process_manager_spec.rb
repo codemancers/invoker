@@ -100,5 +100,30 @@ BAR=foo
       dir = "/tmp"
       expect(process_manager.load_env(dir)).to eq({})
     end
+
+    it "should load .local.env file if it exists" do
+      dir = "/tmp"
+      begin
+        env_file = File.new("#{dir}/.env", "w")
+        env_data =<<-EOD
+FOO=foo
+BAR=bar
+        EOD
+        env_file.write(env_data)
+        env_file.close
+
+        local_env_file = File.new("#{dir}/.env.local", "w")
+        local_env_data =<<-EOD
+FOO=emacs
+        EOD
+        local_env_file.write(local_env_data)
+        local_env_file.close
+
+        env_options = process_manager.load_env(dir)
+        expect(env_options).to include("FOO" => "emacs", "BAR" => "bar")
+      ensure
+        File.delete(env_file.path)
+      end
+    end
   end
 end
