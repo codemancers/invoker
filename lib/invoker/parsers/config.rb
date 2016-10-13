@@ -42,7 +42,8 @@ module Invoker
       end
 
       def autorunnable_processes
-        processes.reject(&:disable_autorun)
+        process_to_run = processes.reject(&:disable_autorun)
+        process_to_run.sort_by { |process| process.index }
       end
 
       def process(label)
@@ -123,6 +124,20 @@ module Invoker
         }
         pconfig['port'] = section['port'] if section['port']
         pconfig['disable_autorun'] = section['disable_autorun'] if section['disable_autorun']
+        pconfig['index'] = section['index'].to_i if section['index']
+        section_index = pconfig['index'].to_i
+        if section_index
+          pconfig['index'] = section_index
+        else
+          pconfig['index'] = 0
+        end
+
+        sleep_duration = section['sleep'].to_i
+        if sleep_duration > 0
+          pconfig['sleep_duration'] = sleep_duration
+        else
+          pconfig['sleep_duration'] = 5
+        end
 
         OpenStruct.new(pconfig)
       end
