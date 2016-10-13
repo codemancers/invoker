@@ -27,7 +27,7 @@ describe "Invoker::Commander" do
   describe "#start_process" do
     describe "when not daemonized" do
       before do
-        processes = [OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'])]
+        processes = [OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'], :sleep_duration => 2)]
         Invoker.config.stubs(:processes).returns(processes)
         Invoker.config.stubs(:autorunnable_processes).returns(processes)
         Invoker.stubs(:can_run_balancer?).returns(false)
@@ -61,7 +61,7 @@ describe "Invoker::Commander" do
 
     describe "when daemonized" do
       before do
-        processes = [OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'])]
+        processes = [OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'], :sleep_duration => 2)]
         Invoker.config.stubs(:processes).returns(processes)
         Invoker.config.stubs(:autorunnable_processes).returns(processes)
         Invoker.stubs(:can_run_balancer?).returns(false)
@@ -102,8 +102,8 @@ describe "Invoker::Commander" do
     context 'autorun is disabled for a process' do
       before do
         @processes = [
-          OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME']),
-          OpenStruct.new(:label => "panda", :cmd => "panda_command", :dir => ENV['HOME'], :disable_autorun => true)
+          OpenStruct.new(:label => "foobar", :cmd => "foobar_command", :dir => ENV['HOME'], :sleep_duration => 2),
+          OpenStruct.new(:label => "panda", :cmd => "panda_command", :dir => ENV['HOME'], :disable_autorun => true, :sleep_duration => 2)
         ]
         Invoker.config.stubs(:processes).returns(@processes)
         Invoker.config.stubs(:autorunnable_processes).returns([@processes.first])

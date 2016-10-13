@@ -216,6 +216,47 @@ command = bundle exec rails s -p $PORT
         file.unlink()
       end
     end
+
+    it "returns a list of processes that can by index" do
+      begin
+        file = Tempfile.new(["config", ".ini"])
+        config_data =<<-EOD
+[postgres]
+command = postgres -D /usr/local/var/postgres
+index = 2
+sleep = 5
+
+[redis]
+command = redis-server /usr/local/etc/redis.conf
+disable_autorun = true
+index = 3
+
+[memcached]
+command = /usr/local/opt/memcached/bin/memcached
+disable_autorun = false
+index = 5
+
+[panda-api]
+command = bundle exec rails s
+disable_autorun = true
+index = 4
+
+[panda-auth]
+command = bundle exec rails s -p $PORT
+index = 1
+      EOD
+        file.write(config_data)
+        file.close
+
+        config = Invoker::Parsers::Config.new(file.path, 9000)
+        processes = config.autorunnable_processes
+        expect(processes.map(&:label)).to eq(['panda-auth', 'postgres', 'memcached'])
+        expect(processes[0].sleep_duration).to eq(1)
+        expect(processes[1].sleep_duration).to eq(5)
+      ensure
+        file.unlink()
+      end
+    end
   end
 
   describe "global config file" do

@@ -136,7 +136,7 @@ module Invoker
         if sleep_duration > 0
           pconfig['sleep_duration'] = sleep_duration
         else
-          pconfig['sleep_duration'] = 5
+          pconfig['sleep_duration'] = 1
         end
 
         OpenStruct.new(pconfig)

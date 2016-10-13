@@ -39,6 +39,7 @@ module Invoker
       process_manager.run_power_server
       Invoker.config.autorunnable_processes.each do |process_info|
         process_manager.start_process(process_info)
+        Logger.puts("Starting process - #{process_info.label} waiting for #{process_info.sleep_duration} seconds...")
         sleep(process_info.sleep_duration)
       end
       at_exit { process_manager.kill_workers }
