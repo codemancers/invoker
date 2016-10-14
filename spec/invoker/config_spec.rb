@@ -340,6 +340,10 @@ some_other_process: some_other_command
 
             config = Invoker::Parsers::Config.new(nil, 9000)
             expect(config.process("some_process").cmd).to eq("some_command")
+            processes = config.autorunnable_processes
+            process_1 = processes[0]
+            expect(process_1.sleep_duration).to eq(1)
+            expect(process_1.index).to eq(0)
           ensure
             File.delete(invoker_ini)
             File.delete(procfile)
