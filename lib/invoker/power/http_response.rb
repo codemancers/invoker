@@ -41,7 +41,7 @@ module Invoker
 
       def initialize
         @header = {}
-        header['Server'] = "Invoker 1.1"
+        header['Server'] = "Invoker #{Invoker::VERSION}"
         header['Date'] = Time.now.httpdate
         @status = 200
         @body = ""
