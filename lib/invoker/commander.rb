@@ -37,7 +37,11 @@ module Invoker
       unix_server_thread = Thread.new { Invoker::IPC::Server.new }
       @thread_group.add(unix_server_thread)
       process_manager.run_power_server
-      Invoker.config.autorunnable_processes.each { |process_info| process_manager.start_process(process_info) }
+      Invoker.config.autorunnable_processes.each do |process_info|
+        process_manager.start_process(process_info)
+        Logger.puts("Starting process - #{process_info.label} waiting for #{process_info.sleep_duration} seconds...")
+        sleep(process_info.sleep_duration)
+      end
       at_exit { process_manager.kill_workers }
       start_event_loop
     end
