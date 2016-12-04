@@ -88,6 +88,11 @@ module Invoker
 
     def load_env(directory = nil)
       directory ||= ENV['PWD']
+
+      if !directory || directory.empty? || !Dir.exist?(directory)
+        return {}
+      end
+
       default_env = File.join(directory, '.env')
       local_env = File.join(directory, '.env.local')
       env = {}
