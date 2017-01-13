@@ -19,7 +19,7 @@ module Invoker
           when "Fedora"
             require "invoker/power/setup/distro/redhat"
             Redhat.new(tld)
-          when "Archlinux"
+          when "Archlinux", "Manjarolinux"
             require "invoker/power/setup/distro/arch"
             Arch.new(tld)
           when "Debian"
