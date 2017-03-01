@@ -53,7 +53,7 @@ module Invoker
       private
 
       def autodetect_config_file
-        Dir.glob("{invoker.ini,Procfile}").first
+        Dir.glob("{invoker.ini,Procfile.dev,Procfile}").first
       end
 
       def invalid_config_file?
