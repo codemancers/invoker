@@ -26,13 +26,13 @@ module Invoker
     def receive_line(line)
       tail_watchers = Invoker.tail_watchers[@command_label]
       color_line = "#{@command_label.color(color)} : #{line}"
+      plain_line = "#{@command_label} : #{line}"
+      Invoker::Logger.puts plain_line
       if tail_watchers && !tail_watchers.empty?
         json_encoded_tail_response = tail_response(color_line)
         if json_encoded_tail_response
           tail_watchers.each { |tail_socket| send_data(tail_socket, json_encoded_tail_response) }
         end
-      else
-        Invoker::Logger.puts color_line
       end
     end
 

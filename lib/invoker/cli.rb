@@ -65,6 +65,11 @@ module Invoker
       tailer.run
     end
 
+    desc "log process1", "Get log of particular process"
+    def log(process_name)
+      system("egrep -a '^#{process_name}' #{Invoker.daemon.log_file}")
+    end
+
     desc "reload process", "Reload a process managed by Invoker"
     option :signal,
       banner: "Signal to send for killing the process, default is SIGINT",
