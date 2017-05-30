@@ -11,5 +11,6 @@ current_directory = File.expand_path(File.dirname(__FILE__))
 desc "run specs inside docker"
 task :docker_spec do
   system("docker build -t invoker-ruby . ")
-  system("docker run --name invoker-rspec --rm -v #{current_directory}:/invoker -t invoker-ruby")
+  puts "********** Building image is done **********"
+  system("docker run --name invoker-rspec --rm -v #{current_directory}:/invoker:z -t invoker-ruby")
 end
