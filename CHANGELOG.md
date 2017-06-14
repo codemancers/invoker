@@ -1,8 +1,10 @@
 ## Changelog since 1.5.3
 
 * Add support for running Invoker build in SELinux environments (https://github.com/code-mancers/invoker/pull/188)
-* Fix colors in console output (https://github.com/code-mancers/invoker/pull/192)
 * Add an option to print process listing in raw format. This enables us to see complete process list (https://github.com/code-mancers/invoker/pull/193)
+* Fix colors in console output (https://github.com/code-mancers/invoker/pull/192)
+* Add a new option to optionally disable colors in log when starting invoker (#196)
+* Handle TERM and INT signals when stopping invoker. (#196)
 
 ## v1.5.3
 

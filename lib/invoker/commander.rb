@@ -82,10 +82,16 @@ module Invoker
     end
 
     def install_interrupt_handler
-      Signal.trap("INT") do
+      Signal.trap("INT") {
+        Invoker::Logger.puts("Stopping invoker")
         process_manager.kill_workers
         exit(0)
-      end
+      }
+      Signal.trap("TERM") {
+        Invoker::Logger.puts("Stopping invoker")
+        process_manager.kill_workers
+        exit(0)
+      }
     end
 
     def daemonize_app

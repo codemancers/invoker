@@ -37,10 +37,15 @@ module Invoker
       type: :boolean,
       banner: "Daemonize the server into the background",
       aliases: [:d]
+    option :nocolors,
+      type: :boolean,
+      banner: "Disable color in output",
+      aliases: [:nc]
     def start(file = nil)
       Invoker.setup_config_location
       port = options[:port] || 9000
       Invoker.daemonize = options[:daemon]
+      Invoker.nocolors = options[:nocolors]
       Invoker.load_invoker_config(file, port)
       warn_about_notification
       warn_about_old_configuration
