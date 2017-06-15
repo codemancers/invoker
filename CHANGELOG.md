@@ -1,6 +1,7 @@
 ## Changelog since 1.5.3
 
 * Add support for running Invoker build in SELinux environments (https://github.com/code-mancers/invoker/pull/188)
+* Fix colors in console output (https://github.com/code-mancers/invoker/pull/192)
 
 ## v1.5.3
 
