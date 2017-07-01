@@ -80,9 +80,17 @@ module Invoker
     end
 
     desc "list", "List all running processes"
+    option :raw,
+      type: :boolean,
+      banner: "Print process list in raw text format",
+      aliases: [:r]
     def list
       unix_socket.send_command('list') do |response_object|
-        Invoker::ProcessPrinter.new(response_object).tap { |printer| printer.print_table }
+        if options[:raw]
+          Invoker::ProcessPrinter.new(response_object).tap { |printer| printer.print_raw_text }
+        else
+          Invoker::ProcessPrinter.new(response_object).tap { |printer| printer.print_table }
+        end
       end
     end
 
