@@ -31,6 +31,11 @@ module Invoker
 
       def self.start_http_proxy(proxy_class, protocol, options)
         port = protocol == 'http' ? Invoker.config.http_port : Invoker.config.https_port
+
+        if ENV["DEBUG_EM_PROXY"] == "1"
+          options[:debug] = true
+        end
+
         EventMachine.start_server('0.0.0.0', port,
                                   proxy_class, options) do |connection|
           balancer = Balancer.new(connection, protocol)
