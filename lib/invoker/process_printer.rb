@@ -19,6 +19,22 @@ module Invoker
       Formatador.display_compact_table(hash_with_colors)
     end
 
+    def print_raw_text
+      list_response.processes.each do |process|
+        Formatador.display_line("[bold]Process Name : #{process.process_name}[/]")
+        Formatador.indent {
+          Formatador.display_line("Dir : #{process.dir}")
+          if process.pid
+            Formatador.display_line("PID : #{process.pid}")
+          else
+            Formatador.display_line("PID : Not Running")
+          end
+          Formatador.display_line("Port : #{process.port}")
+          Formatador.display_line("Command : #{process.shell_command}")
+        }
+      end
+    end
+
     private
 
     def colorize_hash(process, color)
