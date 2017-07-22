@@ -20,7 +20,6 @@ module Invoker
     end
 
     def print_raw_text
-      Formatador.display_line("[green]--------------------------------------[/]")
       list_response.processes.each do |process|
         Formatador.display_line("[bold]Process Name : #{process.process_name}[/]")
         Formatador.indent {
@@ -33,7 +32,6 @@ module Invoker
           Formatador.display_line("Port : #{process.port}")
           Formatador.display_line("Command : #{process.shell_command}")
         }
-        Formatador.display_line("[green]--------------------------------------[/]")
       end
     end
 
