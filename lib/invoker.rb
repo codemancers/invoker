@@ -36,9 +36,10 @@ require "invoker/process_printer"
 module Invoker
   class << self
     attr_accessor :config, :tail_watchers, :commander
-    attr_accessor :dns_cache, :daemonize
+    attr_accessor :dns_cache, :daemonize, :nocolors
 
     alias_method :daemonize?, :daemonize
+    alias_method :nocolors?, :nocolors
 
     def darwin?
       ruby_platform.downcase.include?("darwin")
