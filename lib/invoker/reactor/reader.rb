@@ -23,7 +23,7 @@ module Invoker
         data = read_data(ready_fd)
         send_data_to_worker(data, command_worker)
       rescue Invoker::Errors::ProcessTerminated
-        remove_from_read_monitoring(command_worker.pipe_end, command_worker)
+        remove_from_read_monitoring(command_worker, ready_fd)
       end
     end
 
@@ -35,10 +35,12 @@ module Invoker
       end
     end
 
-    def remove_from_read_monitoring(fd, command_worker)
-      read_array.delete(fd)
+    def remove_from_read_monitoring(command_worker, ready_fd)
       if command_worker
+        read_array.delete(command_worker.pipe_end)
         command_worker.unbind
+      else
+        read_array.delete(ready_fd)
       end
     rescue StandardError => error
       Invoker::Logger.puts(error.message)
