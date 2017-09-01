@@ -19,18 +19,29 @@ module Invoker
 
     def process_read(ready_fd)
       command_worker = Invoker.commander.get_worker_from_fd(ready_fd)
-      return unless command_worker
       begin
         data = read_data(ready_fd)
-        command_worker.receive_data(data)
+        send_data_to_worker(data, command_worker)
       rescue Invoker::Errors::ProcessTerminated
-        remove_from_read_monitoring(command_worker.pipe_end, command_worker)
+        remove_from_read_monitoring(command_worker, ready_fd)
       end
     end
 
-    def remove_from_read_monitoring(fd, command_worker)
-      read_array.delete(fd)
-      command_worker.unbind
+    def send_data_to_worker(data, command_worker)
+      if command_worker
+        command_worker.receive_data(data)
+      else
+        Invoker::Logger.puts("No reader found for incoming data")
+      end
+    end
+
+    def remove_from_read_monitoring(command_worker, ready_fd)
+      if command_worker
+        read_array.delete(command_worker.pipe_end)
+        command_worker.unbind
+      else
+        read_array.delete(ready_fd)
+      end
     rescue StandardError => error
       Invoker::Logger.puts(error.message)
       Invoker::Logger.puts(error.backtrace)
