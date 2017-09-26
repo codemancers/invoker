@@ -43,10 +43,10 @@ module Invoker
       aliases: [:nc]
     option :certificate,
       type: :string,
-      banner: "Provide certificate for https (can include chain)"
+      banner: "Path to certificate"
     option :private_key,
       type: :string,
-      banner: "Provide private key for https"
+      banner: "Path to private key"
     def start(file = nil)
       Invoker.setup_config_location
       port = options[:port] || 9000
