@@ -41,11 +41,19 @@ module Invoker
       type: :boolean,
       banner: "Disable color in output",
       aliases: [:nc]
+    option :certificate,
+      type: :string,
+      banner: "Path to certificate"
+    option :private_key,
+      type: :string,
+      banner: "Path to private key"
     def start(file = nil)
       Invoker.setup_config_location
       port = options[:port] || 9000
       Invoker.daemonize = options[:daemon]
       Invoker.nocolors = options[:nocolors]
+      Invoker.certificate = options[:certificate]
+      Invoker.private_key = options[:private_key]
       Invoker.load_invoker_config(file, port)
       warn_about_notification
       warn_about_old_configuration
