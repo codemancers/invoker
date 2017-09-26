@@ -36,7 +36,7 @@ require "invoker/process_printer"
 module Invoker
   class << self
     attr_accessor :config, :tail_watchers, :commander
-    attr_accessor :dns_cache, :daemonize, :nocolors
+    attr_accessor :dns_cache, :daemonize, :nocolors, :certificate, :private_key
 
     alias_method :daemonize?, :daemonize
     alias_method :nocolors?, :nocolors

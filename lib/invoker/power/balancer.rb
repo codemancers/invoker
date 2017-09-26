@@ -17,7 +17,7 @@ module Invoker
     class InvokerHttpsProxy < InvokerHttpProxy
       def post_init
         super
-        start_tls
+        start_tls(private_key_file: Invoker.private_key, cert_chain_file: Invoker.certificate)
       end
     end
 
