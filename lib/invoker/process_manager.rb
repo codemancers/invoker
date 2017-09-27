@@ -30,7 +30,7 @@ module Invoker
     # @param process_name [String] Command label of process specified in config file.
     def start_process_by_name(process_name)
       if process_running?(process_name)
-        Invoker::Logger.puts "\nProcess '#{process_name}' is already running".color(:red)
+        Invoker::Logger.puts "\nProcess '#{process_name}' is already running".colorize(:red)
         return false
       end
 
@@ -49,7 +49,7 @@ module Invoker
       return false unless worker
       signal_to_use = remove_message.signal || 'INT'
 
-      Invoker::Logger.puts("Removing #{command_label} with signal #{signal_to_use}".color(:red))
+      Invoker::Logger.puts("Removing #{command_label} with signal #{signal_to_use}".colorize(:red))
       kill_or_remove_process(worker.pid, signal_to_use, command_label)
     end
 
@@ -128,7 +128,7 @@ module Invoker
       thread = Thread.new do
         Process.wait(pid)
         message = "Process with command #{command_label} exited with status #{$?.exitstatus}"
-        Invoker::Logger.puts("\n#{message}".color(:red))
+        Invoker::Logger.puts("\n#{message}".colorize(:red))
         Invoker.notify_user(message)
         Invoker.commander.trigger(command_label, :exit)
       end
@@ -149,7 +149,7 @@ module Invoker
       process_kill(pid, signal_to_use)
       true
     rescue Errno::ESRCH
-      Invoker::Logger.puts("Killing process with #{pid} and name #{command_label} failed".color(:red))
+      Invoker::Logger.puts("Killing process with #{pid} and name #{command_label} failed".colorize(:red))
       remove_worker(command_label, false)
       false
     end

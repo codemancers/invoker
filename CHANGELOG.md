@@ -1,7 +1,11 @@
 ## Changelog since 1.5.4
 
-* Fix high cpu usage when process managed by Invoker crashes and Invoker doesn't read from its socket.
 
+
+# v1.5.5
+* Fix high cpu usage when process managed by Invoker crashes and Invoker doesn't read from its socket.(https://github.com/code-mancers/invoker/pull/198)
+* Allow users to specify custom ssl certificate and key (https://github.com/code-mancers/invoker/pull/199)
+* Remove rainbow dependency and migrate to colorize
 
 # v1.5.4
 * Add support for running Invoker build in SELinux environments (https://github.com/code-mancers/invoker/pull/188)

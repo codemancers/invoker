@@ -58,7 +58,7 @@ module Invoker
       warn_about_notification
       warn_about_old_configuration
       pinger = Invoker::CLI::Pinger.new(unix_socket)
-      abort("Invoker is already running".color(:red)) if pinger.invoker_running?
+      abort("Invoker is already running".colorize(:red)) if pinger.invoker_running?
       Invoker.commander.start_manager
     end
 
@@ -158,7 +158,7 @@ module Invoker
       require "libnotify"
     rescue LoadError
       Invoker::Logger.puts "You can install libnotify gem for Invoker notifications "\
-        "via system tray".color(:red)
+        "via system tray".colorize(:red)
     end
 
     def warn_about_terminal_notifier
@@ -166,7 +166,7 @@ module Invoker
         command_path = `which terminal-notifier`
         if !command_path || command_path.empty?
           Invoker::Logger.puts "You can enable OSX notification for processes "\
-            "by installing terminal-notifier gem".color(:red)
+            "by installing terminal-notifier gem".colorize(:red)
         end
       end
     end

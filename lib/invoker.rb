@@ -6,8 +6,7 @@ require "formatador"
 require "ostruct"
 require "uuid"
 require "json"
-require "rainbow"
-require "rainbow/ext/string"
+require "colorize"
 require "etc"
 
 require "invoker/version"
@@ -74,7 +73,7 @@ module Invoker
       return true if File.exist?(Invoker::Power::Config.config_file)
 
       if throw_warning
-        Invoker::Logger.puts("Invoker has detected setup has not been run. Domain feature will not work without running setup command.".color(:red))
+        Invoker::Logger.puts("Invoker has detected setup has not been run. Domain feature will not work without running setup command.".colorize(:red))
       end
       false
     end

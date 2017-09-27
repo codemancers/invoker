@@ -90,7 +90,7 @@ module Invoker
       end
 
       def print_message_and_abort
-        Invoker::Logger.puts("\n Invalid config file. Invoker requires an ini or a Procfile.".color(:red))
+        Invoker::Logger.puts("\n Invalid config file. Invoker requires an ini or a Procfile.".colorize(:red))
         abort
       end
 

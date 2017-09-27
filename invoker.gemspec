@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.summary = %q{Something small for Process management}
   s.add_dependency("thor", "~> 0.19")
-  s.add_dependency("rainbow", "~> 2.1.0")
+  s.add_dependency("colorize", "~> 0.8.1")
   s.add_dependency("iniparse", "~> 1.1")
   s.add_dependency("formatador", "~> 0.2")
   s.add_dependency("eventmachine", "~> 1.0.4")

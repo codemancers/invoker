@@ -26,7 +26,7 @@ module Invoker
 
       def initialize(tld)
         if tld !~ /^[a-z]+$/
-          Invoker::Logger.puts("Please specify valid tld".color(:red))
+          Invoker::Logger.puts("Please specify valid tld".colorize(:red))
           exit(1)
         end
         self.tld = tld
@@ -36,7 +36,7 @@ module Invoker
         if check_if_setup_can_run?
           setup_invoker
         else
-          Invoker::Logger.puts("The setup has been already run.".color(:red))
+          Invoker::Logger.puts("The setup has been already run.".colorize(:red))
         end
         self
       end
@@ -77,7 +77,7 @@ module Invoker
         begin
           safe_remove_file(resolver_file)
         rescue Errno::EACCES
-          Invoker::Logger.puts("Running uninstall requires root access, please rerun it with sudo".color(:red))
+          Invoker::Logger.puts("Running uninstall requires root access, please rerun it with sudo".colorize(:red))
           raise
         end
       end

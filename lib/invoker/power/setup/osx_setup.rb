@@ -17,7 +17,7 @@ module Invoker
           drop_to_normal_user
           create_config_file
         else
-          Invoker::Logger.puts("Invoker is not configured to serve from subdomains".color(:red))
+          Invoker::Logger.puts("Invoker is not configured to serve from subdomains".colorize(:red))
         end
         self
       end
@@ -42,7 +42,7 @@ module Invoker
       def install_resolver(dns_port)
         open_resolver_for_write { |fl| fl.write(resolve_string(dns_port)) }
       rescue Errno::EACCES
-        Invoker::Logger.puts("Running setup requires root access, please rerun it with sudo".color(:red))
+        Invoker::Logger.puts("Running setup requires root access, please rerun it with sudo".colorize(:red))
         raise
       end
 
@@ -110,7 +110,7 @@ port #{dns_port}
         return true unless File.exist?(resolver_file)
 
         Invoker::Logger.puts "Invoker has detected an existing Pow installation. We recommend "\
-          "that you uninstall pow and rerun this setup.".color(:red)
+          "that you uninstall pow and rerun this setup.".colorize(:red)
         Invoker::Logger.puts "If you have already uninstalled Pow, proceed with installation"\
           " by pressing y/n."
         replace_resolver_flag = Invoker::CLI::Question.agree("Replace Pow configuration (y/n) : ")
@@ -118,7 +118,7 @@ port #{dns_port}
         if replace_resolver_flag
           Invoker::Logger.puts "Invoker has overwritten one or more files created by Pow. "\
           "If .#{tld} domains still don't resolve locally, try turning off the wi-fi"\
-          " and turning it on. It'll force OS X to reload network configuration".color(:green)
+          " and turning it on. It'll force OS X to reload network configuration".colorize(:green)
         end
         replace_resolver_flag
       end

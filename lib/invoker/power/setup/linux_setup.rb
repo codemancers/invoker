@@ -19,7 +19,7 @@ module Invoker
           drop_to_normal_user
           create_config_file
         else
-          Invoker::Logger.puts("Invoker is not configured to serve from subdomains".color(:red))
+          Invoker::Logger.puts("Invoker is not configured to serve from subdomains".colorize(:red))
         end
         self
       end

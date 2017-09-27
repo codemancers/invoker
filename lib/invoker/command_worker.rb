@@ -25,7 +25,7 @@ module Invoker
     # Print the lines received over the network
     def receive_line(line)
       tail_watchers = Invoker.tail_watchers[@command_label]
-      color_line = "#{@command_label.color(color)} : #{line}"
+      color_line = "#{@command_label.colorize(color)} : #{line}"
       plain_line = "#{@command_label} : #{line}"
       if Invoker.nocolors?
         Invoker::Logger.puts plain_line
