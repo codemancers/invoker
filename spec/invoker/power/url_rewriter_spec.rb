@@ -124,6 +124,53 @@ describe Invoker::Power::UrlRewriter do
         match = rewriter.select_backend_config('baz.foo.dev')
         expect(match.port).to eql(1)
       end
+
+      it 'does not match baz.dev' do
+        match = rewriter.select_backend_config('baz.dev')
+        expect(match.port).to be_nil
+      end
+
+      context 'with an alias' do
+        it 'matches baz.foo.dev to the alias' do
+          @processes[1][:alias] = '*.foo'
+          Invoker.dns_cache = Invoker::DNSCache.new(nil)
+
+          match = rewriter.select_backend_config('baz.foo.dev')
+          expect(match.port).to eql(2)
+        end
+
+        it 'matches baz.dev to the alias' do
+          @processes[1][:alias] = '*'
+          Invoker.dns_cache = Invoker::DNSCache.new(nil)
+
+          match = rewriter.select_backend_config('baz.dev')
+          expect(match.port).to eql(2)
+        end
+
+        it 'matches non wildcard alias' do
+          @processes[1][:alias] = 'baz'
+          Invoker.dns_cache = Invoker::DNSCache.new(nil)
+
+          match = rewriter.select_backend_config('baz.dev')
+          expect(match.port).to eql(2)
+        end
+
+        it 'does not match baz.foo.blah.dev' do
+          @processes[1][:alias] = '*.foo'
+          Invoker.dns_cache = Invoker::DNSCache.new(nil)
+
+          match = rewriter.select_backend_config('baz.foo.blah.dev')
+          expect(match.port).to be_nil
+        end
+
+        it 'matches **' do
+          @processes[1][:alias] = '**.foo'
+          Invoker.dns_cache = Invoker::DNSCache.new(nil)
+
+          match = rewriter.select_backend_config('a.b.c.foo.dev')
+          expect(match.port).to eql(2)
+        end
+      end
     end
   end
 end
