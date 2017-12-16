@@ -59,7 +59,7 @@ describe Invoker::Power::PfMigrate do
       mock_config = mock()
       mock_config.stubs(:http_port).returns(80)
       mock_config.stubs(:https_port).returns(443)
-      mock_config.stubs(:tld).returns('dev')
+      mock_config.stubs(:tld).returns('local')
       Invoker.config = mock_config
     end
 
