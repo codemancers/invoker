@@ -134,11 +134,13 @@ module Invoker
       tasks.keys + ["help"]
     end
 
+    # TODO(kgrz): the default TLD option is duplicated in both this file and
+    # lib/invoker.rb May be assign this to a constant?
     def get_tld(options)
       if options[:tld] && !options[:tld].empty?
         options[:tld]
       else
-        'dev'
+        'local'
       end
     end
 

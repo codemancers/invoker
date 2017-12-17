@@ -146,7 +146,7 @@ module Invoker
     end
 
     def default_tld
-      'dev'
+      'local'
     end
   end
 end

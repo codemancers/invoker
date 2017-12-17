@@ -24,8 +24,8 @@ describe Invoker::Power::LinuxSetup, fakefs: true do
     FileUtils.mkdir_p(Invoker::Power::Distro::Base::RESOLVER_DIR)
   end
 
-  let(:invoker_setup) { Invoker::Power::LinuxSetup.new('dev') }
-  let(:distro_installer) { Invoker::Power::Distro::Ubuntu.new('dev') }
+  let(:invoker_setup) { Invoker::Power::LinuxSetup.new('local') }
+  let(:distro_installer) { Invoker::Power::Distro::Ubuntu.new('local') }
 
   describe "should only proceed after user confirmation" do
     before { invoker_setup.distro_installer = distro_installer }
@@ -78,7 +78,7 @@ describe Invoker::Power::LinuxSetup, fakefs: true do
 
       dnsmasq_content = File.read(distro_installer.resolver_file)
       expect(dnsmasq_content.strip).to_not be_empty
-      expect(dnsmasq_content).to match(/dev/)
+      expect(dnsmasq_content).to match(/local/)
 
       socat_content = File.read(Invoker::Power::Distro::Base::SOCAT_SHELLSCRIPT)
       expect(socat_content.strip).to_not be_empty
