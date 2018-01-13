@@ -8,39 +8,39 @@ describe Invoker::Power::UrlRewriter do
       @original_invoker_config = Invoker.config
 
       Invoker.config = mock
-      Invoker.config.stubs(:tld).returns("local")
+      Invoker.config.stubs(:tld).returns("test")
     end
 
     after(:all) do
       Invoker.config = @original_invoker_config
     end
 
-    it "should match foo.local" do
-      match = rewriter.extract_host_from_domain("foo.local")
+    it "should match foo.test" do
+      match = rewriter.extract_host_from_domain("foo.test")
       expect(match).to_not be_empty
 
       matching_string = match[0]
       expect(matching_string).to eq("foo")
     end
 
-    it "should match foo.local:1080" do
-      match = rewriter.extract_host_from_domain("foo.local:1080")
+    it "should match foo.test:1080" do
+      match = rewriter.extract_host_from_domain("foo.test:1080")
       expect(match).to_not be_empty
 
       matching_string = match[0]
       expect(matching_string).to eq("foo")
     end
 
-    it "should match emacs.bar.local" do
-      match = rewriter.extract_host_from_domain("emacs.bar.local")
+    it "should match emacs.bar.test" do
+      match = rewriter.extract_host_from_domain("emacs.bar.test")
       expect(match).to_not be_empty
 
       expect(match[0]).to eq("emacs.bar")
       expect(match[1]).to eq("bar")
     end
 
-    it "should match hello-world.local" do
-      match = rewriter.extract_host_from_domain("hello-world.local")
+    it "should match hello-world.test" do
+      match = rewriter.extract_host_from_domain("hello-world.test")
       expect(match).to_not be_nil
 
       expect(match[0]).to eq("hello-world")

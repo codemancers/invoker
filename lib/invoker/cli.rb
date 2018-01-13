@@ -140,7 +140,7 @@ module Invoker
       if options[:tld] && !options[:tld].empty?
         options[:tld]
       else
-        'local'
+        'test'
       end
     end
 
