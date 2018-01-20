@@ -10,7 +10,7 @@ Use it for managing multiple processes with ease.
 Use it for developing web applications on different local domains without
 `/etc/hosts` hacks.
 
-Invoker supports DNS and proxying of HTTP/HTTPS/WebSocket applications over a `.local`
+Invoker supports DNS and proxying of HTTP/HTTPS/WebSocket applications over a `.test`
 like local TLD.
 
 <img src="images/Invoker-Infographics.svg">
@@ -21,9 +21,9 @@ like local TLD.
 A brief overview of Invoker features are:
 
 * Manage multiple dependent processes using Invoker. You can use Procfile or a INI file to define multiple processes managed by Invoker.
-* Invoker supports proxying to your HTTP application via a locally defined TLD like `.local`
+* Invoker supports proxying to your HTTP application via a locally defined TLD like `.test`
 * Invoker automatically supports HTTPS, Websocket for your application.
-* Any externally running HTTP application can use HTTP proxy of Invoker for access via `http://app.local` domain.
+* Any externally running HTTP application can use HTTP proxy of Invoker for access via `http://app.test` domain.
 
 
 ## How to use it?
@@ -66,9 +66,9 @@ can also start `Invoker` by daeomonizing it, via:
 {% endhighlight %}
 
 <a name="tld"></a>
-## .local TLD support for OSX and Linux.
+## .test TLD support for OSX and Linux.
 
-You can access http services managed by invoker via `command_label.local` domain locally.
+You can access http services managed by invoker via `command_label.test` domain locally.
 
 To make it work though, you need to run following command, just once from anywhere:
 
@@ -80,7 +80,7 @@ This feature has been well tested to work on both `OSX` and `Linux`. You can add
 run above command with:
 
 {% highlight bash %}
-~> sudo invoker setup --tld local #specify a custom TLD, the default is `dev`
+~> sudo invoker setup --tld local #specify a custom TLD, the default is `test`
 {% endhighlight %}
 
 If you decide to remove Invoker, you can remove things installed by Invoker using command
@@ -116,17 +116,17 @@ command = activemq-admin start
 disable_autorun = true
 {% endhighlight %}
 
-Now these services can be accessed via `http://terminal.local` , `http://cms.local`
-`http://typo.local`. You can also access them via wildcard subdomains such as `*.*.local`.
+Now these services can be accessed via `http://terminal.test` , `http://cms.test`
+`http://typo.test`. You can also access them via wildcard subdomains such as `*.*.test`.
 
-You can also access any external http process via `.local` DNS by running
+You can also access any external http process via `.test` DNS by running
 following command:
 
 {% highlight bash %}
 ~> invoker add_http wordpress 8080
 {% endhighlight %}
 
-Above command will make wordpress available on `wordpress.local` even if
+Above command will make wordpress available on `wordpress.test` even if
 wordpress was original not started by Invoker. You can access any randomly
 started process via Invoker like this.
 
@@ -134,7 +134,7 @@ started process via Invoker like this.
 ## Https support
 
 Invoker uses a self-signed certificate to make all your web applications available via
-`https` as well. You absolutely don't have to do anything. Access your webapps on `https://app.local`
+`https` as well. You absolutely don't have to do anything. Access your webapps on `https://app.test`
 and enjoy!
 
 
@@ -146,7 +146,7 @@ have been using a `Procfile` to bootstrap your development stack, you can
 keep using it with `Invoker.`
 
 The only thing to remember is, your `Procfile`
-must have `$PORT` in command - for `.local` domain feature to work
+must have `$PORT` in command - for `.test` domain feature to work
 
 {% highlight bash %}
 rails: cd $HOME/rails_app && bundle exec rails s -p $PORT
