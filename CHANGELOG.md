@@ -1,6 +1,5 @@
-## Changelog since 1.5.4
-
-
+# v1.5.6
+* Change default tld from .dev to .test (https://github.com/code-mancers/invoker/pull/208)
 
 # v1.5.5
 * Fix high cpu usage when process managed by Invoker crashes and Invoker doesn't read from its socket.(https://github.com/code-mancers/invoker/pull/198)
