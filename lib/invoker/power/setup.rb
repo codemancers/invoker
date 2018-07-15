@@ -11,9 +11,11 @@ module Invoker
       end
 
       def self.uninstall
-        power_config = Invoker::Power::Config.load_config
-        selected_installer_klass = installer_klass
-        selected_installer_klass.new(power_config.tld).uninstall_invoker
+        if Invoker::Power::Config.has_config?
+          power_config = Invoker::Power::Config.load_config
+          selected_installer_klass = installer_klass
+          selected_installer_klass.new(power_config.tld).uninstall_invoker
+        end
       end
 
       def self.installer_klass
