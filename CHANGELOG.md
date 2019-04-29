@@ -1,5 +1,5 @@
 # v1.5.7
-* Enable Manjaro linux support
+* Enable Manjaro Linux support
 
 # v1.5.6
 * Change default tld from .dev to .test (https://github.com/code-mancers/invoker/pull/208)
