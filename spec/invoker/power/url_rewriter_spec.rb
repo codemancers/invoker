@@ -3,12 +3,18 @@ require 'spec_helper'
 describe Invoker::Power::UrlRewriter do
   let(:rewriter) { Invoker::Power::UrlRewriter.new }
 
-  context "matching domain part of incoming request" do
-    before(:all) do
-      @original_invoker_config = Invoker.config
+  before(:all) do
+    @original_invoker_config = Invoker.config
+  end
 
-      Invoker.config = mock
-      Invoker.config.stubs(:tld).returns("test")
+  def mock_invoker_tld_as(domain)
+    Invoker.config = mock
+    Invoker.config.stubs(:tld).returns(domain)
+  end
+
+  context "matching domain part of incoming request" do
+    before(:each) do
+      mock_invoker_tld_as("test")
     end
 
     after(:all) do
@@ -47,11 +53,8 @@ describe Invoker::Power::UrlRewriter do
     end
 
     context 'user sets up a custom top level domain' do
-      before(:all) do
-        @original_invoker_config = Invoker.config
-
-        Invoker.config = mock
-        Invoker.config.stubs(:tld).returns("local")
+      before(:each) do
+        mock_invoker_tld_as("local")
       end
 
       it 'should match domain part of incoming request correctly' do
