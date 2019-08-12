@@ -16,6 +16,7 @@ def mock_socat_scripts
     fl.write(socat_content)
   end
   FileUtils.mkdir_p("/usr/bin")
+  FileUtils.mkdir_p("/etc/systemd/system")
 end
 
 describe Invoker::Power::LinuxSetup, fakefs: true do
