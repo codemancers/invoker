@@ -14,7 +14,7 @@ MM = Invoker::IPC::Message
 RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
   config.filter_run :focus
-  config.mock_framework = :mocha
+  config.mock_with :mocha
   config.include FakeFS::SpecHelpers, fakefs: true
 
   # Run specs in random order to surface order dependencies. If you find an

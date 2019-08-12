@@ -16,12 +16,14 @@ def mock_socat_scripts
     fl.write(socat_content)
   end
   FileUtils.mkdir_p("/usr/bin")
+  FileUtils.mkdir_p("/etc/systemd/system")
 end
 
 describe Invoker::Power::LinuxSetup, fakefs: true do
   before do
     FileUtils.mkdir_p(inv_conf_dir)
     FileUtils.mkdir_p(Invoker::Power::Distro::Base::RESOLVER_DIR)
+    Invoker.config = mock
   end
 
   let(:invoker_setup) { Invoker::Power::LinuxSetup.new('test') }
@@ -52,7 +54,6 @@ describe Invoker::Power::LinuxSetup, fakefs: true do
   describe "configuring dnsmasq and socat" do
     before(:all) do
       @original_invoker_config = Invoker.config
-      Invoker.config = mock
     end
 
     after(:all) do
