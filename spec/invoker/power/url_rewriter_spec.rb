@@ -12,13 +12,13 @@ describe Invoker::Power::UrlRewriter do
     Invoker.config.stubs(:tld).returns(domain)
   end
 
+  after(:all) do
+    Invoker.config = @original_invoker_config
+  end
+
   context "matching domain part of incoming request" do
     before(:each) do
       mock_invoker_tld_as("test")
-    end
-
-    after(:all) do
-      Invoker.config = @original_invoker_config
     end
 
     it "should match foo.test" do
@@ -63,10 +63,6 @@ describe Invoker::Power::UrlRewriter do
 
         matching_string = match[0]
         expect(matching_string).to eq("foo")
-      end
-
-      after(:all) do
-        Invoker.config = @original_invoker_config
       end
     end
   end
