@@ -1,5 +1,6 @@
 # v1.5.7
 * Enable Manjaro Linux support
+* Ensure same color is re-used for next started process, which is helpful to maintain consistency when using `reload` command (https://github.com/code-mancers/invoker/pull/230)
 
 # v1.5.6
 * Change default tld from .dev to .test (https://github.com/code-mancers/invoker/pull/208)
