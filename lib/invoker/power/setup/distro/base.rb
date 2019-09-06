@@ -51,6 +51,22 @@ module Invoker
           system("systemctl start socat_invoker.service")
           system("systemctl restart dnsmasq")
         end
+
+        def install_packages
+          "dnsmasq and socat"
+        end
+
+        def install_other
+          " a local resolver for .#{tld} domain and"
+        end
+
+        def get_user_confirmation?
+          Invoker::Logger.puts("Invoker is going to install #{install_packages} on this machine."\
+            " It is also going to install#{install_other} a socat service"\
+            " which will forward all local requests on port 80 and 443 to another port")
+          Invoker::Logger.puts("If you still want to proceed with installation, press y.")
+          Invoker::CLI::Question.agree("Proceed with installation (y/n) : ")
+        end
       end
     end
   end

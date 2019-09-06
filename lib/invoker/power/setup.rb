@@ -76,6 +76,7 @@ module Invoker
       end
 
       def remove_resolver_file
+        return if resolver_file.nil?
         begin
           safe_remove_file(resolver_file)
         rescue Errno::EACCES
