@@ -19,6 +19,7 @@ module Invoker
     def setup
       Invoker::Power::Setup.install(get_tld(options))
     end
+    map install: :setup
 
     desc "version", "Print Invoker version"
     def version
@@ -132,7 +133,7 @@ module Invoker
     end
 
     def self.valid_tasks
-      tasks.keys + %w(help restart)
+      tasks.keys + %w(help install restart)
     end
 
     # TODO(kgrz): the default TLD option is duplicated in both this file and
