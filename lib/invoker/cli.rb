@@ -92,6 +92,7 @@ module Invoker
       signal = options[:signal] || 'INT'
       unix_socket.send_command('reload', process_name: name, signal: signal)
     end
+    map restart: :reload
 
     desc "list", "List all running processes"
     option :raw,
@@ -132,7 +133,7 @@ module Invoker
     end
 
     def self.valid_tasks
-      tasks.keys + %w(help install)
+      tasks.keys + %w(help install restart)
     end
 
     # TODO(kgrz): the default TLD option is duplicated in both this file and
