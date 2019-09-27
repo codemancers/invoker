@@ -155,7 +155,7 @@ command = ls
 
   describe "Procfile" do
     it "should load Procfiles and create config object" do
-      File.open("/tmp/Procfile", "w") {|fl| 
+      File.open("/tmp/Procfile", "w") {|fl|
         fl.write <<-EOD
 web: bundle exec rails s -p $PORT
           EOD
@@ -170,7 +170,7 @@ web: bundle exec rails s -p $PORT
 
   describe "Copy of DNS information" do
     it "should allow copy of DNS information" do
-      File.open("/tmp/Procfile", "w") {|fl| 
+      File.open("/tmp/Procfile", "w") {|fl|
         fl.write <<-EOD
 web: bundle exec rails s -p $PORT
           EOD
@@ -251,7 +251,7 @@ index = 1
         config = Invoker::Parsers::Config.new(file.path, 9000)
         processes = config.autorunnable_processes
         expect(processes.map(&:label)).to eq(['panda-auth', 'postgres', 'memcached'])
-        expect(processes[0].sleep_duration).to eq(1)
+        expect(processes[0].sleep_duration).to eq(0)
         expect(processes[1].sleep_duration).to eq(5)
       ensure
         file.unlink()
@@ -342,7 +342,7 @@ some_other_process: some_other_command
             expect(config.process("some_process").cmd).to eq("some_command")
             processes = config.autorunnable_processes
             process_1 = processes[0]
-            expect(process_1.sleep_duration).to eq(1)
+            expect(process_1.sleep_duration).to eq(0)
             expect(process_1.index).to eq(0)
           ensure
             File.delete(invoker_ini)

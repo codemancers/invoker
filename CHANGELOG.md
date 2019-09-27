@@ -1,6 +1,10 @@
 # v1.5.7
 * Enable Manjaro Linux support
 * Fix setup on Ubuntu w/ systemd-resolved (https://github.com/code-mancers/invoker/pull/233)
+* Ensure same color is re-used for next started process, which is helpful to maintain consistency when using `reload` command (https://github.com/code-mancers/invoker/pull/230)
+* Add `install` as an alias of `setup` command (https://github.com/code-mancers/invoker/pull/232)
+* Change default process sleep duration to 0 (https://github.com/code-mancers/invoker/pull/231)
+* Add `restart` as an alias of `reload` command (https://github.com/code-mancers/invoker/pull/229)
 
 # v1.5.6
 * Change default tld from .dev to .test (https://github.com/code-mancers/invoker/pull/208)
