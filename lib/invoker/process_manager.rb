@@ -168,6 +168,9 @@ module Invoker
       if worker
         @open_pipes.delete(worker.pipe_end.fileno)
         @workers.delete(command_label)
+        # Move label color to front of array so it's reused first
+        LABEL_COLORS.delete(worker.color)
+        LABEL_COLORS.unshift(worker.color)
       end
       if trigger_event
         Invoker.commander.trigger(command_label, :worker_removed)
