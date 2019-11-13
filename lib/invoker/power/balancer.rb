@@ -100,7 +100,7 @@ module Invoker
         @backend_data = true
 
         # check backend data for websockets connection. check for upgrade headers
-        # - Upgarde: websocket\r\n
+        # - Upgrade: websocket\r\n
         if data =~ /Upgrade: websocket/
           @upgraded_to = "websocket"
         end
