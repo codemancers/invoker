@@ -9,8 +9,8 @@ module Invoker
       attr_accessor :distro_installer
 
       def setup_invoker
-        if get_user_confirmation?
-          initialize_distro_installer
+        initialize_distro_installer
+        if distro_installer.get_user_confirmation?
           find_open_ports
           distro_installer.install_required_software
           install_resolver
@@ -35,6 +35,12 @@ module Invoker
         Invoker::Power::Config.delete
       end
 
+      def build_power_config
+        config = super
+        config[:tld] = distro_installer.tld
+        config
+      end
+
       def resolver_file
         distro_installer.resolver_file
       end
@@ -56,10 +62,11 @@ module Invoker
             Facter::Util::Resolution.exec("[ -e /usr/bin/systemctl ] && echo 'true' || echo 'false'")
           end
         end
-        @distro_installer = Invoker::Power::Distro::Base.distro_installer(tld)
+        @distro_installer ||= Invoker::Power::Distro::Base.distro_installer(tld)
       end
 
       def install_resolver
+        return if resolver_file.nil?
         File.open(resolver_file, "w") do |fl|
           fl.write(resolver_file_content)
         end
@@ -91,14 +98,6 @@ address=/#{tld}/127.0.0.1
       def install_systemd_unit
         FileUtils.cp(socat_unit, Invoker::Power::Distro::Base::SOCAT_SYSTEMD)
         system("chmod 644 #{Invoker::Power::Distro::Base::SOCAT_SYSTEMD}")
-      end
-
-      def get_user_confirmation?
-        Invoker::Logger.puts("Invoker is going to install dnsmasq and socat on this machine."\
-          " It is also going to install a local resolver for .#{tld} domain and a socat service"\
-          " which will forward all local requests on port 80 and 443 to another port")
-        Invoker::Logger.puts("If you still want to proceed with installation, press y.")
-        Invoker::CLI::Question.agree("Proceed with installation (y/n) : ")
       end
     end
   end
