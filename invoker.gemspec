@@ -16,9 +16,9 @@ Gem::Specification.new do |s|
   s.description = %q{Something small for process management}
   s.email = %q{hemant@codemancers.com}
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {spec,features}/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+  s.files         = Dir.glob("lib/**/*")
+  s.test_files    = Dir.glob("spec/**/*")
+  s.executables   = Dir.glob("bin/*").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
   s.homepage = %q{http://invoker.codemancers.com}
@@ -33,7 +33,6 @@ Gem::Specification.new do |s|
   s.add_dependency("em-proxy", "~> 0.1")
   s.add_dependency("rubydns", "~> 0.8.5")
   s.add_dependency("uuid", "~> 2.3")
-  s.add_dependency("facter", "~> 2.2")
   s.add_dependency("http-parser-lite", "~> 0.6")
   s.add_dependency("dotenv", "~> 2.0", "<= 2.2.2")
   s.add_development_dependency("rspec", "~> 3.0")
