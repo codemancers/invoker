@@ -12,27 +12,34 @@ module Invoker
         end
 
         def self.distro_installer(tld)
-          case Facter[:operatingsystem].value
-          when "Ubuntu"
-            require "invoker/power/setup/distro/ubuntu"
-            Ubuntu.new(tld)
-          when "Fedora"
-            require "invoker/power/setup/distro/redhat"
-            Redhat.new(tld)
-          when "Archlinux", "Manjarolinux"
+          if distro.start_with? "Arch Linux", "Manjaro Linux"
             require "invoker/power/setup/distro/arch"
             Arch.new(tld)
-          when "Debian"
+          elsif distro.start_with? "Debian"
             require "invoker/power/setup/distro/debian"
             Debian.new(tld)
-          when "LinuxMint"
-            require "invoker/power/setup/distro/mint"
-            Mint.new(tld)
-          when "OpenSuSE"
+          elsif distro.start_with? "Fedora"
+            require "invoker/power/setup/distro/redhat"
+            Redhat.new(tld)
+          elsif distro.start_with? "Linux Mint", "Ubuntu"
+            require "invoker/power/setup/distro/ubuntu"
+            Ubuntu.new(tld)
+          elsif distro.start_with? "openSUSE"
             require "invoker/power/setup/distro/opensuse"
             Opensuse.new(tld)
           else
             raise "Your selected distro is not supported by Invoker"
+          end
+        end
+
+        def self.distro
+          @distro ||= if File.exist?('/etc/os-release')
+            File.read('/etc/os-release').each_line do |line|
+              parsed_line = line.chomp.tr('"', '').split('=')
+              break parsed_line[1] if parsed_line[0] == 'NAME'
+            end
+          else
+            raise "File /etc/os-release doesn't exist or not Linux"
           end
         end
 
