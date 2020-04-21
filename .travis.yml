@@ -24,7 +24,7 @@ jobs:
       rvm: ruby # Latest stable version
       script: bundle exec rspec --tag ~docker # Don't run specs with docker: true
       cache: bundler
-      # Clear out values set above for docker runs
+      # Clear out values that were set above specifically for docker runs
       env:
       before_install:
       services:

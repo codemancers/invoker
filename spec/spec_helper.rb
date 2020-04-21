@@ -1,4 +1,3 @@
-require "pry"
 require "simplecov"
 require 'coveralls'
 require 'fakefs/spec_helpers'
