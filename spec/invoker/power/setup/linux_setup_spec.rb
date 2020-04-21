@@ -153,7 +153,7 @@ describe Invoker::Power::Distro::Base, docker: true do
         expect(described_class.distro_installer('')).to be_a Invoker::Power::Distro::Debian
       when 'fedora'
         expect(described_class.distro_installer('')).to be_a Invoker::Power::Distro::Redhat
-      when 'linuxmintd/mint19.3-amd64', 'ubuntu'
+      when 'linuxmintd/mint20-amd64', 'ubuntu'
         expect(described_class.distro_installer('')).to be_a Invoker::Power::Distro::Ubuntu
       when 'opensuse/leap', 'opensuse/tumbleweed'
         expect(described_class.distro_installer('')).to be_a Invoker::Power::Distro::Opensuse
