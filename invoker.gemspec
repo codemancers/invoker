@@ -21,10 +21,18 @@ Gem::Specification.new do |s|
   s.executables   = Dir.glob("bin/*").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.homepage = %q{http://invoker.codemancers.com}
+  s.homepage = %q{https://invoker.codemancers.com}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.summary = %q{Something small for Process management}
+
+  s.metadata = {
+    "bug_tracker_uri" => "https://github.com/code-mancers/invoker/issues",
+    "changelog_uri" => "https://github.com/code-mancers/invoker/blob/master/CHANGELOG.md",
+    "documentation_uri" => "https://invoker.codemancers.com/",
+    "source_code_uri" => "https://github.com/code-mancers/invoker/tree/v#{Invoker::VERSION}",
+  }
+
   s.add_dependency("thor", "~> 0.19")
   s.add_dependency("colorize", "~> 0.8.1")
   s.add_dependency("iniparse", "~> 1.1")
