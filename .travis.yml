@@ -4,18 +4,17 @@ services:
   - docker
 
 before_install:
-  - docker pull "$distro":latest
-  - docker run -v $PWD:/src "$distro":latest /bin/bash -c "$install && gem install bundler --no-document --no-format-executable && cd /src && bundle install && distro=$distro bundle exec rspec --tag docker"
+  - docker run -v $PWD:/src "$DISTRO":latest /bin/sh -c "$INSTALL && gem install bundler --no-document --no-format-execut able && cd /src && bundle install && DISTRO=$DISTRO bundle exec rspec --tag docker"
 
 env:
-  - distro=archlinux install='pacman -Sy --noconfirm base-devel ruby && PATH="$PATH:$(ruby -e "puts Gem.user_dir")/bin"'
-  - distro=debian install="apt-get update; apt-get install -y build-essential ruby ruby-dev"
-  - distro=fedora install='dnf install -y gcc-c++ make redhat-rpm-config ruby ruby-devel'
-  - distro=linuxmintd/mint19.3-amd64 install="apt-get update; apt-get install -y build-essential ruby ruby-dev"
-  - distro=manjarolinux/base install='pacman -Sy --noconfirm base-devel ruby && PATH="$PATH:$(ruby -e "puts Gem.user_dir")/bin"'
-  - distro=opensuse/leap install='zypper install -y gcc-c++ make ruby ruby-devel'
-  - distro=opensuse/tumbleweed install='zypper install -y gcc-c++ make ruby ruby-devel'
-  - distro=ubuntu install="apt-get update; apt-get install -y build-essential ruby ruby-dev"
+  - DISTRO=archlinux/base INSTALL='pacman -Sy --noconfirm base-devel libffi ruby && PATH="$PATH:$(ruby -e "puts Gem.user_dir")/bin"'
+  - DISTRO=debian INSTALL="apt-get update; apt-get install -y build-essential ruby ruby-dev"
+  - DISTRO=fedora INSTALL='dnf install -y gcc-c++ make redhat-rpm-config ruby ruby-devel'
+  - DISTRO=linuxmintd/mint20-amd64 INSTALL="apt-get update; apt-get install -y build-essential ruby ruby-dev"
+  - DISTRO=manjarolinux/base INSTALL='pacman -Sy --noconfirm base-devel libffi ruby && PATH="$PATH:$(ruby -e "puts Gem.user_dir")/bin"'
+  - DISTRO=opensuse/leap INSTALL='zypper install -y gcc-c++ make ruby ruby-devel'
+  - DISTRO=opensuse/tumbleweed INSTALL='zypper install -y gcc-c++ make ruby ruby-devel'
+  - DISTRO=ubuntu INSTALL="apt-get update; apt-get install -y build-essential ruby ruby-dev"
 
 jobs:
   include:
@@ -24,7 +23,7 @@ jobs:
       rvm: ruby # Latest stable version
       script: bundle exec rspec --tag ~docker # Don't run specs with docker: true
       cache: bundler
-      # Clear out values set above for docker runs
+      # Clear out values that were set above specifically for docker runs
       env:
       before_install:
       services:
