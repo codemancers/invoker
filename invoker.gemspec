@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
     "source_code_uri" => "https://github.com/code-mancers/invoker/tree/v#{Invoker::VERSION}",
   }
 
-  s.add_dependency("thor", "~> 0.19")
+  s.add_dependency("thor", ">= 0.19", "< 2")
   s.add_dependency("colorize", "~> 0.8.1")
   s.add_dependency("iniparse", "~> 1.1")
   s.add_dependency("formatador", "~> 0.2")
