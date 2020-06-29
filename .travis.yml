@@ -7,14 +7,14 @@ before_install:
   - docker run -v $PWD:/src "$DISTRO":latest /bin/sh -c "$INSTALL && gem install bundler --no-document --no-format-execut able && cd /src && bundle install && DISTRO=$DISTRO bundle exec rspec --tag docker"
 
 env:
-  - DISTRO=archlinux/base INSTALL='pacman -Sy --noconfirm base-devel libffi ruby && PATH="$PATH:$(ruby -e "puts Gem.user_dir")/bin"'
-  - DISTRO=debian INSTALL="apt-get update; apt-get install -y build-essential ruby ruby-dev"
+  - DISTRO=archlinux INSTALL='pacman -Sy --noconfirm base-devel libffi ruby && PATH="$PATH:$(ruby -e "puts Gem.user_dir")/bin"'
+  - DISTRO=debian INSTALL="apt-get update && apt-get install -y build-essential ruby ruby-dev"
   - DISTRO=fedora INSTALL='dnf install -y gcc-c++ make redhat-rpm-config ruby ruby-devel'
-  - DISTRO=linuxmintd/mint20-amd64 INSTALL="apt-get update; apt-get install -y build-essential ruby ruby-dev"
+  - DISTRO=linuxmintd/mint20-amd64 INSTALL="apt-get update && apt-get install -y build-essential ruby ruby-dev"
   - DISTRO=manjarolinux/base INSTALL='pacman -Sy --noconfirm base-devel libffi ruby && PATH="$PATH:$(ruby -e "puts Gem.user_dir")/bin"'
   - DISTRO=opensuse/leap INSTALL='zypper install -y gcc-c++ make ruby ruby-devel'
   - DISTRO=opensuse/tumbleweed INSTALL='zypper install -y gcc-c++ make ruby ruby-devel'
-  - DISTRO=ubuntu INSTALL="apt-get update; apt-get install -y build-essential ruby ruby-dev"
+  - DISTRO=ubuntu INSTALL="apt-get update && apt-get install -y build-essential ruby ruby-dev"
 
 jobs:
   include:

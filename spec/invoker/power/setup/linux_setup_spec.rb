@@ -147,7 +147,7 @@ describe Invoker::Power::Distro::Base, docker: true do
   describe '.distro_installer' do
     it 'correctly recognizes the current distro' do
       case ENV['DISTRO']
-      when 'archlinux/base', 'manjarolinux/base'
+      when 'archlinux', 'manjarolinux/base'
         expect(described_class.distro_installer('')).to be_a Invoker::Power::Distro::Arch
       when 'debian'
         expect(described_class.distro_installer('')).to be_a Invoker::Power::Distro::Debian
