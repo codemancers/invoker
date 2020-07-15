@@ -98,12 +98,27 @@ module Invoker
       type: :boolean,
       banner: "Print process list in raw text format",
       aliases: [:r]
+    option :wait,
+      type: :boolean,
+      banner: "wait for update",
+      aliases: [:w]
     def list
-      unix_socket.send_command('list') do |response_object|
-        if options[:raw]
-          Invoker::ProcessPrinter.new(response_object).tap { |printer| printer.print_raw_text }
-        else
-          Invoker::ProcessPrinter.new(response_object).tap { |printer| printer.print_table }
+      if options[:wait]
+        Signal.trap("INT") { exit(0) }
+        loop do
+          puts "\e[H\e[2J"
+          unix_socket.send_command('list') do |response_object|
+            Invoker::ProcessPrinter.new(response_object).tap { |printer| printer.print_table }
+          end
+          sleep(5)
+        end
+      else
+        unix_socket.send_command('list') do |response_object|
+          if options[:raw]
+            Invoker::ProcessPrinter.new(response_object).tap { |printer| printer.print_raw_text }
+          else
+            Invoker::ProcessPrinter.new(response_object).tap { |printer| printer.print_table }
+          end
         end
       end
     end
