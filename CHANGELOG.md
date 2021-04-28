@@ -1,3 +1,7 @@
+# v1.5.8
+* Add `--wait` / `-w` option to `invoker list` to stream updates instead of printing once & exiting (https://github.com/code-mancers/invoker/pull/239)
+* Make `Host` header check case-insensitive (https://github.com/code-mancers/invoker/pull/241)
+
 # v1.5.7
 * Enable Manjaro Linux support
 * Fix setup on Ubuntu w/ systemd-resolved (https://github.com/code-mancers/invoker/pull/233)
