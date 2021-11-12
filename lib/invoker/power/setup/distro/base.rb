@@ -12,7 +12,7 @@ module Invoker
         end
 
         def self.distro_installer(tld)
-          if distro.start_with? "Arch Linux", "Manjaro Linux"
+          if distro.start_with? "Arch Linux", "Manjaro Linux", "'EndeavourOS'"
             require "invoker/power/setup/distro/arch"
             Arch.new(tld)
           elsif distro.start_with? "Debian"
