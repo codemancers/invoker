@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.executables   = Dir.glob("bin/*").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.homepage = %q{https://invoker.codemancers.com}
+  s.homepage = %q{https://invoker.c9s.dev}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.summary = %q{Something small for Process management}
@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   s.metadata = {
     "bug_tracker_uri" => "https://github.com/code-mancers/invoker/issues",
     "changelog_uri" => "https://github.com/code-mancers/invoker/blob/master/CHANGELOG.md",
-    "documentation_uri" => "https://invoker.codemancers.com/",
+    "documentation_uri" => "https://invoker.c9s.dev/",
     "source_code_uri" => "https://github.com/code-mancers/invoker/tree/v#{Invoker::VERSION}",
   }
 

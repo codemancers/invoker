@@ -14,7 +14,7 @@ Currently it only works with Ruby 2.0, 2.1, 2.2, and 2.3.
 
 ## Manual ##
 
-Information about configuring and using Invoker can be found on -  [Invoker Website](http://invoker.codemancers.com)
+Information about configuring and using Invoker can be found on -  [Invoker Website](https://invoker.c9s.dev/)
 
 Invoker documentation is maintained via `Jekyll` and hosted on `github`. If you would like to fix an error
 or update something - please submit a pull request against `gh-pages` branch of `Invoker`.
