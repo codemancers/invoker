@@ -13,7 +13,7 @@ module Invoker
         Invoker::Logger.puts "Invoker daemon is already running"
         exit(0)
       elsif dead?
-        File.delete(pid_file) if File.exists?(pid_file)
+        File.delete(pid_file) if File.exist?(pid_file)
       end
       Invoker::Logger.puts "Running Invoker daemon"
       daemonize

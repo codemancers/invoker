@@ -52,7 +52,7 @@ module Invoker
       end
 
       def use_file_as_body(file_name)
-        if file_name && File.exists?(file_name)
+        if file_name && File.exist?(file_name)
           file_content = File.read(file_name)
           self.body = file_content
         else
