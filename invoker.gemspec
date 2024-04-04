@@ -41,7 +41,7 @@ Gem::Specification.new do |s|
   s.add_dependency("em-proxy", "~> 0.1")
   s.add_dependency("rubydns", "~> 0.8.5")
   s.add_dependency("uuid", "~> 2.3")
-  s.add_dependency("http-parser-lite", "~> 1.0.1")
+  s.add_dependency("http-parser-lite", "~> 1.0")
   s.add_dependency("dotenv", "~> 2.0", "!= 2.3.0", "!= 2.4.0")
   s.add_development_dependency("rspec", "~> 3.0")
   s.add_development_dependency("mocha")
