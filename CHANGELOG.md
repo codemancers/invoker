@@ -1,3 +1,6 @@
+# v2.0.0
+* Updated to make compliant for > Ruby 3.0, updated http-parser-lite reference, fixed exists? vs exist? deprecation. (https://github.com/codemancers/invoker/pull/250)
+
 # v1.5.8
 * Add `--wait` / `-w` option to `invoker list` to stream updates instead of printing once & exiting (https://github.com/code-mancers/invoker/pull/239)
 * Make `Host` header check case-insensitive (https://github.com/code-mancers/invoker/pull/241)

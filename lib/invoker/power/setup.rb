@@ -56,7 +56,7 @@ module Invoker
       end
 
       def check_if_setup_can_run?
-        !File.exists?(Invoker::Power::Config.config_file)
+        !File.exist?(Invoker::Power::Config.config_file)
       end
 
       def create_config_file
@@ -86,7 +86,7 @@ module Invoker
       end
 
       def safe_remove_file(file)
-        File.delete(file) if File.exists?(file)
+        File.delete(file) if File.exist?(file)
       end
     end
   end

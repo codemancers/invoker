@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.version = Invoker::VERSION
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
+  s.required_ruby_version = '>= 3.0.0'
   s.authors = ["Hemant Kumar", "Amitava Basak"]
   s.description = %q{Something small for process management}
   s.email = %q{hemant@codemancers.com}
@@ -41,7 +42,7 @@ Gem::Specification.new do |s|
   s.add_dependency("em-proxy", "~> 0.1")
   s.add_dependency("rubydns", "~> 0.8.5")
   s.add_dependency("uuid", "~> 2.3")
-  s.add_dependency("http-parser-lite", "~> 0.6")
+  s.add_dependency("http-parser-lite", "~> 1.0")
   s.add_dependency("dotenv", "~> 2.0", "!= 2.3.0", "!= 2.4.0")
   s.add_development_dependency("rspec", "~> 3.0")
   s.add_development_dependency("mocha")
